@@ -1,21 +1,44 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2022/11/21 14:38:01 by arobu             #+#    #+#              #
+#    Updated: 2023/08/09 05:04:05 by arobu            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-NAME            = Webserv
-VPATH           = ./src
+# Variables
+NAME			= webserv
 
+# VPath
+VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRequestHandler
 
-SRC_DIR         = ./src
-OBJ_DIR         = ./obj
+# Includes
+INCLUDE			= -I ./src/Server
+INCLUDE			+= -I ./src/ServerConfig
+INCLUDE			+= -I ./src/SocketHandler
+INCLUDE			+= -I ./src/HttpRequestHandler
 
-# Modules
+# Diretories
+SRC_DIR			= ./src
+OBJ_DIR			= ./obj
+
 # Compiler
-CC          = c++ -Wall -Werror -Wextra
-CFLAGS      =  #-march=nocona
-ASAN        = #-fsanitize=address -g3
-CFLAGS      =  #-Ofast -flto# -g3 -fsanitize=address -g3 #-g3 -Wall -Werror -Wextra -g3 #
+CC			= c++
+CFLAGS		= -O3 -flto #-Wall -Werror -Wextra
+
+ifdef FSANITIZE
+	CFLAGS += -g3 -fsanitize=address
+	LDLFLAGS += -g3 -fsanitize=address
+endif
 
 #Archive and Remove
-RM          = rm -f
-AR          = ar rcs
+RM			= rm -f
+AR			= ar rcs
+
 # Colors
 DEF_COLOR = \033[0;39m
 RED = \033[0;91m
@@ -25,39 +48,40 @@ BLUE = \033[0;94m
 MAGENTA = \033[0;95m
 CYAN = \033[0;96m
 WHITE = \033[0;97m
+
 # Sources
-#SRCS = src/mergeSort.cpp src/mergeSortD.cpp ./src/main.cpp
-SRCS    = $(shell find ./src -name "*.cpp")
+SRCS	= $(shell find ./src -name "*.cpp")
+
 # Objects
-OBJS    = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.cpp=.o)))
+OBJS	= $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.cpp=.o)))
+
 # Rules
 all:
 	@${MAKE} $(NAME) -j
-$(NAME): $(OBJ_DIR) $(OBJS)
+$(NAME): $(OBJ_DIR) $(OBJS) $(MAIN_FILE)
 	@$(CC) $(INCLUDE) $(FRAMEWORK) $(ASAN) $(OBJS) -o $@ -lm $(LDLFLAGS) $(LIBFLAGS)
-	@echo "$(YELLOW)Webserv$(DEF_COLOR) $(CYAN)done.$(DEF_COLOR)"
+	@echo "$(YELLOW)$(NAME)$(DEF_COLOR) $(CYAN)done.$(DEF_COLOR)"
 
 $(OBJ_DIR)/%.o: %.cpp
 	@$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
+
 show:
-	echo $(SRCS)
-	echo $(OBJS)
+	@echo $(OBJS)
 
  clean:
 			@$(RM) -rdf $(OBJ_DIR)
 			@$(RM) -rdf $(DSYM)
-			@echo "$(YELLOW)Webserv$(DEF_COLOR) $(CYAN)successfully cleaned!$(DEF_COLOR)"
+			@echo "$(YELLOW)$(NAME)$(DEF_COLOR) $(CYAN)successfully cleaned!$(DEF_COLOR)"
 
 fclean:		clean
-#			@make fclean -C $(LIBFT_FOLDER)
-#			@rm -rdf $(GLFW_BUILD)
-#			@rm -rdf $(MLX_BUILD)
 			@$(RM) -f $(NAME)
 			@echo "$(YELLOW)All$(DEF_COLOR) $(CYAN)objects successfully cleaned!$(DEF_COLOR)"
 
 re:			fclean all
+
+bonus:	libft	mlx	$(NAME)
 
 .PHONY:		all clean fclean re
