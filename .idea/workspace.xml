@@ -23,9 +23,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2d2829d0-d563-473e-86b4-97f7eedc903d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Webserv" beforeDir="false" afterPath="$PROJECT_DIR$/Webserv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,7 +180,7 @@
       <updated>1692807514657</updated>
       <workItem from="1692807515884" duration="11064000" />
       <workItem from="1692876637256" duration="16798000" />
-      <workItem from="1692896207173" duration="5176000" />
+      <workItem from="1692896207173" duration="5289000" />
     </task>
     <servers />
   </component>

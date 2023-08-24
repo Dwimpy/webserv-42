@@ -53,7 +53,7 @@ bool	SocketHandler::listenForClientConnections(const unsigned int &port)
 
 int	SocketHandler::pollIncomingRequests()
 {
-	const int	timeout = 5000;
+	const int	timeout = 2000;
 
 	try {
 		this->_pollReady = poll(_activeSockets.data(), _activeSockets.size(), timeout);
