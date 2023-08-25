@@ -10,7 +10,7 @@ HttpRequest::HttpRequest(const std::string &request)
 	HttpRequestParser::parseRequest(*this, str, str + request.size());
 	HttpRequestParser::resetParser();
 //	std::cout << "Method: " << getRequestMethod() << std::endl;
-	std::cout << "Request URI: " << getRequestUri() << std::endl;
+//	std::cout << "Request URI: " << getRequestUri() << std::endl;
 //	std::cout << "HTTP Version: " << getVersionMajor() << "." << getVersionMinor() << std::endl;
 //	for (size_t i = 0; i < _headers.size(); ++i)
 //	{
@@ -59,12 +59,12 @@ void	HttpRequest::pushHeader(const Header& header)
 	_headers.push_back(header);
 }
 
-const	bool	HttpRequest::isEmptyHeader()
+bool	HttpRequest::isEmptyHeader()
 {
 	return (this->_headers.empty());
 }
 
-const	size_t	HttpRequest::getHeadersSize()
+size_t	HttpRequest::getHeadersSize()
 {
 	return (this->_headers.size());
 }
@@ -99,6 +99,17 @@ const std::string HttpRequest::getValueByKey(const std::string &key)
 	return ("");
 }
 
+
+const std::string HttpRequest::getValueByKey(const std::string &key) const
+{
+	for (size_t i = 0; i < _headers.size(); i++)
+	{
+		if (_headers[i].getKey() == key)
+			return (_headers[i].getValue());
+	}
+	return ("");
+}
+
 std::string HttpRequest::getFileName()
 {
 	size_t	idx;
@@ -118,24 +129,19 @@ std::string HttpRequest::getFileName()
 	return ("index.html");
 }
 
-std::string HttpRequest::getContentType()
+
+const unsigned int &HttpRequest::getVersionMajor() const
 {
-	size_t	idx;
-	if (getRequestUri() == "/")
-		return ("text/html");
-	idx = getRequestUri().find_last_of('.');
-	std::string type = getRequestUri().substr(idx + 1);
-	if (type == "png")
-		return ("image/png");
-	else if (type == "jpg" || type == "jpeg")
-		return ("image/jpeg");
-	else if (type == "html")
-		return ("text/html");
-	else if (type == "css")
-		return ("text/css");
-	else if (type == "js")
-		return ("text/js");
-	else if (type == "json")
-		return ("application/json");
-	return (type);
+	return (this->_versionMajor);
 }
+
+const unsigned int &HttpRequest::getVersionMinor() const
+{
+	return (this->_versionMinor);
+}
+
+const std::string &HttpRequest::getRequestUri() const
+{
+	return (this->_requestUri);
+}
+

@@ -25,7 +25,7 @@ class SocketHandler{
 
 	int				pollIncomingRequests();
 	int				acceptIncomingRequest();
-	void			removeClientAtIndexAndCloseFd(size_t index);
+	void			removeClientAtIndexAndCloseFd(size_t &index);
 
 	size_t			getActiveSocketsSize();
 

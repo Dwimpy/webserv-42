@@ -23,8 +23,8 @@ class HttpRequest {
 	void	pushToLastHeaderKey(char c);
 	void	pushToLastHeaderValue(char c);
 
-	const size_t		getHeadersSize();
-	const bool			isEmptyHeader();
+	size_t		getHeadersSize();
+	bool			isEmptyHeader();
 	const std::string	getValueByKey(const std::string &key);
 	const std::string	&getRequestMethod();
 	const std::string	&getRequestUri();
@@ -32,6 +32,13 @@ class HttpRequest {
 	std::string			getFileName();
 	const unsigned int	&getVersionMajor();
 	const unsigned int	&getVersionMinor();
+
+	std::string			getFileName() const;
+	std::string			getContentType() const;
+	const std::string	getValueByKey(const std::string &key) const;
+	const std::string	&getRequestUri() const;
+	const unsigned int	&getVersionMajor() const;
+	const unsigned int	&getVersionMinor() const;
 
 
   private:

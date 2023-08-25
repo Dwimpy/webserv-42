@@ -20,6 +20,7 @@ class Server {
 	bool	startServer();
 	void	run(void);
 	void	handleIncomingRequests();
+	bool	sendResponse(t_pollfd currentClient);
 
   private:
 	char					_buffer[8192];

@@ -91,7 +91,7 @@ int SocketHandler::acceptIncomingRequest()
 }
 
 
-void	SocketHandler::removeClientAtIndexAndCloseFd(size_t index)
+void	SocketHandler::removeClientAtIndexAndCloseFd(size_t &index)
 {
 	std::vector<t_pollfd >::iterator it = _activeSockets.begin() + static_cast<long>(index);
 
@@ -99,9 +99,9 @@ void	SocketHandler::removeClientAtIndexAndCloseFd(size_t index)
 		_connectedClients.erase(getClientAtIndex(index).fd);
 		_activeSockets.erase(it);
 	}
-	else{
+	else
 		std::cerr << "Iterator out of bounds\n" << std::endl;
-	}
+	index--;
 }
 
 bool	SocketHandler::isReventPolling(const short &revents)

@@ -23,3 +23,11 @@ const std::string &Header::getValue()
 {
 	return (this->_value);
 }
+const std::string &Header::getKey() const
+{
+	return (this->_key);
+}
+const std::string &Header::getValue() const
+{
+	return (this->_value);
+}

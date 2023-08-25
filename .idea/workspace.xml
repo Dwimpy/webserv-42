@@ -22,6 +22,23 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
+    <list default="true" id="bf9fe8c6-b6e2-4265-8245-d6e071a6dde1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/webserv.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Header/Header.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Header/Header.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Header/Header.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Header/Header.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Server/Server.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ServerConfig/ServerConfig.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerConfig/ServerConfig.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webserv" beforeDir="false" afterPath="$PROJECT_DIR$/webserv" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,8 +55,11 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.hpp" root0="SKIP_INSPECTION" />
+  </component>
   <component name="MacroExpansionManager">
-    <option name="directoryName" value="tr9vo9mu" />
+    <option name="directoryName" value="homn88jw" />
   </component>
   <component name="MakefileLocalSettings">
     <option name="availableProjects">
@@ -68,68 +88,39 @@
       </map>
     </option>
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
     <option name="majorVersion" value="2023" />
     <option name="minorVersion" value="1.5" />
   </component>
-  <component name="ProjectId" id="2UOPAsylRaGwHy31oZQbYcqB1rq" />
+  <component name="ProjectId" id="2UUJ1EeVNeNl0DfSLnpqHKzSXrN" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-<<<<<<< HEAD
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "cf.advertisement.text.has.clang-format": "true",
-    "cf.advertisement.text.overridden": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/dhendzel/Documents/webserv-42",
+    "last_opened_file_path": "/Users/arobu/projects/workdir/webserv-42/Makefile",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.sourceCode",
+    "settings.editor.selected.configurable": "settings.sync",
     "vue.rearranger.settings.migration": "true"
-=======
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
-    &quot;cf.advertisement.text.overridden&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/arobu/projects/workdir/webserv-42&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
->>>>>>> httpparser_dev
   }
-}</component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/HttpRequestHandler/Request" />
-      <recent name="$PROJECT_DIR$/src/HttpRequestHandler/Method" />
-      <recent name="$PROJECT_DIR$/src/SocketHandler" />
-    </key>
-  </component>
+}]]></component>
   <component name="RunManager" selected="Makefile Application.all">
     <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="all" CONFIG_NAME="all" version="1">
       <method v="2">
@@ -196,25 +187,17 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="2d2829d0-d563-473e-86b4-97f7eedc903d" name="Changes" comment="" />
-      <created>1692807514657</created>
+      <changelist id="bf9fe8c6-b6e2-4265-8245-d6e071a6dde1" name="Changes" comment="" />
+      <created>1692988008718</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1692807514657</updated>
-      <workItem from="1692807515884" duration="11064000" />
-      <workItem from="1692876637256" duration="16798000" />
-      <workItem from="1692896207173" duration="5742000" />
-      <workItem from="1692904500016" duration="600000" />
-      <workItem from="1692952083679" duration="10583000" />
-      <workItem from="1692973170499" duration="1086000" />
+      <updated>1692988008718</updated>
+      <workItem from="1692988009808" duration="45000" />
+      <workItem from="1692988067096" duration="7068000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>

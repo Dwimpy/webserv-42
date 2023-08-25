@@ -8,7 +8,7 @@ ServerConfig::ServerConfig()
 	setPort("8080");
 	setHostName("Random server");
 	setHost("127.0.0.1");
-	setDocumentRoot("docs/");
+	setDocumentRoot("docs");
 	setIndex("index.html");
 }
 

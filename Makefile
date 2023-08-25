@@ -15,7 +15,7 @@ NAME			= webserv
 
 # VPath
 VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRequestHandler \
-				  ./src/HttpRequestHandler/Request ./src/HttpRequestHandler/Header
+				  ./src/HttpRequestHandler/Request ./src/HttpRequestHandler/Response ./src/HttpRequestHandler/Header
 
 # Includes
 INCLUDE			= -I ./src/Server
@@ -23,6 +23,7 @@ INCLUDE			+= -I ./src/ServerConfig
 INCLUDE			+= -I ./src/SocketHandler
 INCLUDE			+= -I ./src/HttpRequestHandler
 INCLUDE			+= -I ./src/HttpRequestHandler/Request
+INCLUDE			+= -I ./src/HttpRequestHandler/Response
 INCLUDE			+= -I ./src/HttpRequestHandler/Header
 
 
