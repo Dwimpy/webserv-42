@@ -19,6 +19,7 @@ body {
 a{
     color: inherit;
     text-decoration: none;
+    cursor: pointer;
 }
 .nav{
     font-size: 2em;

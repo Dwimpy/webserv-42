@@ -93,6 +93,7 @@ void Server::handleIncomingRequests()
 				HttpRequest request(response_msg);
 				send(currentClient.fd, response.c_str(), response.size(), 0);
 				response.clear();
+                close(currentClient.fd);
 				_socketHandler.removeClientAtIndexAndCloseFd(i);
 				--i;
 			}
