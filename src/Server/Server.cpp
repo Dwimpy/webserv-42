@@ -56,7 +56,7 @@ void Server::run()
 
 		handleIncomingRequests();
 	}
-	close(_socketHandler.getServerSocket());
+//	close(_socketHandler.getServerSocket());
 	_socketHandler.cleanUpRemainingConnections();
 }
 
@@ -75,24 +75,27 @@ void Server::handleIncomingRequests()
 					close(currentClient.fd);
 					continue;
 				}
-				std::cout << _buffer << std::endl;
+//				std::cout << _buffer << std::endl;
+				std::string response_msg = std::string(_buffer);
+				HttpRequest request(response_msg);
                 std::string response;
-                std::ifstream	infile("docs/index.html");
+                std::ifstream	infile("./docs/index.html");
                 if (!infile.good()){
                     perror("error opening file1");
                     exit (1);
                 }
+				std::cout << "Content Type: " << request.getContentType() << std::endl;
                 response.append("HTTP/1.1 200 OK\r\n"
-                                "Content-Type: text/html\r\n"
+								"Content-Type: text/html\r\n"
                                 "\r\n");
                 char c;
                 while(infile.get(c))
                     response.push_back(c);
 //				std::cout << _buffer << std::endl;
-				std::string response_msg = std::string(_buffer);
-				HttpRequest request(response_msg);
 				send(currentClient.fd, response.c_str(), response.size(), 0);
 				response.clear();
+				close(currentClient.fd);
+				infile.close();
 				_socketHandler.removeClientAtIndexAndCloseFd(i);
 				--i;
 			}

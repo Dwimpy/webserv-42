@@ -131,14 +131,8 @@ void	SocketHandler::cleanUpRemainingConnections()
 {
 	std::vector<t_pollfd >::iterator it = _activeSockets.begin();
 	if (it != _activeSockets.end()){
-		t_pollfd &currentConnection = *it;
-		if (currentConnection.fd == _serverSocket)
-			close(_serverSocket);
-		else
-		{
 			close(it->fd);
 			_connectedClients.erase(it->fd);
-		}
 	}
 	else{
 		std::cerr << "Iterator out of bounds\n" << std::endl;

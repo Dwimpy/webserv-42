@@ -23,11 +23,12 @@ class HttpRequest {
 	void	pushToLastHeaderKey(char c);
 	void	pushToLastHeaderValue(char c);
 
-
 	const size_t		getHeadersSize();
 	const bool			isEmptyHeader();
+	const std::string	getValueByKey(const std::string &key);
 	const std::string	&getRequestMethod();
 	const std::string	&getRequestUri();
+	std::string	getContentType();
 	const unsigned int	&getVersionMajor();
 	const unsigned int	&getVersionMinor();
 
