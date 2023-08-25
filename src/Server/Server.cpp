@@ -4,9 +4,11 @@
 #include "unistd.h"
 #include <cstdio>
 #include <iostream>
+#include <fstream>
 #include <signal.h>
 #include <sys/socket.h>
 #include <vector>
+
 
 Server::Server() : _socketHandler(SocketHandler()), _config(ServerConfig())
 {}
@@ -73,11 +75,19 @@ void Server::handleIncomingRequests()
 					continue;
 				}
 				std::cout << _buffer << std::endl;
-				const char *response = "HTTP/1.0 200 OK\r\n"
-									   "Content-Type: text/html\r\n"
-									   "\r\n"
-									   "<html><body><h1>WRONG! Start again!</h1> <a class=\"nav__link\" href=\"../../docs/index.html\">Home</a></body></html>";
-				send(currentClient.fd, response, strlen(response), 0);
+                std::string response;
+                std::ifstream	infile("docs/index.html");
+                if (!infile.good()){
+                    perror("error opening file");
+                    exit (1);
+                }
+                response.append("HTTP/1.0 200 OK\r\n"
+                                "Content-Type: text/html\r\n"
+                                "\r\n");
+                char c;
+                while(infile.get(c))
+                    response.push_back(c);
+				send(currentClient.fd, response.c_str(), response.size(), 0);
 				close(currentClient.fd);
 				_socketHandler.removeClientAtIndexAndCloseFd(i);
 				--i;
