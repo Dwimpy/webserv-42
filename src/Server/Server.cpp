@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "HttpRequest.hpp"
 #include "stdlib.h"
 #include "fcntl.h"
 #include "unistd.h"
@@ -72,7 +73,9 @@ void Server::handleIncomingRequests()
 					close(currentClient.fd);
 					continue;
 				}
-				std::cout << _buffer << std::endl;
+//				std::cout << _buffer << std::endl;
+				std::string response_msg = std::string(_buffer);
+				HttpRequest request(response_msg);
 				const char *response = "HTTP/1.0 200 OK\r\n"
 									   "Content-Type: text/html\r\n"
 									   "\r\n"
