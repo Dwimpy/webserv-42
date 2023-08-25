@@ -28,7 +28,8 @@ class HttpRequest {
 	const std::string	getValueByKey(const std::string &key);
 	const std::string	&getRequestMethod();
 	const std::string	&getRequestUri();
-	std::string	getContentType();
+	std::string			getContentType();
+	std::string			getFileName();
 	const unsigned int	&getVersionMajor();
 	const unsigned int	&getVersionMinor();
 

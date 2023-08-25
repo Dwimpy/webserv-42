@@ -79,14 +79,14 @@ void Server::handleIncomingRequests()
 				std::string response_msg = std::string(_buffer);
 				HttpRequest request(response_msg);
                 std::string response;
-                std::ifstream	infile("./docs/index.html");
+                std::ifstream	infile(_config.getDocumentRoot() + request.getFileName());
                 if (!infile.good()){
                     perror("error opening file1");
                     exit (1);
                 }
 				std::cout << "Content Type: " << request.getContentType() << std::endl;
                 response.append("HTTP/1.1 200 OK\r\n"
-								"Content-Type: text/html\r\n"
+								"Content-Type: " + request.getContentType() + "\r\n"
                                 "\r\n");
                 char c;
                 while(infile.get(c))

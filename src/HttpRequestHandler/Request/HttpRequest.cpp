@@ -9,13 +9,13 @@ HttpRequest::HttpRequest(const std::string &request)
 //	printf("In function: %s\n", str);
 	HttpRequestParser::parseRequest(*this, str, str + request.size());
 	HttpRequestParser::resetParser();
-	std::cout << "Method: " << getRequestMethod() << std::endl;
-	std::cout << "Request URI: " << getRequestUri() << std::endl;
-	std::cout << "HTTP Version: " << getVersionMajor() << "." << getVersionMinor() << std::endl;
-	for (size_t i = 0; i < _headers.size(); ++i)
-	{
-		std::cout << "Name: " << _headers[i].getKey() << "\t" "Value: " << _headers[i].getValue() << std::endl;
-	}
+//	std::cout << "Method: " << getRequestMethod() << std::endl;
+//	std::cout << "Request URI: " << getRequestUri() << std::endl;
+//	std::cout << "HTTP Version: " << getVersionMajor() << "." << getVersionMinor() << std::endl;
+//	for (size_t i = 0; i < _headers.size(); ++i)
+//	{
+//		std::cout << "Name: " << _headers[i].getKey() << "\t" "Value: " << _headers[i].getValue() << std::endl;
+//	}
 }
 
 HttpRequest::~HttpRequest()
@@ -99,10 +99,43 @@ const std::string HttpRequest::getValueByKey(const std::string &key)
 	return ("");
 }
 
+std::string HttpRequest::getFileName()
+{
+	size_t	idx;
+
+	if (getRequestUri() == "/")
+		return ("index.html");
+	idx = getRequestUri().find_last_of('.');
+	std::string type = getRequestUri().substr(idx + 1);
+	if (type == "css")
+		return ("css/style.css");
+	if (type == "jpeg" || type == "jpg")
+		return ("assets/background.jpeg");
+	if (type == "png")
+		return ("assets/planet.png");
+	if (type == "js")
+		return ("js/script.js");
+	return ("index.html");
+}
+
 std::string HttpRequest::getContentType()
 {
 	size_t	idx;
+	if (getRequestUri() == "/")
+		return ("text/html");
 	idx = getRequestUri().find_last_of('.');
 	std::string type = getRequestUri().substr(idx + 1);
+	if (type == "png")
+		return ("image/png");
+	else if (type == "jpg" || type == "jpeg")
+		return ("image/jpeg");
+	else if (type == "html")
+		return ("text/html");
+	else if (type == "css")
+		return ("text/css");
+	else if (type == "js")
+		return ("text/js");
+	else if (type == "json")
+		return ("application/json");
 	return (type);
 }
