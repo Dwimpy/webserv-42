@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "HttpRequest.hpp"
 #include "stdlib.h"
 #include "fcntl.h"
 #include "unistd.h"
@@ -61,7 +62,6 @@ void Server::run()
 
 void Server::handleIncomingRequests()
 {
-	static int i2 = 0;
     for (int i = 0; i < _socketHandler.getActiveSocketsSize(); i++) {
 		t_pollfd currentClient = _socketHandler.getClientAtIndex(i);
 		if (SocketHandler::isReventPolling(currentClient.revents)) {
@@ -75,8 +75,6 @@ void Server::handleIncomingRequests()
 					close(currentClient.fd);
 					continue;
 				}
-                if  (i2 == 0)
-                {
 				std::cout << _buffer << std::endl;
                 std::string response;
                 std::ifstream	infile("docs/index.html");
@@ -90,31 +88,11 @@ void Server::handleIncomingRequests()
                 char c;
                 while(infile.get(c))
                     response.push_back(c);
+//				std::cout << _buffer << std::endl;
+				std::string response_msg = std::string(_buffer);
+				HttpRequest request(response_msg);
 				send(currentClient.fd, response.c_str(), response.size(), 0);
-                response.clear();
-				close(currentClient.fd);
-                infile.close();
-                    i2++;
-                }
-                else
-                {
-                char c;
-                std::string response;
-                std::ifstream	infile2("docs/assets/background.jpeg");
-                if (!infile2.good()){
-                    perror("error opening file2");
-                    exit (1);
-                }
-                response.append("HTTP/1.1 200 OK\r\n"
-                                "Content-Type: image/jpeg\r\n"
-                                "\r\n");
-                while(infile2.get(c))
-                    response.push_back(c);
-                send(currentClient.fd, response.c_str(), response.size(), 0);
-                close(currentClient.fd);
-                infile2.close();
-                    i2--;
-                }
+				response.clear();
 				_socketHandler.removeClientAtIndexAndCloseFd(i);
 				--i;
 			}

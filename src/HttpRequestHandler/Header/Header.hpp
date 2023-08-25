@@ -5,6 +5,12 @@ class Header{
 	Header(std::string key, std::string value);
 	Header();
 	~Header();
+	void	pushToKey(char c);
+	void	pushToValue(char c);
+
+	const std::string &getKey();
+	const std::string &getValue();
+
   private:
 	std::string	_key;
 	std::string	_value;

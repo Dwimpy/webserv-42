@@ -9,7 +9,6 @@
 typedef struct sockaddr_in	t_sockaddr_in;
 typedef struct sockaddr		t_sockaddr;
 
-
 static bool	shouldExit = false;
 
 class Server {
