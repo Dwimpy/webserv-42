@@ -14,14 +14,6 @@ static bool	shouldExit = false;
 
 class Server {
 
-	typedef struct socketContext
-	{
-		t_sockaddr_in			serverAddr;
-		t_sockaddr_in			clientAddrs;
-		socklen_t				clientLen;
-		size_t					receivedBytes;
-	}				t_socketContext;
-
   public:
 	Server();
 	Server(const ServerConfig &config);
@@ -32,7 +24,7 @@ class Server {
 
   private:
 	char					_buffer[8192];
-	t_socketContext 		_socketContext;
+	t_sockaddr_in			serverAddr;
 	SocketHandler			_socketHandler;
 	HttpRequestHandler		_httpRequestHandler;
 	const ServerConfig		_config;

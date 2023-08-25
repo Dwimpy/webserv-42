@@ -25,7 +25,7 @@ bool Server::startServer()
 {
 	initServerAddr();
 	if (!_socketHandler.createSocket() ||
-		!_socketHandler.bindSocket(_socketContext.serverAddr) ||
+		!_socketHandler.bindSocket(serverAddr) ||
 		!_socketHandler.listenForClientConnections(std::stoi(_config.getPort())))
 		return (false);
 	return (true);
@@ -34,10 +34,10 @@ bool Server::startServer()
 void Server::initServerAddr()
 {
 	signal(SIGINT, signalHandler);
-	memset(&_socketContext.serverAddr, 0, sizeof(_socketContext.serverAddr));
-	_socketContext.serverAddr.sin_family = AF_INET;
-	_socketContext.serverAddr.sin_addr.s_addr = INADDR_ANY;
-	_socketContext.serverAddr.sin_port = htons(std::stoi(_config.getPort()));
+	memset(&serverAddr, 0, sizeof(serverAddr));
+	serverAddr.sin_family = AF_INET;
+	serverAddr.sin_addr.s_addr = INADDR_ANY;
+	serverAddr.sin_port = htons(std::stoi(_config.getPort()));
 }
 
 void Server::run()
@@ -62,9 +62,8 @@ void Server::handleIncomingRequests()
 	for (int i = 0; i < _socketHandler.getActiveSocketsSize(); i++) {
 		t_pollfd currentClient = _socketHandler.getClientAtIndex(i);
 		if (SocketHandler::isReventPolling(currentClient.revents)) {
-			if (_socketHandler.isFdServerSocket(currentClient.fd)) {
+			if (_socketHandler.isFdServerSocket(currentClient.fd))
 				_socketHandler.acceptIncomingRequest();
-			}
 			else {
 				memset(_buffer, 0, sizeof(_buffer));
 				if ((recv(currentClient.fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)

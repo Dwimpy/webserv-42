@@ -14,13 +14,17 @@
 NAME			= webserv
 
 # VPath
-VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRequestHandler
+VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRequestHandler \
+				  ./src/HttpRequestHandler/Request ./src/HttpRequestHandler/Header
 
 # Includes
 INCLUDE			= -I ./src/Server
 INCLUDE			+= -I ./src/ServerConfig
 INCLUDE			+= -I ./src/SocketHandler
 INCLUDE			+= -I ./src/HttpRequestHandler
+INCLUDE			+= -I ./src/HttpRequestHandler/Request
+INCLUDE			+= -I ./src/HttpRequestHandler/Header
+
 
 # Diretories
 SRC_DIR			= ./src
