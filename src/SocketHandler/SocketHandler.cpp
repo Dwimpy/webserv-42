@@ -1,6 +1,7 @@
 #include "SocketHandler.hpp"
 #include <cstdio>
 #include <iostream>
+#include "fcntl.h"
 
 
 
@@ -16,6 +17,8 @@ bool	SocketHandler::createSocket()
 		this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 		if (this->_serverSocket == -1)
 			throw std::runtime_error("Error creating server socket\n");
+		int reuse = 1;
+		setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 		std::cout <<"Socket created" << std::endl;
 		return (true);
 	} catch(std::exception &e) {
@@ -75,13 +78,11 @@ int SocketHandler::acceptIncomingRequest()
 		t_sockaddr_in	clientAddr;
 		clientAddrLen = sizeof(clientAddr);
 		const int	clientSocket = accept(_serverSocket, (t_sockaddr *)&clientAddr, &clientAddrLen);
+		fcntl(clientSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 		if (clientSocket < 0)
 			throw std::runtime_error("Error accepting incoming client\n");
 		if (_connectedClients.insert(clientSocket).second)
-        {
-            std::cout << clientSocket << std::endl;
 			_activeSockets.push_back((t_pollfd){clientSocket, POLLIN, 0});
-        }
 		return (true);
 	}catch (std::exception &e) {
 		std::cerr << "Exception caught: " << e.what();

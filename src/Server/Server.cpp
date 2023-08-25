@@ -84,7 +84,7 @@ void Server::handleIncomingRequests()
                     perror("error opening file1");
                     exit (1);
                 }
-				std::cout << "Content Type: " << request.getContentType() << std::endl;
+//				std::cout << "Content Type: " << request.getContentType() << std::endl;
                 response.append("HTTP/1.1 200 OK\r\n"
 								"Content-Type: " + request.getContentType() + "\r\n"
                                 "\r\n");

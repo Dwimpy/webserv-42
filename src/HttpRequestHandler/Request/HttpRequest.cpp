@@ -10,7 +10,7 @@ HttpRequest::HttpRequest(const std::string &request)
 	HttpRequestParser::parseRequest(*this, str, str + request.size());
 	HttpRequestParser::resetParser();
 //	std::cout << "Method: " << getRequestMethod() << std::endl;
-//	std::cout << "Request URI: " << getRequestUri() << std::endl;
+	std::cout << "Request URI: " << getRequestUri() << std::endl;
 //	std::cout << "HTTP Version: " << getVersionMajor() << "." << getVersionMinor() << std::endl;
 //	for (size_t i = 0; i < _headers.size(); ++i)
 //	{
