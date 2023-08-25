@@ -2,20 +2,13 @@
 #include "HttpRequestParser.hpp"
 #include <iostream>
 
-HttpRequest::HttpRequest(const std::string &request)
+HttpRequest::HttpRequest(const std::string &request): _versionMajor(1), _versionMinor(1)
 {
 	const char *str;
 	str = request.c_str();
-//	printf("In function: %s\n", str);
+
 	HttpRequestParser::parseRequest(*this, str, str + request.size());
 	HttpRequestParser::resetParser();
-//	std::cout << "Method: " << getRequestMethod() << std::endl;
-//	std::cout << "Request URI: " << getRequestUri() << std::endl;
-//	std::cout << "HTTP Version: " << getVersionMajor() << "." << getVersionMinor() << std::endl;
-//	for (size_t i = 0; i < _headers.size(); ++i)
-//	{
-//		std::cout << "Name: " << _headers[i].getKey() << "\t" "Value: " << _headers[i].getValue() << std::endl;
-//	}
 }
 
 HttpRequest::~HttpRequest()

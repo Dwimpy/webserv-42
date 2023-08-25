@@ -23,21 +23,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf9fe8c6-b6e2-4265-8245-d6e071a6dde1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/webserv.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Header/Header.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Header/Header.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Header/Header.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Header/Header.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Server/Server.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerConfig/ServerConfig.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerConfig/ServerConfig.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webserv" beforeDir="false" afterPath="$PROJECT_DIR$/webserv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webserv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -193,7 +180,7 @@
       <option name="presentableId" value="Default" />
       <updated>1692988008718</updated>
       <workItem from="1692988009808" duration="45000" />
-      <workItem from="1692988067096" duration="7068000" />
+      <workItem from="1692988067096" duration="7210000" />
     </task>
     <servers />
   </component>
