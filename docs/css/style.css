@@ -1,0 +1,122 @@
+html {
+    height: 100%;
+}
+body {
+    height: 100%;
+    margin:     0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+
+    color: whitesmoke;
+    display: flex;
+    align-items: center;
+    background: url("../assets/background.jpeg")center no-repeat;
+    background-size: cover;
+    flex-direction: column;
+    justify-content: center;
+}
+a{
+    color: inherit;
+    text-decoration: none;
+}
+.nav{
+    font-size: 2em;
+    font-weight: bold;
+
+}
+
+.title{
+    display: flex;
+    justify-content: center;
+}
+
+header{
+    position: fixed;
+    top: 0;
+}
+
+main{
+    display: flex;
+    justify-content: center;
+}
+
+.button{
+    border-radius: 1.8em;
+    background-size: 200% 100%;
+    transition: background-position 0.8s ease-out;
+    background-image: linear-gradient(#000, #000),
+    linear-gradient(120deg, #f09 0%, #0ff 50%, #9f0 100%);
+    box-shadow: #5E5DF0 0 10px 20px -10px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    opacity: 1;
+    padding: 8px 18px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: fit-content;
+    word-break: normal;
+    border: 0.25em solid transparent;
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    align-self: center;
+    margin-top: 0.5em;
+}
+
+footer{
+    position: fixed;
+    bottom: 0;
+}
+
+.input-group {
+    width: 100%;
+    max-width: 20em;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+
+}
+
+.input-group__input {
+    color: #fff;
+    font-size: 1.25rem;
+    line-height: 1;
+    border-style: none;
+    outline: none;
+/ / height calc line-height + (vertical-padding * 2) + (vertical-border * 2) height: calc(1 em + 1.6 em + 0.5 em);
+    width: 100%;
+    padding: 0.8em 0.8em;
+    border: 0.25em solid transparent;
+    background-image: linear-gradient(#000, #000),
+    linear-gradient(120deg, #f09 0%, #0ff 50%, #9f0 100%);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    border-radius: 1.8em;
+    background-size: 200% 100%;
+    transition: background-position 0.8s ease-out;
+    margin: 0.5em;
+}
+
+.button:hover{
+     background-position: 100% 0;
+}
+
+.button:active{
+    background-image: linear-gradient(120deg, #f09 0%, #0ff 50%, #9f0 100%);
+}
+
+.input-group__input:hover {
+     background-position: 100% 0;
+ }
+
+.input-group__input:focus {
+     outline: 2px dashed #ad2b89;
+     outline-offset: 0.5em;
+ }
+
+

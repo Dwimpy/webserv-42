@@ -78,7 +78,10 @@ int SocketHandler::acceptIncomingRequest()
 		if (clientSocket < 0)
 			throw std::runtime_error("Error accepting incoming client\n");
 		if (_connectedClients.insert(clientSocket).second)
+        {
+            std::cout << clientSocket << std::endl;
 			_activeSockets.push_back((t_pollfd){clientSocket, POLLIN, 0});
+        }
 		return (true);
 	}catch (std::exception &e) {
 		std::cerr << "Exception caught: " << e.what();

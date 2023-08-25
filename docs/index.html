@@ -1,72 +1,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <title>Fusion</title>
 </head>
 <body>
-<style contenteditable="true" style="display: block">
-    html{
-        background: white;
-    }
-</style>
 <header class="header">
-    <div class="container">
-        <div class ="header__inner">
-            <a class = "nav__link" href="tours/tours.html">Tour</a>
-            <nav class="nav">
-                <a class="nav__link" href="index.html">Home</a>
-                <b>Responsive clear field button</b>
-                <br><br>
-                <div class="buttonIn">
-                    <input type="text" id="textField">
-                    <button id="submitButton">submit</button>
-                </div>
-            </nav>
-        </div>
+    <div class ="header__inner">
+        <nav class="nav">
+            <a class="nav__link title" href="index.html">Home</a>
+        </nav>
     </div>
 </header>
-
-<div class="intro">
-    <div class ="container">
-        <div class="intro__inner">
-            <h2 class="inner__uptitle">Fusion travel</h2>
-            <h1 class="intro__title">Let's Enjoy Your Trip In UAE</h1>
-        </div>
+<main>
+    <div class="inner">
+        <h2 class="title">Webserver project</h2>
+            <div class="buttonIn">
+                <div class="input-group">
+                    <input type="text" id="textField1" class="input-group__input" value="login" />
+                    <input type="text" id="textField2" class="input-group__input" value="password" />
+                <button id="submitButton" class="button">submit</button>
+            </div>
+        <h1 class="title">Duck a ducking dock</h1>
     </div>
-    <footer>
-        <p><span class="highlight">&#169; 2022 by Daroil</p>
-    </footer>
-</div>
-
+</main>
+<footer>
+    <p><span class="highlight">&#169; 2022 by Daroil and Dwimpy </span></p>
+</footer>
 </body>
-<script>
-    document.getElementById("submitButton").addEventListener("click", function() {
-        var textFieldValue = document.getElementById("textField").value;
-
-        // Create an object to hold the data you want to send
-        var data = {
-            textData: textFieldValue
-        };
-
-        // Make a POST request to the server using the Fetch API
-        fetch("http://127.0.0.1:8080", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(responseData => {
-                console.log("Server response:", responseData);
-                // You can handle the response from the server here
-            })
-            .catch(error => {
-                // console.error("Error:", error);
-                // Handle errors here
-            });
-    });
-</script>
+<script src="js/script.js"></script>
 </html>
