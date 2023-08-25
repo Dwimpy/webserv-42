@@ -88,3 +88,21 @@ const unsigned int &HttpRequest::getVersionMinor()
 {
 	return (this->_versionMinor);
 }
+
+const std::string HttpRequest::getValueByKey(const std::string &key)
+{
+	for (size_t i = 0; i < _headers.size(); i++)
+	{
+		if (_headers[i].getKey() == key)
+			return (_headers[i].getValue());
+	}
+	return ("");
+}
+
+std::string HttpRequest::getContentType()
+{
+	size_t	idx;
+	idx = getRequestUri().find_last_of('.');
+	std::string type = getRequestUri().substr(idx + 1);
+	return (type);
+}
