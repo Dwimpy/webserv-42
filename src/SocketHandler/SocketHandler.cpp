@@ -19,6 +19,7 @@ bool	SocketHandler::createSocket()
 			throw std::runtime_error("Error creating server socket\n");
 		int reuse = 1;
 		setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+		fcntl(_serverSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 		std::cout <<"Socket created" << std::endl;
 		return (true);
 	} catch(std::exception &e) {
@@ -56,10 +57,9 @@ bool	SocketHandler::listenForClientConnections(const unsigned int &port)
 
 int	SocketHandler::pollIncomingRequests()
 {
-	const int	timeout = 2000;
 
 	try {
-		this->_pollReady = poll(_activeSockets.data(), _activeSockets.size(), timeout);
+		this->_pollReady = poll(_activeSockets.data(), _activeSockets.size(), -1);
 		if (this->_pollReady < 0 && errno != EINTR)
 			throw std::runtime_error("Polling encountered an error");
 		else if (this->_pollReady == 0)
@@ -78,7 +78,6 @@ int SocketHandler::acceptIncomingRequest()
 		t_sockaddr_in	clientAddr;
 		clientAddrLen = sizeof(clientAddr);
 		const int	clientSocket = accept(_serverSocket, (t_sockaddr *)&clientAddr, &clientAddrLen);
-		fcntl(clientSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 		if (clientSocket < 0)
 			throw std::runtime_error("Error accepting incoming client\n");
 		if (_connectedClients.insert(clientSocket).second)

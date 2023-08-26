@@ -15,7 +15,8 @@ NAME			= webserv
 
 # VPath
 VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRequestHandler \
-				  ./src/HttpRequestHandler/Request ./src/HttpRequestHandler/Response ./src/HttpRequestHandler/Header
+				  ./src/HttpRequestHandler/Request ./src/HttpRequestHandler/Response ./src/HttpRequestHandler/Header \
+				  ./src/ResourceManager
 
 # Includes
 INCLUDE			= -I ./src/Server
@@ -25,6 +26,8 @@ INCLUDE			+= -I ./src/HttpRequestHandler
 INCLUDE			+= -I ./src/HttpRequestHandler/Request
 INCLUDE			+= -I ./src/HttpRequestHandler/Response
 INCLUDE			+= -I ./src/HttpRequestHandler/Header
+INCLUDE			+= -I ./src/Page
+INCLUDE			+= -I ./src/ResourceManager
 
 
 # Diretories

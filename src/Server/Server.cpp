@@ -43,7 +43,7 @@ void Server::initServerAddr()
 
 void Server::run()
 {
-	while (true)
+	while (!shouldExit)
 	{
 		int pollingStatus = _socketHandler.pollIncomingRequests();
 
