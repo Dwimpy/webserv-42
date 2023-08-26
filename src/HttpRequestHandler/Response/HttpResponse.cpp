@@ -57,6 +57,7 @@ void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &co
 	{
 		this->_statusCode = 404;
 		this->_statusError = "KO";
+        this->_fileName = "./docs/error_pages/404.html";
 	}
 }
 
