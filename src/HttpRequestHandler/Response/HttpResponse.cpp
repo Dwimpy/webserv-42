@@ -9,7 +9,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 	appendHttpProtocol(request);
 	appendStatusCode(request);
 	appendContentType(request);
-	appendFileContents();
+    appendFileContents();
 }
 
 HttpResponse::HttpResponse()
