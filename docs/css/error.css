@@ -1,3 +1,6 @@
+html {
+    height: 100%;
+}
 body{
     margin:0;
     padding:0;
@@ -5,6 +8,8 @@ body{
     height:100vh;
     background-image: linear-gradient(to top, #2e1753, #1f1746, #131537, #0d1028, #050819);
     display:flex;
+    color: whitesmoke;
+    flex-direction: column;
     justify-content:center;
     align-items:center;
     overflow:hidden;

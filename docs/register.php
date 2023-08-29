@@ -7,22 +7,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fileContents = file_get_contents("num.txt");
         if ($fileContents !== false) {
             if(is_numeric($fileContents))
-            {
-//                echo "file content is $fileContents and it is numeric";
                 $fileContents++;
-            }
-//            echo "file content is $fileContents";
+            else
+                $fileContents = 1;
             file_put_contents("num.txt", $fileContents);
         }
     } else {
         $fileContents = 1;
         file_put_contents("num.txt", $fileContents);
-
     }
-
-//        echo "in the post";
-
 }
+
+
 ?>
 <!DOCTYPE html>
 <html>

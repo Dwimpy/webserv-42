@@ -1,6 +1,6 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    file_put_contents("num.txt", "0");
+//     file_put_contents("num.txt", "0");
     $stdin = fopen('php://stdin', 'r');
     $inputData = fread($stdin, 1024);
     // Validate and sanitize input before writing to the file
@@ -33,7 +33,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error writing to file.";
     }
 }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    echo "<h2>Posted Data:</h2>";
+    echo "<ul>";
 
+    foreach ($_POST as $key => $value) {
+        echo "<li><strong>$key:</strong> $value</li>";
+    }
+
+    echo "</ul>";
+}
 
 
 ?>
