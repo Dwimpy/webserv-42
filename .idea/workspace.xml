@@ -23,14 +23,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf9fe8c6-b6e2-4265-8245-d6e071a6dde1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/ConfigFile/ServerBlock/ServerBlock.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Header/Header.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Header/Header.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/HttpRequestHandler.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/HttpRequestHandler.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequestParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/HttpRequestParser/HttpRequestParser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequestParser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/HttpRequestParser/HttpRequestParser.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,15 +116,12 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/Parser/HttpRequestParser" />
+      <recent name="$PROJECT_DIR$/src/ConfigFile" />
       <recent name="$PROJECT_DIR$/src/Page" />
     </key>
   </component>
   <component name="RunManager" selected="Makefile Application.all">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="all" CONFIG_NAME="all" version="1">
       <method v="2">
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
@@ -170,6 +167,11 @@
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="Makefile Application.all" />
       <item itemvalue="Makefile Application.fclean" />
@@ -193,6 +195,11 @@
       <workItem from="1692988009808" duration="45000" />
       <workItem from="1692988067096" duration="7363000" />
       <workItem from="1693044596488" duration="5046000" />
+      <workItem from="1693236179396" duration="128000" />
+      <workItem from="1693237401607" duration="1102000" />
+      <workItem from="1693243333922" duration="272000" />
+      <workItem from="1693311743424" duration="4712000" />
+      <workItem from="1693319555507" duration="17976000" />
     </task>
     <servers />
   </component>

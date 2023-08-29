@@ -1,5 +1,5 @@
 #include "HttpRequest.hpp"
-#include "HttpRequestParser.hpp"
+#include "../../Parser/HttpRequestParser/HttpRequestParser.hpp"
 #include <iostream>
 
 HttpRequest::HttpRequest(const std::string &request): _versionMajor(1), _versionMinor(1)

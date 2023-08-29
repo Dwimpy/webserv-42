@@ -16,7 +16,9 @@ NAME			= webserv
 # VPath
 VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRequestHandler \
 				  ./src/HttpRequestHandler/Request ./src/HttpRequestHandler/Response ./src/HttpRequestHandler/Header \
-				  ./src/ResourceManager
+				  ./src/ResourceManager ./src/Client ./src/ServerManager ./src/ConfigFile/ ./src/ConfigFile/Directive \
+				  ./src/ConfigFile/LocationBlock ./src/ConfigFile/ServerBlock ./src/ConfigFile/ServerConfigurator \
+				  ./src/Parser/HttpRequestParser ./src/Parser/ConfigFileParser
 
 # Includes
 INCLUDE			= -I ./src/Server
@@ -28,7 +30,17 @@ INCLUDE			+= -I ./src/HttpRequestHandler/Response
 INCLUDE			+= -I ./src/HttpRequestHandler/Header
 INCLUDE			+= -I ./src/Page
 INCLUDE			+= -I ./src/ResourceManager
+INCLUDE			+= -I ./src/Client
+INCLUDE			+= -I ./src/ServerManager
+INCLUDE			+= -I ./src/ConfigFile
 
+INCLUDE			+= -I ./src/ConfigFile/Directive
+INCLUDE			+= -I ./src/ConfigFile/LocationBlock
+INCLUDE			+= -I ./src/ConfigFile/ServerBlock
+INCLUDE			+= -I ./src/ConfigFile/ServerConfigurator
+
+INCLUDE			+= -I ./src/Parser/HttpRequestParser
+INCLUDE			+= -I ./src/Parser/ConfigFileParser
 
 # Diretories
 SRC_DIR			= ./src
