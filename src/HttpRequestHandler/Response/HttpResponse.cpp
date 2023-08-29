@@ -44,15 +44,24 @@ void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
 
 int HttpResponse::dup_request_to_stdin() {
 //    int fd = tmp_fd();
-    FILE*   tmp = tmpfile();
-    int fd = fileno(tmp);
+//    FILE*   tmp = tmpfile();
+//    int fd = fileno(tmp);
+    int fd[2];
+    if (pipe(fd) == -1)
+        return EXIT_FAILURE;
     std::string query;
     query.append("username=s&password=s");
-    if (fd < 0 || write(fd, query.c_str(), query.length()) < 0)
+    if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
+    {
+        close(fd[STDIN_FILENO]);
+        close(fd[STDOUT_FILENO]);
         return EXIT_FAILURE;
-    lseek(fd, 0, SEEK_SET);
-    dup2(fd, STDIN_FILENO);
-    close(fd);
+    }
+//    std::cerr << "request query " << query.c_str() << std::endl;
+    close(fd[STDOUT_FILENO]);
+//    lseek(fd, 0, SEEK_SET);
+    dup2(fd[STDIN_FILENO], STDIN_FILENO);
+    close(fd[STDIN_FILENO]);
     return EXIT_SUCCESS;
 }
 
@@ -78,26 +87,28 @@ void    HttpResponse::childProcess(const HttpRequest &request)
         arguments[1] = const_cast<char*>("/Users/dhendzel/Documents/webserv-42/docs/register_process.php");
     else
     {
-        std::cout << "executed register" << std::endl << std::endl;
         arguments[1] = const_cast<char*>("/Users/dhendzel/Documents/webserv-42/docs/register.php");
     }
     arguments[2] = NULL;
 
 //    std::cerr << "argument 0 " << arguments[0] << "argument 1 " << arguments[1] << std::endl;
-    dup2(_response_fd, STDOUT_FILENO);
+    dup2(_response_fd[1], STDOUT_FILENO);
+    close(_response_fd[1]);
+    close(_response_fd[0]);
     if(dup_request_to_stdin())
-        exit(error("tmpfile creation failed!"));
+        error("tmpfile creation failed!");
     std::string cgi_path = "/Users/dhendzel/Documents/webserv-42/docs/";
     if (!cgi_path.empty() && chdir(cgi_path.c_str()) == -1)
-        exit(error("chdir failed!"));
+        error("chdir failed!");
     if (execve(arguments[0], arguments, environment) == -1)
-        exit(error("execve failed!"));
+        error("execve failed!");
 }
 
 int	HttpResponse::parent_process() {
     int status;
 
     waitpid(-1, &status, 0);
+    close(_response_fd[1]);
     if (WIFEXITED(status)) {
         if (WEXITSTATUS(status))
         {
@@ -118,17 +129,17 @@ int HttpResponse::write_response()
     char			buffer[1000];
     long long 		bytes = 1;
 
-    lseek(_response_fd, 0, SEEK_SET);
+//    lseek(_response_fd, 0, SEEK_SET);
     while (bytes > 0) {
-        bytes = read(_response_fd, buffer, sizeof(buffer));
+        bytes = read(_response_fd[0], buffer, sizeof(buffer));
         if (bytes < 0) {
-            close(_response_fd);
+            close(_response_fd[0]);
             return EXIT_FAILURE;
         }
         else
             _response << std::string(buffer, bytes);
     }
-    close(_response_fd);
+    close(_response_fd[0]);
     return	EXIT_SUCCESS;
 }
 
@@ -143,11 +154,11 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
         _flag = 0;
         if (request.getRequestUri() == "/register_process.php")
             _flag = 1;
-        FILE*   tmp = tmpfile();
-        _response_fd = fileno(tmp);
-
-        if (_response_fd < 0)
+//        FILE*   tmp = tmpfile();
+//        _response_fd = fileno(tmp);
+        if(pipe(_response_fd) == -1)
             std::cerr << ("tmpfile creation failed!") << std::endl;
+//        if (_response_fd < 0)
         switch (fork()) {
             case -1:
                 std::cerr << ("fork creation failed!") << std::endl;
@@ -156,12 +167,12 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
                 childProcess(request);
         }
         if (parent_process() != EXIT_SUCCESS){
-            exit(1);
+            error("EXITED PARENT");
         }
         if (write_response() != EXIT_SUCCESS)
         {
-            std::cerr << ("interrupted by signal!") << std::endl;
-            exit (EXIT_FAILURE);
+//            std::cerr << ("interrupted by signal!") << std::endl;
+            error("interrupted by signal!");
         }
     }
     else

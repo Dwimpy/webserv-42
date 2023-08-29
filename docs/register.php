@@ -8,6 +8,9 @@ $_SESSION["password"] = 123;
 ?>
 <!DOCTYPE html>
 <html>
+<link rel="shortcut icon" href="assets/planet.png" />
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 <head>
     <title>Register Page</title>
 </head>
@@ -15,10 +18,10 @@ $_SESSION["password"] = 123;
     <h2>Register</h2>
     <form action="register_process.php" method="post">
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
+        <input class="input-group__input" type="text" id="username" name="username" required><br><br>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <input type="submit" value="Register">
+        <input class="input-group__input" type="password" id="password" name="password" required><br><br>
+        <input class="button" type="submit" value="Register">
     </form>
 </body>
 </html>

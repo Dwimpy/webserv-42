@@ -29,7 +29,8 @@ class HttpResponse{
 	std::string			_statusError;
 	std::string			_fileName;
 	std::stringstream	_response;
-    int                 _response_fd;
+//    int                 _response_fd;
+    int                 _response_fd[2];
 
     int                 _flag;
 };

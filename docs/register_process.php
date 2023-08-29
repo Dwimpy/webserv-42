@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         fclose($file);
 
-        echo "Registration successful. Data written to users.txt. Username: $username $password\n";
+        echo "Registration successful. Data written to users.txt. Username: $username password: $password\n";
     } else {
         echo "Error writing to file.";
     }
