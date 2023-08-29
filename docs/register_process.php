@@ -1,5 +1,6 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    file_put_contents("num.txt", "0");
     $stdin = fopen('php://stdin', 'r');
     $inputData = fread($stdin, 1024);
     // Validate and sanitize input before writing to the file
@@ -32,6 +33,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error writing to file.";
     }
 }
+
+
+
 ?>
 <html lang="en">
 <link rel="stylesheet" href="css/error.css">
@@ -45,5 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <a href="../index.html" class="button">Go home</a>
 <div class="astronaut">
     <img src="../assets/astronaut.png" alt="" class="src">
+
 </div>
 </html>

@@ -1,10 +1,28 @@
 <?php
-session_start();
 
-// Set session data
-$_SESSION["username"] = "john_doe";
-$_SESSION["password"] = 123;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $filePath = "num.txt";
 
+    if (file_exists($filePath)) {
+        $fileContents = file_get_contents("num.txt");
+        if ($fileContents !== false) {
+            if(is_numeric($fileContents))
+            {
+//                echo "file content is $fileContents and it is numeric";
+                $fileContents++;
+            }
+//            echo "file content is $fileContents";
+            file_put_contents("num.txt", $fileContents);
+        }
+    } else {
+        $fileContents = 1;
+        file_put_contents("num.txt", $fileContents);
+
+    }
+
+//        echo "in the post";
+
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -23,5 +41,9 @@ $_SESSION["password"] = 123;
         <input class="input-group__input" type="password" id="password" name="password" required><br><br>
         <input class="button" type="submit" value="Register">
     </form>
+        <form method="post">
+                <input class="button" type="submit" name="increment" value=<?php echo $fileContents?>>
+        </form>
+
 </body>
 </html>

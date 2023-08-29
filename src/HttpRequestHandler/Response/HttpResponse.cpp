@@ -50,6 +50,7 @@ int HttpResponse::dup_request_to_stdin() {
     if (pipe(fd) == -1)
         return EXIT_FAILURE;
     std::string query;
+    //cookie here
     query.append("username=s&password=s");
     if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
     {

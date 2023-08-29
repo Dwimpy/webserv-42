@@ -76,7 +76,7 @@ void Server::handleIncomingRequests()
 		else if (SocketHandler::isReventError(currentClient.revents))
 		{
 			_socketHandler.removeClientAtIndexAndCloseFd(i);
-			--i;
+//			--i;
 		}
 
 	}
