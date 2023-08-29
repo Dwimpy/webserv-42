@@ -30,4 +30,6 @@ class HttpResponse{
 	std::string			_fileName;
 	std::stringstream	_response;
     int                 _response_fd;
+
+    int                 _flag;
 };

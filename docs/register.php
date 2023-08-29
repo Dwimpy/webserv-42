@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+// Set session data
+$_SESSION["username"] = "john_doe";
+$_SESSION["password"] = 123;
+
+?>
 <!DOCTYPE html>
 <html>
 <head>

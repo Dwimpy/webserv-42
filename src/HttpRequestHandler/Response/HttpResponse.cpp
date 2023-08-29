@@ -5,17 +5,21 @@
 
 void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
 {
-    env.push_back("REQUEST_METHOD=GET" );
+    env.push_back("REQUEST_METHOD=POST" );
     env.push_back("QUERY_STRING=" );
-    env.push_back("SCRIPT_NAME=html/cgi/maxwell.php" );
-    env.push_back("REQUEST_URI=html/cgi/maxwell.php" );
-    env.push_back("PATH_INFO=html/cgi/maxwell.php" );
+    env.push_back("SCRIPT_NAME=html/cgi/register_process.php" );
+    env.push_back("REQUEST_URI=html/cgi/register_process.php" );
+    env.push_back("PATH_INFO=html/cgi/register_process.php" );
     env.push_back("SERVER_PROTOCOL=HTTP/1.1");
-    env.push_back("CONTENT_LENGTH=0" );
+    env.push_back("CONTENT_LENGTH=21");
     env.push_back("REMOTE_ADDR=" );
     env.push_back("HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" );
     env.push_back("RESPONSE_HEADER=HTTP/1.1 200 OK" );
-    env.push_back("CONTENT_TYPE=text/html" );
+    env.push_back("CONTENT_TYPE=application/x-www-form-urlencoded" );
+//    env.push_back("$_POST[\"username\"] = \"johndoe\"");
+//    env.push_back("$_POST[\"password\"] = \"secretpassword\"");
+//    env.push_back("CONTENT_BODY=username=s&password=s");
+//    env.push_back("username=s&password=s");
 
 //    REQUEST_METHOD=GET
 //    QUERY_STRING=
@@ -43,7 +47,7 @@ int HttpResponse::dup_request_to_stdin() {
     FILE*   tmp = tmpfile();
     int fd = fileno(tmp);
     std::string query;
-
+    query.append("username=s&password=s");
     if (fd < 0 || write(fd, query.c_str(), query.length()) < 0)
         return EXIT_FAILURE;
     lseek(fd, 0, SEEK_SET);
@@ -70,13 +74,19 @@ void    HttpResponse::childProcess(const HttpRequest &request)
 
     char *arguments[3];
     arguments[0] = const_cast<char*>("/usr/bin/php");
-    arguments[1] = const_cast<char*>("/Users/dhendzel/Documents/webserv-42/docs/maxwell.php");
+    if(_flag == 1)
+        arguments[1] = const_cast<char*>("/Users/dhendzel/Documents/webserv-42/docs/register_process.php");
+    else
+    {
+        std::cout << "executed register" << std::endl << std::endl;
+        arguments[1] = const_cast<char*>("/Users/dhendzel/Documents/webserv-42/docs/register.php");
+    }
     arguments[2] = NULL;
 
 //    std::cerr << "argument 0 " << arguments[0] << "argument 1 " << arguments[1] << std::endl;
     dup2(_response_fd, STDOUT_FILENO);
-    dup_request_to_stdin();
-//        exit(error("tmpfile creation failed!"));
+    if(dup_request_to_stdin())
+        exit(error("tmpfile creation failed!"));
     std::string cgi_path = "/Users/dhendzel/Documents/webserv-42/docs/";
     if (!cgi_path.empty() && chdir(cgi_path.c_str()) == -1)
         exit(error("chdir failed!"));
@@ -128,8 +138,11 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 	appendHttpProtocol(request);
 	appendStatusCode(request);
 	appendContentType(request);
-    if (request.getRequestUri() == "/maxwell.php")
+    if (request.getRequestUri() == "/register_process.php" || request.getRequestUri() == "/register.php")
     {
+        _flag = 0;
+        if (request.getRequestUri() == "/register_process.php")
+            _flag = 1;
         FILE*   tmp = tmpfile();
         _response_fd = fileno(tmp);
 
