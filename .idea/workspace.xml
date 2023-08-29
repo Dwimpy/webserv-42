@@ -23,13 +23,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf9fe8c6-b6e2-4265-8245-d6e071a6dde1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/error_pages/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/error_pages/404.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/register.php" beforeDir="false" afterPath="$PROJECT_DIR$/docs/register.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/register_process.php" beforeDir="false" afterPath="$PROJECT_DIR$/docs/register_process.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/users.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webserv" beforeDir="false" afterPath="$PROJECT_DIR$/webserv" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -95,7 +89,7 @@
         <entry file="file://$PROJECT_DIR$/docs/register.php">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret column="5" lean-forward="true" selection-start-column="5" selection-end-column="5" />
+              <caret column="5" selection-start-column="5" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -339,12 +333,12 @@
       <workItem from="1692988067096" duration="7363000" />
       <workItem from="1693044596488" duration="5046000" />
       <workItem from="1693235233836" duration="2095000" />
-      <workItem from="1693334143602" duration="733000" />
+      <workItem from="1693334143602" duration="936000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="733000" />
+    <option name="totallyTimeSpent" value="936000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
@@ -405,7 +399,7 @@
     <entry file="file://$PROJECT_DIR$/docs/register.php">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret column="5" lean-forward="true" selection-start-column="5" selection-end-column="5" />
+          <caret column="5" selection-start-column="5" selection-end-column="5" />
         </state>
       </provider>
     </entry>
