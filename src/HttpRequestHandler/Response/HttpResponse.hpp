@@ -20,9 +20,14 @@ class HttpResponse{
 	std::string			getFileName(const HttpRequest &request);
 	std::string			getResponse();
 
+    int                 write_response();
+    void                childProcess(const HttpRequest &request);
+    int                 parent_process();
+    int                 dup_request_to_stdin();
   private:
 	unsigned int		_statusCode;
 	std::string			_statusError;
 	std::string			_fileName;
 	std::stringstream	_response;
+    int                 _response_fd;
 };

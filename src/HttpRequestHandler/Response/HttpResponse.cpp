@@ -3,14 +3,158 @@
 #include <iostream>
 #include <string>
 
+void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
+{
+    env.push_back("REQUEST_METHOD=GET" );
+    env.push_back("QUERY_STRING=" );
+    env.push_back("SCRIPT_NAME=html/cgi/maxwell.php" );
+    env.push_back("REQUEST_URI=html/cgi/maxwell.php" );
+    env.push_back("PATH_INFO=html/cgi/maxwell.php" );
+    env.push_back("SERVER_PROTOCOL=HTTP/1.1");
+    env.push_back("CONTENT_LENGTH=0" );
+    env.push_back("REMOTE_ADDR=" );
+    env.push_back("HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" );
+    env.push_back("RESPONSE_HEADER=HTTP/1.1 200 OK" );
+    env.push_back("CONTENT_TYPE=text/html" );
+
+//    REQUEST_METHOD=GET
+//    QUERY_STRING=
+//    SCRIPT_NAME=html/cgi/maxwell.php
+//    REQUEST_URI=html/cgi/maxwell.php
+//    PATH_INFO=html/cgi/maxwell.php
+//    SERVER_PROTOCOL=HTTP/1.1
+//    CONTENT_LENGTH=0
+//    REMOTE_ADDR=
+//    HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36
+//    RESPONSE_HEADER=HTTP/1.1 200 OK
+//    Content-Type: text/html
+//    Content-Length:
+//    CONTENT_TYPE=
+//    HTTP_COOKIE=key=1170067506
+
+//    if (_request.cookies)
+//        _request.env.push_back("HTTP_COOKIE=key=" + toString<int>(_request.cookies));
+//    else
+//        _request.env.push_back("HTTP_COOKIE=");
+}
+
+int HttpResponse::dup_request_to_stdin() {
+//    int fd = tmp_fd();
+    FILE*   tmp = tmpfile();
+    int fd = fileno(tmp);
+    std::string query;
+
+    if (fd < 0 || write(fd, query.c_str(), query.length()) < 0)
+        return EXIT_FAILURE;
+    lseek(fd, 0, SEEK_SET);
+    dup2(fd, STDIN_FILENO);
+    close(fd);
+    return EXIT_SUCCESS;
+}
+
+int    error(std::string error)
+{
+    std::cerr << error << std::endl;
+    return (EXIT_FAILURE);
+}
+
+void    HttpResponse::childProcess(const HttpRequest &request)
+{
+    std::vector<std::string> env;
+    createEnv(env, request);
+
+    char *environment[env.size() + 1];
+    for (size_t i = 0; i < env.size(); i++)
+        environment[i] = const_cast<char*>(env[i].c_str());
+    environment[env.size()] = nullptr;
+
+    char *arguments[3];
+    arguments[0] = const_cast<char*>("/usr/bin/php");
+    arguments[1] = const_cast<char*>("/Users/dhendzel/Documents/webserv-42/docs/maxwell.php");
+    arguments[2] = NULL;
+
+//    std::cerr << "argument 0 " << arguments[0] << "argument 1 " << arguments[1] << std::endl;
+    dup2(_response_fd, STDOUT_FILENO);
+    dup_request_to_stdin();
+//        exit(error("tmpfile creation failed!"));
+    std::string cgi_path = "/Users/dhendzel/Documents/webserv-42/docs/";
+    if (!cgi_path.empty() && chdir(cgi_path.c_str()) == -1)
+        exit(error("chdir failed!"));
+    if (execve(arguments[0], arguments, environment) == -1)
+        exit(error("execve failed!"));
+}
+
+int	HttpResponse::parent_process() {
+    int status;
+
+    waitpid(-1, &status, 0);
+    if (WIFEXITED(status)) {
+        if (WEXITSTATUS(status))
+        {
+            std::cerr << ("execve failed!") << std::endl;
+            return (EXIT_FAILURE);
+        }
+    }
+    else if (WIFSIGNALED(status))
+    {
+        std::cerr << ("interrupted by signal!") << std::endl;
+        return (EXIT_FAILURE);
+    }
+    return EXIT_SUCCESS;
+}
+
+int HttpResponse::write_response()
+{
+    char			buffer[1000];
+    long long 		bytes = 1;
+
+    lseek(_response_fd, 0, SEEK_SET);
+    while (bytes > 0) {
+        bytes = read(_response_fd, buffer, sizeof(buffer));
+        if (bytes < 0) {
+            close(_response_fd);
+            return EXIT_FAILURE;
+        }
+        else
+            _response << std::string(buffer, bytes);
+    }
+    close(_response_fd);
+    return	EXIT_SUCCESS;
+}
+
 HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &config): _statusCode(200), _statusError("OK")
 {
 	fileExists(request, config);
 	appendHttpProtocol(request);
 	appendStatusCode(request);
 	appendContentType(request);
-    appendFileContents();
+    if (request.getRequestUri() == "/maxwell.php")
+    {
+        FILE*   tmp = tmpfile();
+        _response_fd = fileno(tmp);
+
+        if (_response_fd < 0)
+            std::cerr << ("tmpfile creation failed!") << std::endl;
+        switch (fork()) {
+            case -1:
+                std::cerr << ("fork creation failed!") << std::endl;
+                break;
+            case 0:
+                childProcess(request);
+        }
+        if (parent_process() != EXIT_SUCCESS){
+            exit(1);
+        }
+        if (write_response() != EXIT_SUCCESS)
+        {
+            std::cerr << ("interrupted by signal!") << std::endl;
+            exit (EXIT_FAILURE);
+        }
+    }
+    else
+        appendFileContents();
 }
+
 
 HttpResponse::HttpResponse()
 {}
