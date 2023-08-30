@@ -72,38 +72,54 @@ int    error(std::string error)
     return (EXIT_FAILURE);
 }
 
+const std::string getProjectDir() {
+    char buffer[PATH_MAX];
+
+    if (getcwd(buffer, sizeof(buffer)) != nullptr)
+        return std::string(buffer);
+    else
+        error("getcwd fails");
+    return nullptr;
+}
+
 void    HttpResponse::childProcess(const HttpRequest &request)
 {
     std::vector<std::string> env;
-    createEnv(env, request);
+    std::string phpScript;
+    const std::string cgiPath = getProjectDir() + "/docs/";
 
+    if (!cgiPath.empty() && chdir(cgiPath.c_str()) == -1)
+        error("404 CGI path not found!");
+
+    createEnv(env, request);
     char *environment[env.size() + 1];
+
     for (size_t i = 0; i < env.size(); i++)
         environment[i] = const_cast<char*>(env[i].c_str());
     environment[env.size()] = nullptr;
 
+    if (_flag == 1)
+        phpScript = "register_process.php";
+    else
+        phpScript = "register.php";
+
     char *arguments[3];
     arguments[0] = const_cast<char*>("/usr/bin/php");
-    if(_flag == 1)
-        arguments[1] = const_cast<char*>("/Users/dhendzel/Documents/webserv-42/docs/register_process.php");
-    else
-    {
-        arguments[1] = const_cast<char*>("/Users/dhendzel/Documents/webserv-42/docs/register.php");
-    }
-    arguments[2] = NULL;
+    arguments[1] = const_cast<char*>((cgiPath + phpScript).c_str());
+    arguments[2] = nullptr;
 
-//    std::cerr << "argument 0 " << arguments[0] << "argument 1 " << arguments[1] << std::endl;
     dup2(_response_fd[1], STDOUT_FILENO);
     close(_response_fd[1]);
     close(_response_fd[0]);
-    if(dup_request_to_stdin())
+
+    if (dup_request_to_stdin())
         error("tmpfile creation failed!");
-    std::string cgi_path = "/Users/dhendzel/Documents/webserv-42/docs/";
-    if (!cgi_path.empty() && chdir(cgi_path.c_str()) == -1)
-        error("chdir failed!");
+
     if (execve(arguments[0], arguments, environment) == -1)
         error("execve failed!");
 }
+
+
 
 int	HttpResponse::parent_process() {
     int status;
