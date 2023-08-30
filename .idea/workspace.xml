@@ -23,14 +23,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf9fe8c6-b6e2-4265-8245-d6e071a6dde1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/ConfigFile/ServerBlock/ServerBlock.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequestParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/HttpRequestParser/HttpRequestParser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Request/HttpRequestParser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/HttpRequestParser/HttpRequestParser.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
