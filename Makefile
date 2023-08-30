@@ -18,7 +18,8 @@ VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRe
 				  ./src/HttpRequestHandler/Request ./src/HttpRequestHandler/Response ./src/HttpRequestHandler/Header \
 				  ./src/ResourceManager ./src/Client ./src/ServerManager ./src/ConfigFile/ ./src/ConfigFile/Directive \
 				  ./src/ConfigFile/LocationBlock ./src/ConfigFile/ServerBlock ./src/ConfigFile/ServerConfigurator \
-				  ./src/Parser/HttpRequestParser ./src/Parser/ConfigFileParser
+				  ./src/Parser/HttpRequestParser ./src/Parser/ConfigFileParser ./src/Socket/ISocket ./src/Socket/ServerSocket \
+				  ./src/Socket/ClientSocket
 
 # Includes
 INCLUDE			= -I ./src/Server
@@ -41,6 +42,10 @@ INCLUDE			+= -I ./src/ConfigFile/ServerConfigurator
 
 INCLUDE			+= -I ./src/Parser/HttpRequestParser
 INCLUDE			+= -I ./src/Parser/ConfigFileParser
+
+INCLUDE			+= -I ./src/Socket/ISocket
+INCLUDE			+= -I ./src/Socket/ServerSocket
+INCLUDE			+= -I ./src/Socket/ClientSocket
 
 # Diretories
 SRC_DIR			= ./src

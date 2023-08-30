@@ -1,5 +1,4 @@
 #pragma once
-#include "Server.hpp"
 #include "ServerConfigurator.hpp"
 
 class ConfigFileParser{

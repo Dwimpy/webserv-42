@@ -1,15 +1,13 @@
-#include "Server.hpp"
-
-#include "HttpRequestParser.hpp"
-#include <fstream>
-#include "ServerConfigurator.hpp"
+#include "ServerManager.hpp"
 
 int main (void)
 {
-	Server server;
+	ServerManager	serverManager;
 //	std::string request_msg = "GET /docs/index.html HTTP/1.1\r\nContent-Type: application/json\r\nContent-Type: application/json\r\nContent-Type: application/text\r\n";
 //	HttpRequest request(request_msg);
-	ServerConfigurator	serverConfigurator("default.conf");
+	serverManager.buildServers("default.conf");
+	if (serverManager.startServers())
+		serverManager.runServers();
 //	if (server.startServer())
 //		server.run();
 	return (0);

@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(): _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
+Client::Client():_clientSocket(ClientSocket()), _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
 {
 	generateSessionId(64);
 }
@@ -22,4 +22,9 @@ void	Client::generateSessionId(int length)
 const std::string &Client::getClientSession() const
 {
 	return (this->_sessionId);
+}
+
+ClientSocket &Client::getClientSocket()
+{
+	return (this->_clientSocket);
 }

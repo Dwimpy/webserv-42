@@ -21,6 +21,9 @@ class ServerBlock{
 	void	pushToLocationDirectiveValue(char c);
 	void	printDirectives();
 
+	const directiveVector &getServerDirectives() const;
+	const locationBlocks &getLocationBlocks() const;
+
   private:
 	directiveVector			_serverDirectives;
   	locationBlocks			_locationBlocks;

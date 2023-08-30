@@ -1,12 +1,24 @@
 #include "ServerConfigurator.hpp"
 #include "ConfigFile.hpp"
-#include "ConfigFileParser.hpp"
-#include "Server.hpp"
-#include "ServerBlock.hpp"
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 
-ServerConfigurator::ServerConfigurator(const std::string &confFilePath)
+ServerConfigurator::ServerConfigurator()
+{}
+
+ServerConfigurator::~ServerConfigurator(){}
+
+std::vector<ConfigFile>	ServerConfigurator::buildConfigFiles()
+{
+	std::vector<ConfigFile> configs;
+
+	for (size_t i = 0; i < _serverBlocks.size(); ++i)
+		configs.push_back(ConfigFile(_serverBlocks[i]));
+	return (configs);
+}
+
+void ServerConfigurator::parseConfigFile(const std::string &confFilePath)
 {
 	const char	*cstr_input;
 
@@ -14,16 +26,11 @@ ServerConfigurator::ServerConfigurator(const std::string &confFilePath)
 	cstr_input = _input.c_str();
 	ConfigFileParser::parseFile(*this, cstr_input, cstr_input + _input.length());
 	if (ConfigFileParser::isParsingError())
+	{
+		std::cerr << "Error encountered while parsing file. Exiting." << "\n";
 		exit (1);
-	for (size_t i = 0; i < _serverBlocks.size(); i++)
-		_serverBlocks[i].printDirectives();
-}
-
-ServerConfigurator::~ServerConfigurator(){}
-
-void ServerConfigurator::addEmptyConfiguration()
-{
-	this->_serverConfigs.__emplace_back(ConfigFile());
+	}
+	ConfigFileParser::resetParser();
 }
 
 void ServerConfigurator::addEmptyServerBlock()

@@ -35,3 +35,11 @@ void LocationBlock::print()
 	for (size_t i = 0; i < _directives.size(); i++)
 		_directives[i].print();
 }
+const std::string &LocationBlock::getPath() const
+{
+	return (this->_path);
+}
+const directiveVector &LocationBlock::getDirectives() const
+{
+	return (this->_directives);
+}

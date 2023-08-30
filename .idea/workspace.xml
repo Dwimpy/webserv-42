@@ -24,6 +24,30 @@
   <component name="ChangeListManager">
     <list default="true" id="bf9fe8c6-b6e2-4265-8245-d6e071a6dde1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/default.conf" beforeDir="false" afterPath="$PROJECT_DIR$/default.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Client/Client.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client/Client.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Client/Client.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client/Client.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigFile/ConfigFile.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/ConfigFile.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigFile/ConfigFile.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/ConfigFile.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigFile/Directive/Directive.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/Directive/Directive.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigFile/Directive/Directive.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/Directive/Directive.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigFile/LocationBlock/LocationBlock.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/LocationBlock/LocationBlock.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigFile/LocationBlock/LocationBlock.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/LocationBlock/LocationBlock.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigFile/ServerBlock/ServerBlock.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/ServerBlock/ServerBlock.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigFile/ServerBlock/ServerBlock.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/ServerBlock/ServerBlock.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigFile/ServerConfigurator/ServerConfigurator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/ServerConfigurator/ServerConfigurator.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigFile/ServerConfigurator/ServerConfigurator.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/ServerConfigurator/ServerConfigurator.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Parser/ConfigFileParser/ConfigFileParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/ConfigFileParser/ConfigFileParser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Parser/ConfigFileParser/ConfigFileParser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser/ConfigFileParser/ConfigFileParser.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Server/Server.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ServerManager/ServerManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerManager/ServerManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ServerManager/ServerManager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerManager/ServerManager.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SocketHandler/SocketHandler.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_config" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,28 +111,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/arobu/projects/workdir/webserv-42/Makefile&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.advertisement.text.has.clang-format": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/arobu/projects/workdir/webserv-42/Makefile",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "settings.sync",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/Socket/ClientSocket" />
+      <recent name="$PROJECT_DIR$/src/Socket/ServerSocket" />
       <recent name="$PROJECT_DIR$/src/Parser/HttpRequestParser" />
       <recent name="$PROJECT_DIR$/src/ConfigFile" />
       <recent name="$PROJECT_DIR$/src/Page" />
@@ -193,10 +220,24 @@
       <workItem from="1693243333922" duration="272000" />
       <workItem from="1693311743424" duration="4712000" />
       <workItem from="1693319555507" duration="17976000" />
+      <workItem from="1693395311752" duration="4479000" />
+      <workItem from="1693402501635" duration="10590000" />
+      <workItem from="1693415873073" duration="20471000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/ServerManager/ServerManager.cpp</url>
+          <line>45</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

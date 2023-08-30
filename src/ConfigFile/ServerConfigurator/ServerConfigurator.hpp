@@ -1,14 +1,15 @@
 #pragma once
-#include "ConfigFile.hpp"
-#include "Server.hpp"
 #include "ServerBlock.hpp"
 #include <vector>
 
+class ConfigFile;
+
 class ServerConfigurator{
   public:
-	ServerConfigurator(const std::string &confFilePath);
+	ServerConfigurator();
 	~ServerConfigurator();
-	void	addEmptyConfiguration();
+
+	void	parseConfigFile(const std::string &confFilePath);
 	void	addEmptyServerBlock();
 	void	addServerDirective();
 	void	addLocationBlock();
@@ -18,10 +19,11 @@ class ServerConfigurator{
 	void	pushToLocationDirectiveKey(char c);
 	void	pushToLocationDirectiveValue(char c);
 	void	pushToLocationPath(char c);
+	std::vector<ConfigFile>	buildConfigFiles();
+
   private:
 	std::string					_input;
 	std::vector<ServerBlock>	_serverBlocks;
-	std::vector<ConfigFile>		_serverConfigs;
 
 	void	createInputString(const std::string &confFilePath);
 };

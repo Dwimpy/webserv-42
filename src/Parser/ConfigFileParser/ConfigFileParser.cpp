@@ -68,6 +68,8 @@ void ConfigFileParser::parseFile(ServerConfigurator &configurator, const char *s
 {
 	ConfigFileParser::_result = ParserRunning;
 	consume(configurator, start, end);
+	if (ConfigFileParser::_result != ParserError)
+		ConfigFileParser::_result = ParserComplete;
 }
 
 bool ConfigFileParser::isParsingError()

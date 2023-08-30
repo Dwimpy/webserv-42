@@ -2,7 +2,13 @@
 #include <cstdio>
 #include <iostream>
 #include "fcntl.h"
-
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <poll.h>
+#include <exception>
+#include <stdexcept>
+#include <fcntl.h>
 
 
 SocketHandler::SocketHandler() : _serverSocket(-1), _pollReady(-1)
@@ -52,22 +58,6 @@ bool	SocketHandler::listenForClientConnections(const unsigned int &port)
 	} catch(std::exception &e) {
 		std::cerr << "Exception caught: " << e.what() << std::endl;
 		return (false);
-	}
-}
-
-int	SocketHandler::pollIncomingRequests()
-{
-
-	try {
-		this->_pollReady = poll(_activeSockets.data(), _activeSockets.size(), -1);
-		if (this->_pollReady < 0 && errno != EINTR)
-			throw std::runtime_error("Polling encountered an error");
-		else if (this->_pollReady == 0)
-			return (0);
-		return (1);
-	} catch (std::exception &e){
-		std::cerr << "Caught exception: " << e.what() << std::flush;
-		return (-1);
 	}
 }
 

@@ -14,6 +14,8 @@ class LocationBlock {
 	void addDirective();
 	void pushToDirectiveKey(char c);
 	void pushToDirectiveValue(char c);
+	const std::string &getPath() const;
+	const directiveVector	&getDirectives() const;
 
   private:
 	std::string		_path;

@@ -25,3 +25,13 @@ void Directive::print()
 {
 	std::cout << this->_name << "\t" << this->_value << "\n";
 }
+
+const std::string &Directive::getKey() const
+{
+	return (this->_name);
+}
+
+const std::string &Directive::getValue() const
+{
+	return (this->_value);
+}

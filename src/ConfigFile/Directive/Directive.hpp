@@ -10,6 +10,8 @@ class Directive {
 	~Directive();
 	void pushToKey(char c);
 	void pushToValue(char c);
+	const std::string &getKey() const;
+	const std::string &getValue() const;
 	void print();
   private:
 	std::string _name;

@@ -1,35 +1,47 @@
 #pragma once
 
-# include "ServerConfig.hpp"
-# include "SocketHandler.hpp"
-# include "HttpRequestHandler.hpp"
-# include <netinet/in.h>
-# include <vector>
+#include <netinet/in.h>
+#include <vector>
+#include <cstdio>
+#include <iostream>
+#include <sys/socket.h>
+#include "ServerConfig.hpp"
+#include "ServerSocket.hpp"
+#include "SocketHandler.hpp"
+#include "HttpRequestHandler.hpp"
+#include "ConfigFile.hpp"
+#include "HttpRequest.hpp"
+#include "unistd.h"
+#include "HttpResponse.hpp"
+#include "ServerSocket.hpp"
 
 typedef struct sockaddr_in	t_sockaddr_in;
 typedef struct sockaddr		t_sockaddr;
-
-static bool	shouldExit = false;
+typedef std::map<int, std::map<int, t_pollfd *> > indexToPollMap;
 
 class Server {
 
   public:
 	Server();
 	Server(const ServerConfig &config);
+	Server(const ConfigFile &config);
 	~Server();
 	bool	startServer();
 	void	run(void);
-	void	handleIncomingRequests();
+	void	handleIncomingRequests(indexToPollMap &map);
+	void 	acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPollMap &map);
 	bool	sendResponse(t_pollfd currentClient);
+	bool	sendResponse(Client client);
+	void	closeRemainingSockets();
+	bool	findClient(std::string sessionId);
+	const ConfigFile	&getConfiguration() const;
+	ServerSocket getSocket() const;
 
   private:
-	char					_buffer[8192];
-	t_sockaddr_in			serverAddr;
-	SocketHandler			_socketHandler;
-	HttpRequestHandler		_httpRequestHandler;
-	const ServerConfig		_config;
-
-	void					initServerAddr();
+	char							_buffer[8192];
+	SocketHandler					_socketHandler;
+	const ServerConfig				_config;
+	const ConfigFile					_configFile;
+	ServerSocket					_serverSocket;
+	std::vector<Client>				_connectedClients;
 };
-
-void	signalHandler(int signal);

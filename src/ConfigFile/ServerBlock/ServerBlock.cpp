@@ -56,3 +56,13 @@ void ServerBlock::pushToLocationDirectiveValue(char c)
 {
 	this->_locationBlocks.back().pushToDirectiveValue(c);
 }
+
+const directiveVector &ServerBlock::getServerDirectives() const
+{
+	return (this->_serverDirectives);
+}
+
+const locationBlocks &ServerBlock::getLocationBlocks() const
+{
+	return (this->_locationBlocks);
+}
