@@ -27,6 +27,7 @@ class ServerManager{
 
 	void	parseConfigurationFile(const std::string &filePath);
 	void	createAndConfigureServers();
+	void	removeFd(std::vector<t_pollfd> &fds);
 };
 
 void	signalHandler(int signal);

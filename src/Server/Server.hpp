@@ -28,7 +28,7 @@ class Server {
 	~Server();
 	bool	startServer();
 	void	run(void);
-	void	handleIncomingRequests(indexToPollMap &map);
+	void	handleIncomingRequests(t_pollfd *pfd, indexToPollMap &map);
 	void 	acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPollMap &map);
 	bool	sendResponse(t_pollfd currentClient);
 	bool	sendResponse(Client client);
@@ -36,6 +36,7 @@ class Server {
 	bool	findClient(std::string sessionId);
 	const ConfigFile	&getConfiguration() const;
 	ServerSocket getSocket() const;
+	void	removeFd();
 
   private:
 	char							_buffer[8192];

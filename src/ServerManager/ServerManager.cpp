@@ -36,7 +36,7 @@ void ServerManager::runServers()
 	while (!shouldExit)
 	{
 		pollIncomingConnections();
-		for (size_t i = 0; i < _activeSockets.size(); ++i)
+		for (int i = 0; i < _activeSockets.size(); ++i)
 		{
 			if (_activeSockets[i].revents == 0)
 				continue ;
@@ -44,10 +44,24 @@ void ServerManager::runServers()
 				_serverList[0].acceptIncomingConnections(_activeSockets, _serverToPollMap);
 			else
 			{
-				_serverList[0].handleIncomingRequests(_serverToPollMap);
-				_serverList[0].closeRemainingSockets();
+				_serverList[0].handleIncomingRequests(&_activeSockets[i], _serverToPollMap);
+//				_serverList[0].removeFd();
 			}
 		}
+		removeFd(_activeSockets);
+	}
+}
+
+void	ServerManager::removeFd(std::vector<t_pollfd> &fds)
+{
+	std::vector<t_pollfd >::const_iterator it = fds.cbegin();
+
+	while (it != fds.cend())
+	{
+		if (it->fd == -1)
+			it = fds.erase(it);
+		else
+			++it;
 	}
 }
 

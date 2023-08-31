@@ -53,9 +53,9 @@ void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPo
 		clientFd = _serverSocket.accept(newClient);
 		if (clientFd == -1)
 			break ;
-		_connectedClients.__emplace_back(newClient);
+		this->_connectedClients.__emplace_back(newClient);
 		pollfds.__emplace_back((t_pollfd){clientFd, POLLIN, 0});
-		map[_serverSocket.getSocketFD()][clientFd] = &pollfds.back();
+		(map)[_serverSocket.getSocketFD()][clientFd] = &pollfds.back();
 	}
 }
 
@@ -83,10 +83,19 @@ void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPo
 
 bool	Server::sendResponse(t_pollfd currentClient)
 {
+	ssize_t	bytes_received;
 	memset(_buffer, 0, sizeof(_buffer));
-	if ((recv(currentClient.fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)
+	if ((bytes_received = recv(currentClient.fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)
 	{
 		perror("ERROR reading from socket");
+		close(currentClient.fd);
+		currentClient.fd = -1;
+		currentClient.revents = 0;
+		return (false);
+	}
+	else if (bytes_received == 0)
+	{
+		perror("ERROR socket closed");
 		close(currentClient.fd);
 		currentClient.fd = -1;
 		currentClient.revents = 0;
@@ -97,7 +106,6 @@ bool	Server::sendResponse(t_pollfd currentClient)
 	HttpResponse responseObj(request, _config);
 	std::string response = responseObj.getResponse();
 	send(currentClient.fd, response.c_str(), response.size(), 0);
-	response.clear();
 	close(currentClient.fd);
 	currentClient.fd = -1;
 	currentClient.revents = 0;
@@ -124,19 +132,29 @@ bool	Server::sendResponse(Client client)
 	return (true);
 }
 
-void	Server::handleIncomingRequests(indexToPollMap &map)
+void	Server::handleIncomingRequests(t_pollfd *pfd, indexToPollMap &map)
 {
-    std::map<int, t_pollfd *>::const_iterator it;
-		for (it = map[3].begin(); it != map[3].end();) {
-			if (it->second->fd != -1 && it->second->revents == POLLIN)
-			{
-				sendResponse(*it->second);
-				it = map[3].erase(it);
-			}
-			else
-				++it;
+    std::map<int, t_pollfd *>::iterator it;
+    std::vector<Client>::iterator it2;
+//	for (it = map[3].begin(); it != map[3].end();)
+//	{
+//		if (it->second->revents == POLLIN)
+//		{
+//			sendResponse(*it->second);
+//			it->second->fd = -1;
+//			it->second->revents = 0;
+//		}
+//		else
+//			++it;
+//	}
+		if (pfd->revents == POLLIN)
+		{
+			sendResponse(*pfd);
+			pfd->fd = -1;
+			pfd->revents = 0;
 		}
-	_connectedClients.clear();
+
+//	_connectedClients.clear();
     // Close sockets and clear the vector in one pass
 }
 
@@ -147,6 +165,19 @@ void	Server::closeRemainingSockets()
 		_connectedClients[i].getClientSocket().setFd(-1);
     }
 	_connectedClients.clear();
+}
+
+void Server::removeFd()
+{
+	std::vector<Client>::iterator it;
+
+	for (it = _connectedClients.begin(); it != _connectedClients.end(); )
+	{
+		if (it->getClientSocket().getFd() == -1)
+			it = _connectedClients.erase(it);
+		else
+			++it;
+	}
 }
 
 const ConfigFile &Server::getConfiguration() const
