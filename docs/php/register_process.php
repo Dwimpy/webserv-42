@@ -6,33 +6,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate and sanitize input before writing to the file
 
     $pairs = explode('&', $inputData);
-
     $data = array();
-    foreach ($pairs as $pair) {
-        list($key, $value) = explode('=', $pair);
-        $data[$key] = $value;
-    }
-
-    $username = $data['username'];
-    $password = $data['password'];
-
-
-    // Open the file in append mode
-    $file = fopen("users.txt", "a");
-
-    if ($file) {
-        // Write the user's information to the file
-        fwrite($file, "Username: $username\n");
-        fwrite($file, "Password: $password\n");
-        fwrite($file, "-----------------\n");
-
+    $file = fopen("usersd.txt", "a");
+    if ($file) 
+    {
+        foreach ($pairs as $pair) {
+            list($key, $value) = explode('=', $pair);
+            $data[$key] = $value;
+            fwrite($file, "$key: $value\n");
+        }
         fclose($file);
-
         echo "Registration successful. Data written to users.txt. Username: $username password: $password\n";
-    } else {
-        echo "Error writing to file.";
+    }
+    else
+    {
+        echo "Error opening file";
     }
 }
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<h2>Posted Data:</h2>";
     echo "<ul>";

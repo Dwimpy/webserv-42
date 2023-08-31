@@ -1,0 +1,3 @@
+/Users/asioud/Desktop/42/webserv-42/CMakeFiles/webserver.dir
+/Users/asioud/Desktop/42/webserv-42/CMakeFiles/edit_cache.dir
+/Users/asioud/Desktop/42/webserv-42/CMakeFiles/rebuild_cache.dir

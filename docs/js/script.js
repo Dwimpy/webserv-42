@@ -11,7 +11,7 @@ document.getElementById("submitButton").addEventListener("click", function() {
     document.getElementById("textField2").value = 'password';
     document.getElementById("textField2").type = 'text';
     // Make a POST request to the server using the Fetch API
-    fetch("http://127.0.0.1:8080", {
+    fetch("http://127.0.0.1:8080/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
+#    By: asioud <asioud@42heilbronn.de>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/21 14:38:01 by arobu             #+#    #+#              #
-#    Updated: 2023/08/09 05:04:05 by arobu            ###   ########.fr        #
+#    Updated: 2023/08/31 13:15:54 by asioud           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,9 @@ NAME			= webserv
 # VPath
 VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRequestHandler \
 				  ./src/HttpRequestHandler/Request ./src/HttpRequestHandler/Response ./src/HttpRequestHandler/Header \
-				  ./src/ResourceManager
+				  ./src/ResourceManager ./src/Client ./src/ServerManager ./src/ConfigFile/ ./src/ConfigFile/Directive \
+				  ./src/ConfigFile/LocationBlock ./src/ConfigFile/ServerBlock ./src/ConfigFile/ServerConfigurator \
+				  ./src/Parser/HttpRequestParser ./src/Parser/ConfigFileParser
 
 # Includes
 INCLUDE			= -I ./src/Server
@@ -28,7 +30,17 @@ INCLUDE			+= -I ./src/HttpRequestHandler/Response
 INCLUDE			+= -I ./src/HttpRequestHandler/Header
 INCLUDE			+= -I ./src/Page
 INCLUDE			+= -I ./src/ResourceManager
+INCLUDE			+= -I ./src/Client
+INCLUDE			+= -I ./src/ServerManager
+INCLUDE			+= -I ./src/ConfigFile
 
+INCLUDE			+= -I ./src/ConfigFile/Directive
+INCLUDE			+= -I ./src/ConfigFile/LocationBlock
+INCLUDE			+= -I ./src/ConfigFile/ServerBlock
+INCLUDE			+= -I ./src/ConfigFile/ServerConfigurator
+
+INCLUDE			+= -I ./src/Parser/HttpRequestParser
+INCLUDE			+= -I ./src/Parser/ConfigFileParser
 
 # Diretories
 SRC_DIR			= ./src
@@ -78,6 +90,9 @@ $(OBJ_DIR):
 
 show:
 	@echo $(OBJS)
+
+rust:
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
  clean:
 			@$(RM) -rdf $(OBJ_DIR)

@@ -79,7 +79,7 @@ const std::string getProjectDir() {
         return std::string(buffer);
     else
         error("getcwd fails");
-    return nullptr;
+    return "";
 }
 
 void    HttpResponse::childProcess(const HttpRequest &request)
@@ -115,11 +115,9 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     if (dup_request_to_stdin())
         error("tmpfile creation failed!");
 
-    if (execve(arguments[0], arguments, environment) == -1)
+    if (execl((cgiPath + "/cgi/target/release/cgi").c_str(), nullptr, environment) == -1)
         error("execve failed!");
 }
-
-
 
 int	HttpResponse::parent_process() {
     int status;
