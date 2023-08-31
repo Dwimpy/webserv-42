@@ -42,7 +42,7 @@ void ServerManager::runServers()
 				_serverList[i].acceptIncomingConnections(_activeSockets, _serverToPollMap);
 		}
 		for (int i = 0; i < _serverList.size(); ++i)
-			_serverList[i].handleIncomingRequests(&_activeSockets[0], _serverToPollMap);
+			_serverList[i].handleIncomingRequests(_serverToPollMap);
 		removeFd(_activeSockets);
 	}
 }

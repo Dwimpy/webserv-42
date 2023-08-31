@@ -40,6 +40,7 @@ void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPo
 		pollfds.__emplace_back((t_pollfd){clientFd, POLLIN, 0});
 		(map)[_serverSocket.getSocketFD()][clientFd] = &pollfds.back();
 	}
+	_connectedClients.clear();
 }
 
 bool	Server::sendResponse(t_pollfd currentClient)
@@ -67,27 +68,7 @@ bool	Server::sendResponse(t_pollfd currentClient)
 	return (true);
 }
 
-bool	Server::sendResponse(Client client)
-{
-	ssize_t	bytes_received;
-	memset(_buffer, 0, sizeof(_buffer));
-	if ((bytes_received = recv(client.getClientSocket().getFd(), _buffer, sizeof(_buffer) - 1, 0)) < 0)
-	{
-		perror("ERROR reading from socket");
-		close(client.getClientSocket().getFd());
-		return (false);
-	}
-	_buffer[bytes_received] = '\0';
-	std::string response_msg = std::string(_buffer);
-	HttpRequest request(response_msg);
-	HttpResponse responseObj(request, _config);
-	std::string response = responseObj.getResponse();
-	send(client.getClientSocket().getFd(), response.c_str(), response.size(), 0);
-	client.getClientSocket().getFd();
-	return (true);
-}
-
-void	Server::handleIncomingRequests(t_pollfd *pfd, indexToPollMap &map)
+void	Server::handleIncomingRequests(indexToPollMap &map)
 {
     std::map<int, t_pollfd *>::iterator it;
 
@@ -102,15 +83,6 @@ void	Server::handleIncomingRequests(t_pollfd *pfd, indexToPollMap &map)
 		else
 			it++;
 	}
-}
-
-void	Server::closeRemainingSockets()
-{
-	for (size_t i = 0; i < _connectedClients.size(); ++i) {
-		_connectedClients[i].getClientSocket().close();
-		_connectedClients[i].getClientSocket().setFd(-1);
-    }
-	_connectedClients.clear();
 }
 
 void Server::removeFd()
