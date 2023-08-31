@@ -24,10 +24,11 @@
   <component name="ChangeListManager">
     <list default="true" id="bf9fe8c6-b6e2-4265-8245-d6e071a6dde1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/default.conf" beforeDir="false" afterPath="$PROJECT_DIR$/default.conf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Server/Server.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ServerManager/ServerManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerManager/ServerManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerManager/ServerManager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerManager/ServerManager.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Socket/ServerSocket/ServerSocket.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Socket/ServerSocket/ServerSocket.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webserv" beforeDir="false" afterPath="$PROJECT_DIR$/webserv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -31,23 +31,18 @@ void ServerManager::pollIncomingConnections()
 
 void ServerManager::runServers()
 {
-	int		pollingStatus = -1;
-
 	while (!shouldExit)
 	{
 		pollIncomingConnections();
-		for (int i = 0; i < _activeSockets.size(); ++i)
+		for (int i = 0; i < _serverList.size(); ++i)
 		{
 			if (_activeSockets[i].revents == 0)
 				continue ;
-			if (_serverList[0].getSocket().getSocketFD() == _activeSockets[i].fd)
-				_serverList[0].acceptIncomingConnections(_activeSockets, _serverToPollMap);
-			else
-			{
-				_serverList[0].handleIncomingRequests(&_activeSockets[i], _serverToPollMap);
-//				_serverList[0].removeFd();
-			}
+			if (_serverList[i].getSocket().getSocketFD() == _activeSockets[i].fd)
+				_serverList[i].acceptIncomingConnections(_activeSockets, _serverToPollMap);
 		}
+		for (int i = 0; i < _serverList.size(); ++i)
+			_serverList[i].handleIncomingRequests(&_activeSockets[0], _serverToPollMap);
 		removeFd(_activeSockets);
 	}
 }
@@ -67,10 +62,13 @@ void	ServerManager::removeFd(std::vector<t_pollfd> &fds)
 
 bool ServerManager::startServers()
 {
-	if (!_serverList[0].startServer())
-		return (false);
-	std::cout << "Server Started:\n   Listening on port: " << _serverList[0].getConfiguration().getPort() << std::endl;
-	_activeSockets.push_back((t_pollfd){_serverList[0].getSocket().getSocketFD(), POLLIN, 0});
+	for (size_t i = 0; i < _serverList.size(); ++i)
+	{
+		if (!_serverList[i].startServer())
+			return (false);
+		std::cout << "Server Started:\n   Listening on port: " << _serverList[i].getConfiguration().getPort() << std::endl;
+		_activeSockets.push_back((t_pollfd){_serverList[i].getSocket().getSocketFD(), POLLIN, 0});
+	}
 	return (true);
 }
 

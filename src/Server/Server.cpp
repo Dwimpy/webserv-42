@@ -25,23 +25,6 @@ bool Server::startServer()
 }
 
 
-void Server::run()
-{
-//	while (!shouldExit)
-//	{
-//		int pollingStatus = _socketHandler.pollIncomingRequests();
-//
-//		if (pollingStatus == 0 && shouldExit)
-//			break ;
-//		else if (pollingStatus == -1 || pollingStatus == 0)
-//			continue ;
-//
-//		handleIncomingRequests();
-//	}
-//	close(_socketHandler.getServerSocket());
-	_socketHandler.cleanUpRemainingConnections();
-}
-
 void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPollMap &map)
 {
 	int		clientFd;
@@ -59,28 +42,6 @@ void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPo
 	}
 }
 
-//void Server::handleIncomingRequests()
-//{
-//	size_t	i;
-//    for (i = 0; i < _socketHandler.getActiveSocketsSize(); i++)
-//	{
-//		t_pollfd currentClient = _socketHandler.getClientAtIndex(i);
-//		if (SocketHandler::isReventPolling(currentClient.revents))
-//		{
-//			if (_socketHandler.isFdServerSocket(currentClient.fd))
-//				_socketHandler.acceptIncomingRequest();
-//			else if (sendResponse(currentClient))
-//				_socketHandler.removeClientAtIndexAndCloseFd(i);
-//			else
-//				continue ;
-//		}
-//		else if (SocketHandler::isReventError(currentClient.revents))
-//		{
-//			_socketHandler.removeClientAtIndexAndCloseFd(i);
-//		}
-//	}
-//}
-
 bool	Server::sendResponse(t_pollfd currentClient)
 {
 	ssize_t	bytes_received;
@@ -89,16 +50,12 @@ bool	Server::sendResponse(t_pollfd currentClient)
 	{
 		perror("ERROR reading from socket");
 		close(currentClient.fd);
-		currentClient.fd = -1;
-		currentClient.revents = 0;
 		return (false);
 	}
 	else if (bytes_received == 0)
 	{
 		perror("ERROR socket closed");
 		close(currentClient.fd);
-		currentClient.fd = -1;
-		currentClient.revents = 0;
 		return (false);
 	}
 	std::string response_msg = std::string(_buffer);
@@ -107,8 +64,6 @@ bool	Server::sendResponse(t_pollfd currentClient)
 	std::string response = responseObj.getResponse();
 	send(currentClient.fd, response.c_str(), response.size(), 0);
 	close(currentClient.fd);
-	currentClient.fd = -1;
-	currentClient.revents = 0;
 	return (true);
 }
 
@@ -135,27 +90,18 @@ bool	Server::sendResponse(Client client)
 void	Server::handleIncomingRequests(t_pollfd *pfd, indexToPollMap &map)
 {
     std::map<int, t_pollfd *>::iterator it;
-    std::vector<Client>::iterator it2;
-//	for (it = map[3].begin(); it != map[3].end();)
-//	{
-//		if (it->second->revents == POLLIN)
-//		{
-//			sendResponse(*it->second);
-//			it->second->fd = -1;
-//			it->second->revents = 0;
-//		}
-//		else
-//			++it;
-//	}
-		if (pfd->revents == POLLIN)
-		{
-			sendResponse(*pfd);
-			pfd->fd = -1;
-			pfd->revents = 0;
-		}
 
-//	_connectedClients.clear();
-    // Close sockets and clear the vector in one pass
+	for (it = map[this->_serverSocket.getSocketFD()].begin(); it != map[this->_serverSocket.getSocketFD()].end();)
+	{
+		if (it->second->revents == POLLIN)
+		{
+			sendResponse(*it->second);
+			it->second->fd = -1;
+			it->second->revents = 0;
+		}
+		else
+			it++;
+	}
 }
 
 void	Server::closeRemainingSockets()
