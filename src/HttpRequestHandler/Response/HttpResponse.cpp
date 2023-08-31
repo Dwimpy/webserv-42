@@ -7,9 +7,9 @@ void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
 {
     env.push_back("REQUEST_METHOD=POST" );
     env.push_back("QUERY_STRING=" );
-    env.push_back("SCRIPT_NAME=html/cgi/register_process.php" );
-    env.push_back("REQUEST_URI=html/cgi/register_process.php" );
-    env.push_back("PATH_INFO=html/cgi/register_process.php" );
+    env.push_back("SCRIPT_NAME=html/cgi/src/register_landing_page.rs" );
+    env.push_back("REQUEST_URI=html/cgi/src/register_landing_page.rs" );
+    env.push_back("PATH_INFO=html/cgi/src/register_landing_page.rs" );
     env.push_back("SERVER_PROTOCOL=HTTP/1.1");
     env.push_back("CONTENT_LENGTH=21");
     env.push_back("REMOTE_ADDR=" );
@@ -85,38 +85,33 @@ const std::string getProjectDir() {
 void    HttpResponse::childProcess(const HttpRequest &request)
 {
     std::vector<std::string> env;
-    std::string phpScript;
-    const std::string cgiPath = getProjectDir() + "/docs/";
+    std::string cgiScript;
+    char *environment[env.size() + 1];
+    std::string cgiPath = getProjectDir()  + "/src/cgi/target/release/" ;
 
-    if (!cgiPath.empty() && chdir(cgiPath.c_str()) == -1)
-        error("404 CGI path not found!");
+    if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
+        error("404 CGI path not found!"); /* set 404 page */
 
     createEnv(env, request);
-    char *environment[env.size() + 1];
 
     for (size_t i = 0; i < env.size(); i++)
         environment[i] = const_cast<char*>(env[i].c_str());
     environment[env.size()] = nullptr;
 
     if (_flag == 1)
-        phpScript = "register_process.php";
+        cgiPath += "register_landing_page";
     else
-        phpScript = "register.php";
+        cgiPath += "register";
 
-    char *arguments[3];
-    arguments[0] = const_cast<char*>("/usr/bin/php");
-    arguments[1] = const_cast<char*>((cgiPath + phpScript).c_str());
-    arguments[2] = nullptr;
-
+    std::cout << "PATHHHHHH: " << cgiPath << std::endl;
     dup2(_response_fd[1], STDOUT_FILENO);
     close(_response_fd[1]);
     close(_response_fd[0]);
-
     if (dup_request_to_stdin())
-        error("tmpfile creation failed!");
+        exit(error("tmpfile creation failed!"));
 
-    if (execl((cgiPath + "/cgi/target/release/cgi").c_str(), nullptr, environment) == -1)
-        error("execve failed!");
+    if (execl(cgiPath.c_str(), nullptr, environment) == -1)
+        exit(error("execve failed!"));
 }
 
 int	HttpResponse::parent_process() {
@@ -164,10 +159,10 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 	appendHttpProtocol(request);
 	appendStatusCode(request);
 	appendContentType(request);
-    if (request.getRequestUri() == "/register_process.php" || request.getRequestUri() == "/register.php")
+    if (request.getRequestUri() == "/register_landing_page.rs" || request.getRequestUri() == "/register.rs")
     {
         _flag = 0;
-        if (request.getRequestUri() == "/register_process.php")
+        if (request.getRequestUri() == "/register_landing_page.rs")
             _flag = 1;
 //        FILE*   tmp = tmpfile();
 //        _response_fd = fileno(tmp);

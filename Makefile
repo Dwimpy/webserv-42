@@ -6,7 +6,7 @@
 #    By: asioud <asioud@42heilbronn.de>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/21 14:38:01 by arobu             #+#    #+#              #
-#    Updated: 2023/08/31 13:15:54 by asioud           ###   ########.fr        #
+#    Updated: 2023/08/31 20:53:22 by asioud           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -93,6 +93,10 @@ show:
 
 rust:
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+build_cgi:
+	@cd ./src/cgi && cargo build --release
+
 
  clean:
 			@$(RM) -rdf $(OBJ_DIR)
