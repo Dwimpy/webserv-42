@@ -1,6 +1,8 @@
 extern crate askama;
 extern crate r2d2;
 
+
+
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
@@ -15,20 +17,19 @@ struct TemplateData;
 
 fn main() {
     let request_method = env::var("REQUEST_METHOD").unwrap_or_else(|_| String::from(""));
-
     if request_method == "POST" {
         let mut input_data = String::new();
         io::stdin().read_to_string(&mut input_data).expect("Failed to read input data");
-        
+
         let pairs: Vec<&str> = input_data.trim().split('&').collect();
         let mut data = HashMap::new();
-        
+
         let mut file = OpenOptions::new()
             .create(true)
             .append(true)
             .open("users.txt")
-            .expect("Failed to open usersd.txt");
-        
+            .expect("Failed to open users.txt");
+
         for pair in pairs
         {
             let parts: Vec<&str> = pair.split('=').collect();
@@ -40,9 +41,9 @@ fn main() {
                 let _ = writeln!(file, "{}: {}", key, value);
             }
             println!("Content-Type: text/html\n\n");
-            let template = TemplateData {};
-            println!("{}", template.render().unwrap());
         }
+        let template = TemplateData {};
+        println!("{}", template.render().unwrap());
     } else {
         println!("Content-Type: text/html\n\n");
         let template = TemplateData {};
