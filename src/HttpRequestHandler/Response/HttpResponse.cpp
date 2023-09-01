@@ -219,7 +219,7 @@ void	HttpResponse::appendHttpProtocol(const HttpRequest &request)
 
 void	HttpResponse::appendCookie(const HttpRequest &request)
 {
-	_response << "Set-Cookie: " << "name.gen()" << "=" << "value.gen()" << << "\r\n\r\n";
+	_response << "Set-Cookie: " << "name.gen()" << "=" << "value.gen()" << "\r\n\r\n";
 }
 void	HttpResponse::appendNewLine(const HttpRequest &request)
 {

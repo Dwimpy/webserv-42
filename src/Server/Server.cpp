@@ -42,30 +42,75 @@ void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPo
 	}
 }
 
+void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, std::map<t_pollfd *, int> &map)
+{
+	int		clientFd;
+
+	clientFd = 0;
+	while (true)
+	{
+		Client	newClient;
+		clientFd = _serverSocket.accept(newClient);
+		if (clientFd < 0)
+		{
+			if (errno == EWOULDBLOCK)
+				std::cerr << "Accept timed out" << std::endl;
+			else
+				break ;
+		}
+		else
+		{
+			this->_connectedClients.__emplace_back(newClient);
+			pollfds.__emplace_back((t_pollfd){clientFd, POLLIN, 0});
+			map[&pollfds.back()] = this->_serverSocket.getSocketFD() - 3;
+		}
+	}
+}
+
 bool	Server::sendResponse(t_pollfd currentClient)
 {
 	ssize_t	bytes_received;
 	memset(_buffer, 0, sizeof(_buffer));
 	if ((bytes_received = recv(currentClient.fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)
 	{
-		perror("ERROR reading from socket");
-		close(currentClient.fd);
-		return (false);
+		if (errno == EWOULDBLOCK || errno == EAGAIN)
+		{
+			std::cerr << "Socket timed out. Closing" << std::endl;
+			close(currentClient.fd);
+			currentClient.fd = -1;
+			currentClient.revents = 0;
+		}
+		else
+			perror("Error receiving data");
 	}
 	else if (bytes_received == 0)
 	{
-		perror("ERROR socket closed");
+		perror("ERROR connection closed by client");
 		close(currentClient.fd);
-		return (false);
+		currentClient.fd = -1;
+		currentClient.revents = 0;
 	}
-	std::cout << "\033[0;92m" << _buffer << "\033[0;39m" << std::endl;
-	std::string response_msg = std::string(_buffer);
-	HttpRequest request(response_msg);
-	HttpResponse responseObj(request, _config);
-	std::string response = responseObj.getResponse();
-	send(currentClient.fd, response.c_str(), response.size(), 0);
-	close(currentClient.fd);
-	return (true);
+	else
+	{
+		std::string response_msg = std::string(_buffer);
+		HttpRequest request(response_msg);
+		HttpResponse responseObj(request, _config);
+		std::string response = responseObj.getResponse();
+		bytes_received = send(currentClient.fd, response.c_str(), response.size(), 0);
+		if (bytes_received < 0)
+		{
+			perror("ERROR socket closed");
+			close(currentClient.fd);
+			currentClient.fd = -1;
+			currentClient.revents = 0;
+			return (false);
+		}
+		close(currentClient.fd);
+		currentClient.fd = -1;
+		currentClient.revents = 0;
+		return (true);
+	}
+	return (false);
 }
 
 bool	Server::sendResponse(Client client)

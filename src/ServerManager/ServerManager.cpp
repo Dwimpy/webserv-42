@@ -1,5 +1,6 @@
 #include "ServerManager.hpp"
 #include "Server.hpp"
+#include <unistd.h>
 
 static bool	shouldExit = false;
 
@@ -19,6 +20,7 @@ void	ServerManager::buildServers(const std::string &filePath)
 
 void ServerManager::pollIncomingConnections()
 {
+
 	try {
 		this->_pollReady = poll(_activeSockets.data(), _activeSockets.size(), -1);
 		if ((this->_pollReady < 0 && errno != EINTR) || this->_pollReady == 0)
@@ -34,16 +36,37 @@ void ServerManager::runServers()
 	while (!shouldExit)
 	{
 		pollIncomingConnections();
-		for (int i = 0; i < _serverList.size(); ++i)
+		for (unsigned long i = 0; i < _serverList.size(); ++i)
 		{
 			if (_activeSockets[i].revents == 0)
 				continue ;
 			if (_serverList[i].getSocket().getSocketFD() == _activeSockets[i].fd)
-				_serverList[i].acceptIncomingConnections(_activeSockets, _serverToPollMap);
+				_serverList[i].acceptIncomingConnections(_activeSockets, _pollToServerMap);
 		}
-		for (int i = 0; i < _serverList.size(); ++i)
-			_serverList[i].handleIncomingRequests(_serverToPollMap);
+		for (unsigned long i = _serverList.size(); i < _activeSockets.size(); ++i)
+		{
+			if (_activeSockets[i].revents == 0)
+				continue;
+			else if (_activeSockets[i].revents == POLLERR)
+			{
+				close(_activeSockets[i].fd);
+				_activeSockets[i].fd = -1;
+				_activeSockets[i].revents = 0;
+			}
+			else
+				handleServerRequests(&_activeSockets[i]);
+		}
 		removeFd(_activeSockets);
+	}
+}
+
+void	ServerManager::handleServerRequests(t_pollfd *pollfd)
+{
+	if (pollfd->revents == POLLIN)
+	{
+		this->_serverList[_pollToServerMap[pollfd]].sendResponse(*pollfd);
+		pollfd->revents = 0;
+		pollfd->fd = -1;
 	}
 }
 

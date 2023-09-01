@@ -68,8 +68,13 @@ int &ServerSocket::getSocketFD()
 int ServerSocket::accept(Client &client)
 {
 	int clientFd;
+	struct timeval timeout;
 
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 0;
 	clientFd = ::accept(this->_fd, (t_sockaddr *)&client.getClientSocket().getClientAddr(), &client.getClientSocket().getClientAddrLen());
+	setsockopt(clientFd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+	setsockopt(clientFd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
 	client.getClientSocket().setFd(clientFd);
 	return (clientFd);
 }
