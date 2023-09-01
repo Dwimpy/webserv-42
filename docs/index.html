@@ -20,14 +20,16 @@
         <h2 class="title">Webserver project</h2>
             <div class="buttonIn">
                 <div class="input-group">
-                    <input type="text" id="textField1" class="input-group__input" value="login" />
-                    <input type="text" id="textField2" class="input-group__input" value="password" />
-                <button id="submitButton" class="button">submit</button>
+                    <form action="login.rs" method="post">
+                        <input type="text" id="textField1" class="input-group__input" value="login" required />
+                        <input type="text" id="textField2" class="input-group__input" value="password" required />
+                        <input type="button" id="submitButton" class="button input-group__input" value="submit"/>
+                    </form>
                     <div>
                         <h2 class="title">
                             Not registered yet?
                         </h2>
-                        <a class="title" href="/Register.rs">Register here</a>
+                        <a class="title" href="/register.rs">Register here</a>
                     </div>
             </div>
         <h1 class="title">Duck a ducking dock</h1>

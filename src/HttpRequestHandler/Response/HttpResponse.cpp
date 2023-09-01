@@ -98,15 +98,19 @@ void    HttpResponse::childProcess(const HttpRequest &request)
         environment[i] = const_cast<char*>(env[i].c_str());
     environment[env.size()] = nullptr;
 
-    if (_flag == 1)
-        cgiPath += "register_landing_page";
-    else
+    if (_flag == 0)
         cgiPath += "register";
+    else if (_flag == 1)
+        cgiPath += "register_landing_page";
+    else if (_flag == 2)
+        cgiPath += "login";
+    else
+        error("no valid flag/path");
 
-    std::cout << "PATHHHHHH: " << cgiPath << std::endl;
     dup2(_response_fd[1], STDOUT_FILENO);
     close(_response_fd[1]);
     close(_response_fd[0]);
+
     if (dup_request_to_stdin())
         exit(error("tmpfile creation failed!"));
 
@@ -159,23 +163,29 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 	appendHttpProtocol(request);
 	appendStatusCode(request);
 	appendContentType(request);
-    if (request.getRequestUri() == "/register_landing_page.rs" || request.getRequestUri() == "/register.rs")
+    std::string uri = request.getRequestUri();
+    
+    if (uri == "/register_landing_page.rs" || uri == "/register.rs" || uri == "/login.rs")
     {
-        _flag = 0;
-        if (request.getRequestUri() == "/register_landing_page.rs")
+        if (uri == "/register_landing_page.rs")
             _flag = 1;
-//        FILE*   tmp = tmpfile();
-//        _response_fd = fileno(tmp);
+        else if (uri == "login.rs")
+            _flag = 2;
+        else
+            _flag = 0;
+
         if(pipe(_response_fd) == -1)
             std::cerr << ("tmpfile creation failed!") << std::endl;
-//        if (_response_fd < 0)
-        switch (fork()) {
+
+        switch (fork())
+        {
             case -1:
                 std::cerr << ("fork creation failed!") << std::endl;
                 break;
             case 0:
                 childProcess(request);
         }
+
         if (parent_process() != EXIT_SUCCESS){
             error("EXITED PARENT");
         }
@@ -188,7 +198,6 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
     else
         appendFileContents();
 }
-
 
 HttpResponse::HttpResponse()
 {}

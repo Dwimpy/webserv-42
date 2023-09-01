@@ -22,3 +22,7 @@ path = "src/register_landing_page.rs"
 [[bin]]
 name = "register"
 path = "src/register.rs"
+
+[[bin]]
+name = "login"
+path = "src/login.rs"
