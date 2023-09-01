@@ -8,12 +8,12 @@ use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
 use rusqlite::params;
 use rusqlite::Connection;
+use std::io::{self, Read};
 
 use rusqlite::Error;
 
 
 use std::collections::HashMap;
-use std::io;
 use std::io::prelude::*;
 use std::env;
 use askama::Template;
@@ -32,37 +32,70 @@ struct RegisterTemplate {
 
 
 fn main() -> Result<(), Error> {
+
+        // Get the value of the "Cookie" environment variable
+        // let cookie = env::var("Cookie").unwrap_or_else(|_| String::from(""));
+    let cookie = match env::var("Cookie") {
+        Ok(value) => value,
+        Err(_) => String::from(""),
+    };
+
+    // Check if the cookie value matches "user=cookie"
+    if cookie == "user:cookie" {
+        println!("Cookie matches the expected value.{}.", cookie);
+        //     access the cookie data and check if the user is logged in
+        //     //that's curious! maybe have a cookie field in a db which will get a cookie connection after log in
+        //     // needs to be cleared every time we end the session(optional) needs to be changed every log in (also check if this cookie value exists for someone else, throw an error then)
+        //     //if he is then we retrieve and display his data
+        //     //if not then we strongly recommend him to log in
+        //     //he enters his credential and we compare them to db
+        //     //if the user exists we retrieve and display his profile
+        //     //if not we throw an error and suggest him to register
+        //     //registration form
+        //     //login password name date of birth
+        //     //after that we save the data and redirect to login
+        //     //process loops
+    } else {
+        println!("Cookie does not match the expected value.{}.", cookie);
+    }
+
+    println!("<br>");
+
+
+
     // Specify the database file path (e.g., "mydb.sqlite")
     let db_path = "mydb.sqlite";
 
     // Open a connection to the database
     let conn = Connection::open(db_path)?;
+    // println!("HEHHEHHEHEHEE<br>");
     // Create a table (e.g., "users")
     conn.execute(
         "CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL,
-                password TEXT NOT NULL
+                password TEXT NOT NULL,
+                cookie TEXT
             )",
         [],
     )
         .expect("Failed to create table");
 
-
-    conn.execute(
-        "INSERT INTO users (username, password) VALUES (?, ?)",
-        [&"user2", &"password1"],
-    )
-        .expect("Failed to insert data");
+    // conn.execute(
+    //     "INSERT INTO users (username, password, cookie) VALUES (?, ?, ?)",
+    //     [&"user2", &"password1", &"cookieValue"],
+    // )
+    //     .expect("Failed to insert data");
 
     // Execute a SELECT query to retrieve all rows from the "users" table
-    let query = "SELECT id, username, password FROM users";
+    let query = "SELECT id, username, password, cookie FROM users";
     let mut stmt = conn.prepare(query)?;
     let rows = stmt.query_map([], |row| {
         Ok((
             row.get::<_, i64>(0)?,
             row.get::<_, String>(1)?,
             row.get::<_, String>(2)?,
+            row.get::<_, String>(3)?,
         ))
     })?;
 
@@ -72,10 +105,17 @@ fn main() -> Result<(), Error> {
         let id: i64 = row.0;
         let username: String = row.1;
         let password: String = row.2;
+        let cookie: String = row.3;
 
-        println!("User ID: {}, Username: {}, Password: {}", id, username, password);
+        println!("User ID: {}, Username: {}, Password: {}, Cookie: {}", id, username, password, cookie);
         println!("<br>");
     }
+
+    let mut input_data = String::new();
+
+    io::stdin().read_to_string(&mut input_data).expect("Failed to read input data");
+    println!("{}", input_data);
+    println!("<br>");
 
     println!("Database and table created successfully.");
     let template = TemplateData {};

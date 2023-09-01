@@ -14,6 +14,8 @@ class HttpResponse{
 	void				appendHttpProtocol(const HttpRequest &request);
 	void				appendStatusCode(const HttpRequest &request);
 	void				appendContentType(const HttpRequest &request);
+    void	            appendCookie(const HttpRequest &request);
+    void	            appendNewLine(const HttpRequest &request);
 	void				appendFileContents();
 	void				fileExists(const HttpRequest &request, const ServerConfig &config);
 	std::string			getContentType(const HttpRequest &request);

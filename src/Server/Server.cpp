@@ -58,6 +58,7 @@ bool	Server::sendResponse(t_pollfd currentClient)
 		close(currentClient.fd);
 		return (false);
 	}
+	std::cout << "\033[0;92m" << _buffer << "\033[0;39m" << std::endl;
 	std::string response_msg = std::string(_buffer);
 	HttpRequest request(response_msg);
 	HttpResponse responseObj(request, _config);

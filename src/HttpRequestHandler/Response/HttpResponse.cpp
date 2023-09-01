@@ -16,6 +16,7 @@ void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
     env.push_back("HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" );
     env.push_back("RESPONSE_HEADER=HTTP/1.1 200 OK" );
     env.push_back("CONTENT_TYPE=application/x-www-form-urlencoded" );
+	env.push_back("Cookie=user:cookie" );
 //    env.push_back("$_POST[\"username\"] = \"johndoe\"");
 //    env.push_back("$_POST[\"password\"] = \"secretpassword\"");
 //    env.push_back("CONTENT_BODY=username=s&password=s");
@@ -166,8 +167,11 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 	appendHttpProtocol(request);
 	appendStatusCode(request);
 	appendContentType(request);
+    if (request.getValueByKey("Cookie") == "")
+        appendCookie(request);
+	else
+        appendNewLine(request);
     std::string uri = request.getRequestUri();
-    
     if (uri == "/register_landing_page.rs" || uri == "/register.rs" || uri == "/login.rs")
     {
         if (uri == "/register_landing_page.rs")
@@ -213,6 +217,15 @@ void	HttpResponse::appendHttpProtocol(const HttpRequest &request)
 	_response << "HTTP/" << request.getVersionMajor() << "." << request.getVersionMinor() << " ";
 }
 
+void	HttpResponse::appendCookie(const HttpRequest &request)
+{
+	_response << "Set-Cookie: " << "name.gen()" << "=" << "value.gen()" << << "\r\n\r\n";
+}
+void	HttpResponse::appendNewLine(const HttpRequest &request)
+{
+	_response << "\r\n";
+}
+
 void	HttpResponse::appendStatusCode(const HttpRequest &request)
 {
 	_response << _statusCode << " " << _statusError << "\r\n";
@@ -220,7 +233,7 @@ void	HttpResponse::appendStatusCode(const HttpRequest &request)
 
 void	HttpResponse::appendContentType(const HttpRequest &request)
 {
-	_response << "Content-Type: " << getContentType(request) << "\r\n\r\n";
+	_response << "Content-Type: " << getContentType(request) << "\r\n";
 }
 
 void	HttpResponse::appendFileContents()
