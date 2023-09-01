@@ -30,6 +30,8 @@ class Server {
 
 	void	handleIncomingRequests(indexToPollMap &map);
 	void 	acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPollMap &map);
+	void	 acceptIncomingConnections(std::vector<t_pollfd> &pollfds, std::map<t_pollfd *, int> &map);
+
 	bool	sendResponse(t_pollfd currentClient);
 	bool	sendResponse(Client client);
 

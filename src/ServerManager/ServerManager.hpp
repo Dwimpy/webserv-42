@@ -14,6 +14,7 @@ class ServerManager{
 	bool	startServers();
 	void	runServers();
 	void 	pollIncomingConnections();
+	void	handleServerRequests(t_pollfd *pollfd);
 
 
   private:
@@ -22,6 +23,7 @@ class ServerManager{
 	std::vector<t_pollfd>		_activeSockets;
 	ServerConfigurator			_serverConfigurator;
 	indexToPollMap				_serverToPollMap;
+	std::map<t_pollfd *, int> 	_pollToServerMap;
 
 	void	parseConfigurationFile(const std::string &filePath);
 	void	createAndConfigureServers();

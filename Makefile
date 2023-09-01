@@ -113,6 +113,9 @@ fclean:		clean
 			@$(RM) -f $(NAME)
 			@echo "$(YELLOW)All$(DEF_COLOR) $(CYAN)objects successfully cleaned!$(DEF_COLOR)"
 
+cgi_clean:
+			@cd ./src/cgi && cargo clean
+
 re:			fclean all
 
 .PHONY:		all clean fclean re
