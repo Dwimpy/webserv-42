@@ -76,6 +76,45 @@ fn main() {
         )
         .expect("Failed to create table");
 
+
+        // conn.execute(
+        //     "INSERT INTO users (username, password) VALUES (?, ?)",
+        //     [&"user2", &"password1"],
+        // )
+        // .expect("Failed to insert data");
+
+        let mut stmt = conn
+            .prepare("SELECT id, username, password FROM users WHERE id = ?")
+            .expect("Failed to prepare query");
+
+        let user_id_to_find = 4;
+        let mut rows = stmt
+            .query(&[&user_id_to_find])
+            .expect("Failed to execute query");
+
+        while let Some(row) = rows.next().expect("Failed to retrieve row") {
+            let id: i64 = row.get(0).expect("Failed to get ID");
+            let username: String = row.get(1).expect("Failed to get username");
+            let password: String = row.get(2).expect("Failed to get password");
+
+            println!("User ID: {}, Username: {}, password {}",id, username, password);
+        }
+    // let mut stmt = conn.prepare("SELECT id, username, password FROM users");
+    // let mut rows = stmt.expect("failed query").query([]);
+
+    // Iterate through the results and print the data
+    // for row in rows {
+    //     let row = row;
+    //     let id: i64 = row.get(0);
+    //     let username: String = row.get(1);
+    //     let password: String = row.get(2);
+
+        // println!("ID: {}, Username: {}, Password: {}", id, username, password);
+    // }
+
+    // Close the database connection
+    //     conn.close().expect("Failed to close database connection");
+
         println!("Database and table created successfully.");
         let template = TemplateData {};
         println!("{}", template.render().unwrap());

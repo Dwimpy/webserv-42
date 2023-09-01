@@ -101,7 +101,7 @@ show:
 rust:
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-build_cgi:
+cgi:
 	@cd ./src/cgi && cargo build --release
 
  clean:

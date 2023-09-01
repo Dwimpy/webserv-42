@@ -93,17 +93,10 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
         error("404 CGI path not found!"); /* set 404 page */
 
-
     for (size_t i = 0; i < env.size(); i++)
-	{
         environment[i] = const_cast<char *>(env[i].c_str());
-		std::cout << environment[i] << std::endl;
-	}
     environment[env.size()] = nullptr;
 
-	char *env1[2];
-	env1[0] = (char *)"REQUEST_METHOD=POST";
-	env1[1] = nullptr;
     if (_flag == 0)
         cgiPath += "register";
     else if (_flag == 1)
@@ -119,9 +112,11 @@ void    HttpResponse::childProcess(const HttpRequest &request)
 
     if (dup_request_to_stdin())
         exit(error("tmpfile creation failed!"));
+
 	char *args[2];
 	args[0] = (char *)cgiPath.c_str();
 	args[1] = nullptr;
+
     if (execve(cgiPath.c_str(), args, environment) == -1)
         exit(error("execve failed!"));
 }
