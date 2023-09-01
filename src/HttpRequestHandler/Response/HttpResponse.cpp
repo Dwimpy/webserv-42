@@ -86,18 +86,24 @@ void    HttpResponse::childProcess(const HttpRequest &request)
 {
     std::vector<std::string> env;
     std::string cgiScript;
+    createEnv(env, request);
     char *environment[env.size() + 1];
     std::string cgiPath = getProjectDir()  + "/src/cgi/target/release/" ;
 
     if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
         error("404 CGI path not found!"); /* set 404 page */
 
-    createEnv(env, request);
 
     for (size_t i = 0; i < env.size(); i++)
-        environment[i] = const_cast<char*>(env[i].c_str());
+	{
+        environment[i] = const_cast<char *>(env[i].c_str());
+		std::cout << environment[i] << std::endl;
+	}
     environment[env.size()] = nullptr;
 
+	char *env1[2];
+	env1[0] = (char *)"REQUEST_METHOD=POST";
+	env1[1] = nullptr;
     if (_flag == 0)
         cgiPath += "register";
     else if (_flag == 1)
@@ -113,8 +119,10 @@ void    HttpResponse::childProcess(const HttpRequest &request)
 
     if (dup_request_to_stdin())
         exit(error("tmpfile creation failed!"));
-
-    if (execl(cgiPath.c_str(), nullptr, environment) == -1)
+	char *args[2];
+	args[0] = (char *)cgiPath.c_str();
+	args[1] = nullptr;
+    if (execve(cgiPath.c_str(), args, environment) == -1)
         exit(error("execve failed!"));
 }
 

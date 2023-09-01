@@ -109,6 +109,4 @@ fclean:		clean
 
 re:			fclean all
 
-bonus:	libft	mlx	$(NAME)
-
 .PHONY:		all clean fclean re
