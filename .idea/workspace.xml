@@ -4,17 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="CMakeRunConfigurationManager">
-    <generated>
-      <config projectName="webserv-42" targetName="bonus" />
-      <config projectName="webserv-42" targetName="obj" />
-      <config projectName="webserv-42" targetName="all" />
-      <config projectName="webserv-42" targetName="libft" />
-      <config projectName="webserv-42" targetName="re" />
-      <config projectName="webserv-42" targetName="show" />
-      <config projectName="webserv-42" targetName="webserv" />
-      <config projectName="webserv-42" targetName="fclean" />
-      <config projectName="webserv-42" targetName="mlx" />
-    </generated>
+    <generated />
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -23,18 +13,66 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf9fe8c6-b6e2-4265-8245-d6e071a6dde1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeCache.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/3.26.4/CMakeCCompiler.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/3.26.4/CMakeCXXCompiler.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/3.26.4/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/3.26.4/CMakeDetermineCompilerABI_CXX.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/3.26.4/CMakeSystem.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/3.26.4/CompilerIdC/CMakeCCompilerId.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/3.26.4/CompilerIdCXX/CMakeCXXCompilerId.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/CMakeConfigureLog.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/CMakeDirectoryInformation.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/Makefile.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/Makefile2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/Progress/1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/Progress/count.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/clion-Default-log.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/cmake.check_cache" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/progress.marks" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/webserver.dir/DependInfo.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/webserver.dir/build.make" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/webserver.dir/cmake_clean.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/webserver.dir/compiler_depend.make" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/webserver.dir/compiler_depend.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/webserver.dir/depend.make" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/webserver.dir/flags.make" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/webserver.dir/link.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeFiles/webserver.dir/progress.make" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmake_install.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/css/error.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/js/stars.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/Cargo.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/Cargo.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/build.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/src/database.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/src/login.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/src/register.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/src/register_landing_page.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/templates/tProfile.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/templates/tRegisterLandingPage.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/templates/tRegisterPage.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cgi/users.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/webserv-42.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webserv-42.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/default.conf" beforeDir="false" afterPath="$PROJECT_DIR$/default.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Client/Client.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client/Client.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Client/Client.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client/Client.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ConfigFile/ConfigFile.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/ConfigFile.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ConfigFile/Directive/Directive.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/Directive/Directive.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ConfigFile/Directive/Directive.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigFile/Directive/Directive.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/error_pages/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/error_pages/404.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/js/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/docs/js/script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Server/Server.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server/Server.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerManager/ServerManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerManager/ServerManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerManager/ServerManager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerManager/ServerManager.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Socket/ClientSocket/ClientSocket.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Socket/ClientSocket/ClientSocket.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,68 +170,12 @@
       <recent name="$PROJECT_DIR$/src/Page" />
     </key>
   </component>
-  <component name="RunManager" selected="Makefile Application.all">
-    <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="all" CONFIG_NAME="all" version="1">
+  <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration name="bonus" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="bonus" CONFIG_NAME="bonus" version="1">
-      <method v="2">
-        <option name="CLION.COMPOUND.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="fclean" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="fclean" CONFIG_NAME="fclean" version="1">
-      <method v="2">
-        <option name="CLION.COMPOUND.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="libft" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="libft" CONFIG_NAME="libft" version="1">
-      <method v="2">
-        <option name="CLION.COMPOUND.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="mlx" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="mlx" CONFIG_NAME="mlx" version="1">
-      <method v="2">
-        <option name="CLION.COMPOUND.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="obj" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="obj" CONFIG_NAME="obj" version="1">
-      <method v="2">
-        <option name="CLION.COMPOUND.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="re" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="re" CONFIG_NAME="re" version="1">
-      <method v="2">
-        <option name="CLION.COMPOUND.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="show" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="show" CONFIG_NAME="show" version="1">
-      <method v="2">
-        <option name="CLION.COMPOUND.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="webserv" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv-42" TARGET_NAME="webserv" CONFIG_NAME="webserv" version="1">
-      <method v="2">
-        <option name="CLION.COMPOUND.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Makefile Application.all" />
-      <item itemvalue="Makefile Application.fclean" />
-      <item itemvalue="Makefile Application.re" />
-      <item itemvalue="Makefile Application.bonus" />
-      <item itemvalue="Makefile Application.libft" />
-      <item itemvalue="Makefile Application.mlx" />
-      <item itemvalue="Makefile Application.obj" />
-      <item itemvalue="Makefile Application.show" />
-      <item itemvalue="Makefile Application.webserv" />
-    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

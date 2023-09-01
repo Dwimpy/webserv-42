@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
+#    By: asioud <asioud@42heilbronn.de>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/21 14:38:01 by arobu             #+#    #+#              #
-#    Updated: 2023/08/09 05:04:05 by arobu            ###   ########.fr        #
+#    Updated: 2023/08/31 20:53:22 by asioud           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRe
 				  ./src/ConfigFile/LocationBlock ./src/ConfigFile/ServerBlock ./src/ConfigFile/ServerConfigurator \
 				  ./src/Parser/HttpRequestParser ./src/Parser/ConfigFileParser ./src/Socket/ISocket ./src/Socket/ServerSocket \
 				  ./src/Socket/ClientSocket
+
 
 # Includes
 INCLUDE			= -I ./src/Server
@@ -42,10 +43,11 @@ INCLUDE			+= -I ./src/ConfigFile/ServerConfigurator
 
 INCLUDE			+= -I ./src/Parser/HttpRequestParser
 INCLUDE			+= -I ./src/Parser/ConfigFileParser
-
 INCLUDE			+= -I ./src/Socket/ISocket
 INCLUDE			+= -I ./src/Socket/ServerSocket
 INCLUDE			+= -I ./src/Socket/ClientSocket
+
+
 
 # Diretories
 SRC_DIR			= ./src
@@ -96,6 +98,12 @@ $(OBJ_DIR):
 show:
 	@echo $(OBJS)
 
+rust:
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+build_cgi:
+	@cd ./src/cgi && cargo build --release
+
  clean:
 			@$(RM) -rdf $(OBJ_DIR)
 			@$(RM) -rdf $(DSYM)
@@ -106,7 +114,5 @@ fclean:		clean
 			@echo "$(YELLOW)All$(DEF_COLOR) $(CYAN)objects successfully cleaned!$(DEF_COLOR)"
 
 re:			fclean all
-
-bonus:	libft	mlx	$(NAME)
 
 .PHONY:		all clean fclean re
