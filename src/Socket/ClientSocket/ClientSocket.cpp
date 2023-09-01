@@ -27,6 +27,7 @@ void ClientSocket::setFd(int fd)
 	this->_fd = fd;
 
 }
+
 const int &ClientSocket::getFd() const
 {
 	return (this->_fd);

@@ -12,7 +12,10 @@ class Client{
 	~Client();
 	const std::string &getClientSession() const;
 
-	ClientSocket	&getClientSocket();
+	const ClientSocket	&getClientSocket() const;
+	void	setClientFd(int fd);
+	void	setClientFd(int fd) const;
+	ClientSocket 	&getClientSocket();
 
   private:
 	std::string		_sessionId;

@@ -15,8 +15,6 @@ class ServerManager{
 	void	runServers();
 	void 	pollIncomingConnections();
 
-	void	initServers();
-
 
   private:
 	int							_pollReady;

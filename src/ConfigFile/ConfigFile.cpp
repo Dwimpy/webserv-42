@@ -20,6 +20,11 @@ ConfigFile::ConfigFile(const ServerBlock &serverBlock)
 	for (size_t i = 0; i < dirVectorSize; ++i)
 	{
 		dir = serverBlock.getServerDirectives()[i];
+		if (!dir.isValidDirective())
+		{
+			std::cerr << "Invalid directive provided: " << dir.getKey() << std::endl;
+			exit(1);
+		}
 		addServerDirective(dir.getKey(), dir.getValue());
 	}
 	for (size_t i = 0; i < locBlocksSize; ++i)
@@ -29,6 +34,11 @@ ConfigFile::ConfigFile(const ServerBlock &serverBlock)
 		for (size_t j = 0; j < loc.getDirectives().size(); ++j)
 		{
 			dir = loc.getDirectives()[j];
+			if (!dir.isValidDirective())
+			{
+				std::cerr << "Invalid location directive provided: " << dir.getKey() << std::endl;
+				exit(1);
+			}
 			addLocationDirective(path, dir.getKey(), dir.getValue());
 		}
 	}

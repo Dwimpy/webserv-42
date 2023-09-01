@@ -60,6 +60,7 @@ void	ServerManager::removeFd(std::vector<t_pollfd> &fds)
 	}
 }
 
+
 bool ServerManager::startServers()
 {
 	for (size_t i = 0; i < _serverList.size(); ++i)

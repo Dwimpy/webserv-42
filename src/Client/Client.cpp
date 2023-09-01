@@ -24,7 +24,17 @@ const std::string &Client::getClientSession() const
 	return (this->_sessionId);
 }
 
+const ClientSocket &Client::getClientSocket() const
+{
+	return (this->_clientSocket);
+}
+
 ClientSocket &Client::getClientSocket()
 {
 	return (this->_clientSocket);
+}
+
+void Client::setClientFd(int fd)
+{
+	this->_clientSocket.setFd(fd);
 }

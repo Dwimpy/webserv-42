@@ -31,10 +31,12 @@ class Server {
 	void	handleIncomingRequests(indexToPollMap &map);
 	void 	acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPollMap &map);
 	bool	sendResponse(t_pollfd currentClient);
+	bool	sendResponse(Client client);
 
 	const ConfigFile	&getConfiguration() const;
 	ServerSocket getSocket() const;
 	void	removeFd();
+	void	removeClient();
 
   private:
 	char							_buffer[8192];
