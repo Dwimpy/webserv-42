@@ -13,12 +13,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf9fe8c6-b6e2-4265-8245-d6e071a6dde1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HttpRequestHandler/Response/HttpResponse.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cgi/src/register.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/cgi/src/register.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -117,7 +112,7 @@
       <workItem from="1693570643833" duration="2924000" />
       <workItem from="1693573975859" duration="8153000" />
       <workItem from="1693591432909" duration="421000" />
-      <workItem from="1693591874715" duration="1095000" />
+      <workItem from="1693591874715" duration="2973000" />
     </task>
     <servers />
   </component>
