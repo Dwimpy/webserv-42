@@ -51,7 +51,7 @@ void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
 //        _request.env.push_back("HTTP_COOKIE=");
 }
 
-int HttpResponse::dup_request_to_stdin() {
+int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
 //    int fd = tmp_fd();
 //    FILE*   tmp = tmpfile();
 //    int fd = fileno(tmp);
@@ -60,7 +60,8 @@ int HttpResponse::dup_request_to_stdin() {
         return EXIT_FAILURE;
     std::string query;
     //cookie here
-    query.append("username=s&password=s");
+//    query.append("username=s&password=s");
+    query.append(request.getFullBody());
     if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
     {
         close(fd[STDIN_FILENO]);
@@ -123,7 +124,7 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     close(_response_fd[1]);
     close(_response_fd[0]);
 
-    if (dup_request_to_stdin())
+    if (dup_request_to_stdin(request))
         exit(error("tmpfile creation failed!"));
 
 	char *args[2];
@@ -240,6 +241,12 @@ void	HttpResponse::appendNewLine(const HttpRequest &request)
 {
 	_response << "\r\n";
 }
+
+void	HttpResponse::deleteCookie(const HttpRequest &request)
+{
+	_response << "Set-Cookie: " << request.getValueByKey("Cookie") << "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;" << "\r\n\r\n";
+}
+
 
 void	HttpResponse::appendStatusCode(const HttpRequest &request)
 {

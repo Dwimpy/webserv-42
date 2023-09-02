@@ -17,6 +17,7 @@ class HttpResponse{
     void	            appendCookie(const HttpRequest &request);
     void	            appendNewLine(const HttpRequest &request);
 	void				appendFileContents();
+	void				deleteCookie(const HttpRequest &request);
 	void				fileExists(const HttpRequest &request, const ServerConfig &config);
 	std::string			getContentType(const HttpRequest &request);
 	std::string			getFileName(const HttpRequest &request);
@@ -25,7 +26,7 @@ class HttpResponse{
     int                 write_response();
     void                childProcess(const HttpRequest &request);
     int                 parent_process();
-    int                 dup_request_to_stdin();
+    int                 dup_request_to_stdin(const HttpRequest &request);
   private:
 	unsigned int		_statusCode;
 	std::string			_statusError;

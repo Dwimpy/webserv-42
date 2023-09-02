@@ -10,10 +10,7 @@ HttpRequest::HttpRequest(const std::string &request): _versionMajor(1), _version
 
 	HttpRequestParser::parseRequest(*this, str, str + request.size());
 	HttpRequestParser::resetParser();
-	for (Header h : _body)
-	{
-		std::cout << "Key: " <<  h.getKey() << "\t" << "Value: " << h.getValue() << std::endl;
-	}
+//	getFullBody();
 }
 
 HttpRequest::~HttpRequest()
@@ -113,15 +110,16 @@ const std::string HttpRequest::getFullBody() const
 	size_t	idx;
 
 	idx = 0;
-	for (Header h : _body)
+	for (std::vector<Header>::const_iterator it = _body.begin(); it < _body.end(); it++)
 	{
 		idx++;
-		str << h.getKey();
+		str << it->getKey();
 		str << "=";
-		str << h.getValue();
+		str << it->getValue();
 		if (idx != _body.size())
 			str << "&";
 	}
+	std::cout << str.str() << std::endl;
 	return (str.str());
 }
 
