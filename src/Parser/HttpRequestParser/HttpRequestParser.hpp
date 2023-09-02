@@ -28,6 +28,11 @@ class HttpRequestParser{
 		StateHeaderValue,
 		StateNewLineCR,
 		StateNewLineLF,
+		StateEndRequest,
+		StateBodyStart,
+		StateBodyKey,
+		StateBodyValue,
+		StateBodyNextHeader
 	};
 
   public:
@@ -60,8 +65,11 @@ class HttpRequestParser{
 	static void parseStateHeaderValue(HttpRequest &request, char c);
 	static void parseStateNewLineCR(HttpRequest &request, char c);
 	static void parseStateNewLineLF(HttpRequest &request, char c);
-
-
+	static void	parseStateEndRequest(HttpRequest &request, char c);
+	static void parseStateBodyStart(HttpRequest &request, char c);
+	static void parseStateBodyKey(HttpRequest &request, char c);
+	static void parseStateBodyValue(HttpRequest &request, char c);
+	static void parseStateBodyNextHeader(HttpRequest &request, char c);
 	static ParserResult		_result;
 	static ParserState		_state;
 

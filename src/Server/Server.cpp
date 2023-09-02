@@ -73,27 +73,19 @@ bool	Server::sendResponse(t_pollfd currentClient)
 	memset(_buffer, 0, sizeof(_buffer));
 	if ((bytes_received = recv(currentClient.fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)
 	{
-		if (errno == EWOULDBLOCK || errno == EAGAIN)
-		{
-			std::cerr << "Socket timed out. Closing" << std::endl;
-			close(currentClient.fd);
-			currentClient.fd = -1;
-			currentClient.revents = 0;
-		}
-		else
-			perror("Error receiving data");
+		close(currentClient.fd);
+		perror("Error receiving data");
 	}
 	else if (bytes_received == 0)
 	{
 		perror("ERROR connection closed by client");
 		close(currentClient.fd);
-		currentClient.fd = -1;
-		currentClient.revents = 0;
 	}
 	else
 	{
 		std::string response_msg = std::string(_buffer);
 		HttpRequest request(response_msg);
+		std::cout << request.getValueByKey("key1");
 		HttpResponse responseObj(request, _config);
 		std::string response = responseObj.getResponse();
 		bytes_received = send(currentClient.fd, response.c_str(), response.size(), 0);
@@ -101,13 +93,9 @@ bool	Server::sendResponse(t_pollfd currentClient)
 		{
 			perror("ERROR socket closed");
 			close(currentClient.fd);
-			currentClient.fd = -1;
-			currentClient.revents = 0;
 			return (false);
 		}
 		close(currentClient.fd);
-		currentClient.fd = -1;
-		currentClient.revents = 0;
 		return (true);
 	}
 	return (false);

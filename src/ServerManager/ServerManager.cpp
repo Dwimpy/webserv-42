@@ -36,7 +36,7 @@ void ServerManager::runServers()
 	while (!shouldExit)
 	{
 		pollIncomingConnections();
-		for (unsigned long i = 0; i < _serverList.size(); ++i)
+		for (unsigned long i = 0; i < 1; ++i)
 		{
 			if (_activeSockets[i].revents == 0)
 				continue ;
@@ -64,7 +64,7 @@ void	ServerManager::handleServerRequests(t_pollfd *pollfd)
 {
 	if (pollfd->revents == POLLIN)
 	{
-		this->_serverList[_pollToServerMap[pollfd]].sendResponse(*pollfd);
+		this->_serverList[0].sendResponse(*pollfd);
 		pollfd->revents = 0;
 		pollfd->fd = -1;
 	}
