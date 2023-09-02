@@ -50,7 +50,7 @@ bool ServerSocket::listen()
 {
 	try
 	{
-		if ((::listen(this->_fd, 512)) < 0)
+		if ((::listen(this->_fd, 1024)) < 0)
 			throw std::runtime_error("Error listening on Socket\n");
 		return (true);
 	} catch (std::exception &e)

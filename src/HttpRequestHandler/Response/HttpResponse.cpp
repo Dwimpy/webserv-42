@@ -185,6 +185,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 	else
         appendNewLine(request);
 //		deleteCookie(request);
+
     std::string uri = request.getRequestUri();
 
     if (uri == "/register_landing_page.rs" || uri == "/profile.rs" || uri == "/login.rs" || uri == "/register.rs")

@@ -73,9 +73,15 @@ pub mod utils {
         let count: i32 = stmt.query_row(&[username, password], |row| row.get(0))?;
 
         // If the count is 1, it means a matching user was found, and the credentials are correct
+
         // println!("count is {}, {}, {}", count, username, password);
         // Ok(count > 1)
         Ok(count == 1) // TODO: Uncomment this line and delete the line above
+
+        // println!("<script> alert(\"{}, {}, {}\")</script>", count, username, password);
+        // Ok(count > 1)
+        // Ok(count == 1) // TODO: Uncomment this line and delete the line above
+
     }
 
     pub fn add_cookie_to_database(username: &str, cookie_value: &str) -> Result<(), Error> {

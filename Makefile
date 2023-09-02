@@ -101,7 +101,7 @@ show:
 rust:
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-build_cgi:
+cgi:
 	@cd ./src/cgi && cargo build --release
 
  clean:
@@ -113,9 +113,9 @@ fclean:		clean
 			@$(RM) -f $(NAME)
 			@echo "$(YELLOW)All$(DEF_COLOR) $(CYAN)objects successfully cleaned!$(DEF_COLOR)"
 
-cgi_clean:
+cgiclean:
 	@cd ./src/cgi && cargo clean
 
 re:			fclean all
 
-.PHONY:		all clean fclean re
+.PHONY:		all clean cgi cgiclean fclean re

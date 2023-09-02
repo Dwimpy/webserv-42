@@ -1,6 +1,7 @@
 #include "ServerManager.hpp"
 #include "Server.hpp"
 #include <unistd.h>
+#include <sys/event.h>
 
 static bool	shouldExit = false;
 
@@ -33,31 +34,88 @@ void ServerManager::pollIncomingConnections()
 
 void ServerManager::runServers()
 {
-	while (!shouldExit)
-	{
-		pollIncomingConnections();
-		for (unsigned long i = 0; i < 1; ++i)
-		{
-			if (_activeSockets[i].revents == 0)
-				continue ;
-			if (_serverList[i].getSocket().getSocketFD() == _activeSockets[i].fd)
-				_serverList[i].acceptIncomingConnections(_activeSockets, _pollToServerMap);
-		}
-		for (unsigned long i = _serverList.size(); i < _activeSockets.size(); ++i)
-		{
-			if (_activeSockets[i].revents == 0)
-				continue;
-			else if (_activeSockets[i].revents == POLLERR)
-			{
-				close(_activeSockets[i].fd);
-				_activeSockets[i].fd = -1;
-				_activeSockets[i].revents = 0;
-			}
-			else
-				handleServerRequests(&_activeSockets[i]);
-		}
-		removeFd(_activeSockets);
-	}
+
+	  int socket_listen_fd,
+        portno = 1815,
+        client_len,
+        socket_connection_fd,
+        kq,
+        new_events;
+    struct kevent change_event[25],
+        event[4];
+    struct sockaddr_in serv_addr,
+        client_addr;
+	int clientfd;
+	kq = kqueue();
+
+    // Create event 'filter', these are the events we want to monitor.
+    // Here we want to monitor: socket_listen_fd, for the events: EVFILT_READ
+    // (when there is data to be read on the socket), and perform the following
+    // actions on this kevent: EV_ADD and EV_ENABLE (add the event to the kqueue
+    // and enable it).
+    EV_SET(change_event, _serverList[0].getSocket().getSocketFD(), EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
+
+    // Register kevent with the kqueue.
+    if (kevent(kq, change_event, 1, NULL, 0, NULL) == -1)
+    {
+        perror("kevent");
+        exit(1);
+    }
+
+    // Actual event loop.
+    for (;;)
+    {
+        // Check for new events, but do not register new events with
+        // the kqueue. Hence the 2nd and 3rd arguments are NULL, 0.
+        // Only handle 1 new event per iteration in the loop; 5th
+        // argument is 1.
+        new_events = kevent(kq, nullptr, 0, event, 1, nullptr);
+        if (new_events == -1)
+        {
+            perror("kevent");
+            exit(1);
+        }
+
+     for (int i = 0; new_events > i; i++)
+    {
+        int event_fd = event[i].ident;
+
+        if (event[i].flags & EV_EOF)
+        {
+            printf("Client has disconnected\n");
+            close(event_fd);
+            continue;
+        }
+        else if (event_fd == _serverList[0].getSocket().getSocketFD())
+        {
+            _serverList[0].acceptIncomingConnections(kq, change_event);
+            for (int j = 0; j < _serverList[0]._connectedClients.size(); ++j)
+            {
+                clientfd = _serverList[0]._connectedClients[j].getClientSocket().getFd();
+
+                if (clientfd >= 0)
+                {
+                    struct kevent ev_add_client;
+                    EV_SET(&ev_add_client, clientfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+                    if (kevent(kq, &ev_add_client, 1, nullptr, 0, nullptr) < 0)
+                    {
+                        perror("kevent (EV_ADD client)");
+                    }
+                }
+            }
+        }
+        else if (event[i].filter & EVFILT_READ)
+        {
+            _serverList[0].sendResponse(event_fd);
+            close(event_fd);
+            // Optionally, remove the event from the kqueue for this specific file descriptor
+            struct kevent ev_remove_client;
+            EV_SET(&ev_remove_client, event_fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+            kevent(kq, &ev_remove_client, 1, nullptr, 0, nullptr);
+        }
+    }
+	_serverList[0]._connectedClients.clear();
+}
 }
 
 void	ServerManager::handleServerRequests(t_pollfd *pollfd)

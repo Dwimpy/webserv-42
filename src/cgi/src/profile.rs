@@ -51,7 +51,10 @@ fn main() -> Result<(), Error> {
             return Ok(());
         }
         Ok(false) => {
+
             println!("No Cookies, redirecting to login page<br>");
+
+
             let template = LoginTemplate {};
             println!("{}", template.render().unwrap());
             return Ok(());

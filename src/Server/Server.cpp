@@ -1,4 +1,6 @@
 #include "Server.hpp"
+
+#include <sys/event.h>
 #include <unistd.h>
 
 Server::Server() : _config(ServerConfig())
@@ -39,6 +41,37 @@ void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPo
 		this->_connectedClients.__emplace_back(newClient);
 		pollfds.__emplace_back((t_pollfd){clientFd, POLLIN, 0});
 		(map)[_serverSocket.getSocketFD()][clientFd] = &pollfds.back();
+		std::cout << "Connection Accepted" << std::endl;
+	}
+}
+
+void Server::acceptIncomingConnections(int kq, struct kevent change[25])
+{
+	int		clientFd;
+	size_t	i;
+
+	i = 0;
+	clientFd = 0;
+//	this->removeClient();
+	while (true)
+	{
+		Client	newClient;
+		clientFd = _serverSocket.accept(newClient);
+		if (clientFd == -1)
+			break ;
+		this->_connectedClients.__emplace_back(newClient);
+		i++;
+	}
+}
+
+void	Server::removeClient()
+{
+	for (std::vector<Client>::iterator it = _connectedClients.begin(); it != _connectedClients.end();)
+	{
+		if (it->getClientSocket().getFd() == -1)
+			it = _connectedClients.erase(it);
+		else
+			++it;
 	}
 }
 
@@ -101,6 +134,39 @@ bool	Server::sendResponse(t_pollfd currentClient)
 	return (false);
 }
 
+bool	Server::sendResponse(int fd)
+{
+	ssize_t	bytes_received;
+	memset(_buffer, 0, sizeof(_buffer));
+	if ((bytes_received = recv(fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)
+	{
+		perror("Error receiving data");
+	}
+	else if (bytes_received == 0)
+	{
+		perror("ERROR connection closed by client");
+	}
+	else
+	{
+//		std::cout << _buffer << std::endl;
+		std::string response_msg = std::string(_buffer);
+		HttpRequest request(response_msg);
+		std::cout << request.getValueByKey("key1");
+		HttpResponse responseObj(request, _config);
+		std::string response = responseObj.getResponse();
+		bytes_received = send(fd, response.c_str(), response.size(), 0);
+		if (bytes_received < 0)
+		{
+			perror("ERROR socket closed");
+
+			return (false);
+		}
+		return (true);
+	}
+	return (false);
+}
+
+
 bool	Server::sendResponse(Client client)
 {
 	ssize_t	bytes_received;
@@ -140,34 +206,6 @@ void	Server::handleIncomingRequests(indexToPollMap &map)
 			it->second->revents = 0;
 		}
 		it++;
-	}
-}
-
-void Server::removeFd()
-{
-	std::vector<Client>::iterator it;
-
-	for (it = _connectedClients.begin(); it != _connectedClients.end(); )
-	{
-		if (it->getClientSocket().getFd() == -1)
-			it = _connectedClients.erase(it);
-		else
-			++it;
-	}
-}
-
-void	Server::removeClient()
-{
-	std::vector<Client >::const_iterator it = _connectedClients.cbegin();
-
-	while (it != _connectedClients.cend())
-	{
-		if (it->getClientSocket().getFd() == -1)
-		{
-			it = _connectedClients.erase(it);
-		}
-		else
-			++it;
 	}
 }
 

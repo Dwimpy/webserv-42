@@ -10,7 +10,7 @@ HttpRequest::HttpRequest(const std::string &request): _versionMajor(1), _version
 
 	HttpRequestParser::parseRequest(*this, str, str + request.size());
 	HttpRequestParser::resetParser();
-//	getFullBody();
+	getFullBody();
 }
 
 HttpRequest::~HttpRequest()

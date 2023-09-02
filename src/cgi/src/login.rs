@@ -82,7 +82,9 @@ fn main() -> Result<(), Error>{
             return Ok(());
         }
         Ok(false) => {
+
             println!("Please enter correct credentials.");
+
             let template = LoginTemplate {};
             println!("{}", template.render().unwrap());
             return Ok(());

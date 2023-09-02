@@ -30,19 +30,20 @@ class Server {
 	void	handleIncomingRequests(indexToPollMap &map);
 	void 	acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPollMap &map);
 	void	 acceptIncomingConnections(std::vector<t_pollfd> &pollfds, std::map<t_pollfd *, int> &map);
-
+	void	acceptIncomingConnections(int kq, struct kevent change[25]);
 	bool	sendResponse(t_pollfd currentClient);
 	bool	sendResponse(Client client);
+	bool	sendResponse(int fd);
 
 	const ConfigFile	&getConfiguration() const;
 	ServerSocket getSocket() const;
 	void	removeFd();
 	void	removeClient();
+	std::vector<Client>				_connectedClients;
 
   private:
 	char							_buffer[8192];
 	const ServerConfig				_config;
 	const ConfigFile					_configFile;
 	ServerSocket					_serverSocket;
-	std::vector<Client>				_connectedClients;
 };
