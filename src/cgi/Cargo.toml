@@ -27,3 +27,7 @@ path = "src/profile.rs"
 [[bin]]
 name = "login"
 path = "src/login.rs"
+
+[[bin]]
+name = "register"
+path = "src/register.rs"

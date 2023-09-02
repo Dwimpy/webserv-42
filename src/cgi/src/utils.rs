@@ -98,4 +98,27 @@ pub mod utils {
         Ok(count > 0)
     }
 
+    pub fn user_exists(conn: &Connection, username: &str) -> Result<bool, Error> {
+        let mut stmt = conn.prepare("SELECT COUNT(*) FROM users WHERE username = ?")?;
+        let count: i64 = stmt.query_row(&[username], |row| row.get(0))?;
+        Ok(count > 0)
+    }
+
+    pub fn add_user_to_db(username: &str, password: &str) -> Result<(), Error> {
+        let db_path = "mydb.sqlite";
+        let conn = Connection::open(db_path)?;
+
+        if !user_exists(&conn, username)? {
+            let cookie_value = "cookieValue";
+            conn.execute(
+                "INSERT INTO users (username, password, cookie) VALUES (?, ?, ?)",
+                &[username, password, "cookieValue"],
+            )?;
+            println!("User '{}' added to the database.", username);
+        } else {
+            println!("User '{}' already exists in the database.", username);
+        }
+
+        Ok(())
+    }
 }
