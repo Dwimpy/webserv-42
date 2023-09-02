@@ -21,9 +21,9 @@ void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
 	env.push_back("USERNAME=" + var.substr(0, 6));
 	env.push_back("PWD=" + var.substr(7, 12));
 
-	std::cout << "cookie: " << var << std::endl;
-	std::cout << "username: " << var.substr(0, 6) << std::endl;
-	std::cout << "pwd: " << var.substr(7, 12) << std::endl;
+//	std::cout << "cookie: " << var << std::endl;
+//	std::cout << "username: " << var.substr(0, 6) << std::endl;
+//	std::cout << "pwd: " << var.substr(7, 12) << std::endl;
 //	env.push_back("Cookie=user:cookie" );
 //    env.push_back("$_POST[\"username\"] = \"johndoe\"");
 //    env.push_back("$_POST[\"password\"] = \"secretpassword\"");
@@ -184,6 +184,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
         appendCookie(request);
 	else
         appendNewLine(request);
+//		deleteCookie(request);
     std::string uri = request.getRequestUri();
 
     if (uri == "/register_landing_page.rs" || uri == "/profile.rs" || uri == "/login.rs" || uri == "/register.rs")

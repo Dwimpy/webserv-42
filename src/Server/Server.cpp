@@ -85,7 +85,7 @@ bool	Server::sendResponse(t_pollfd currentClient)
 	{
 		std::string response_msg = std::string(_buffer);
 		HttpRequest request(response_msg);
-		std::cout << request.getValueByKey("key1");
+		std::cout << _buffer << std::endl;
 		HttpResponse responseObj(request, _config);
 		std::string response = responseObj.getResponse();
 		bytes_received = send(currentClient.fd, response.c_str(), response.size(), 0);

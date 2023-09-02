@@ -9,6 +9,7 @@ use std::time::Duration;
 use std::thread::sleep;
 use std::env;
 
+use std::io;
 
 mod utils;
 use utils::utils::{add_cookie_to_database, check_cookie_in_database, check_user_credentials, create_db, fetch_users_from_db};
@@ -23,11 +24,43 @@ struct LoginTemplate;
 fn main() -> Result<(), Error>{
 
     let cookie = env::var("Cookie").unwrap_or_else(|_| String::from(""));
-    let username = env::var("USERNAME").unwrap_or_else(|_| String::from(""));
-    let password = env::var("PWD").unwrap_or_else(|_| String::from(""));
-    println!("cookie: {}<br>", cookie);
-    println!("username: {}<br>", username);
-    println!("pwd: {}<br>", password);
+    // println!("cookie: {}<br>", cookie);
+
+    // let username = env::var("USERNAME").unwrap_or_else(|_| String::from(""));
+    // let password = env::var("PWD").unwrap_or_else(|_| String::from(""));
+    // println!("username: {}<br>", username);
+    // println!("pwd: {}<br>", password);
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).expect("Failed to read line");
+    // println!("Input is: {}", input);
+
+    let pairs: Vec<(&str, &str)> = input
+        .split('&')
+        .map(|pair| {
+            let mut split = pair.splitn(2, '=');
+            let key = split.next().unwrap_or("");
+            let value = split.next().unwrap_or("");
+            (key, value)
+        })
+        .collect();
+
+    // Initialize username and password variables
+    let mut username = "";
+    let mut password = "";
+
+    // Iterate through the pairs and extract values
+    for (key, value) in &pairs {
+        match *key {
+            "username" => username = *value,
+            "password" => password = *value,
+            _ => (),
+        }
+    }
+
+    // Print the username and password
+    // println!("Username: {}", username);
+    // println!("Password: {}", password);
+
 
     match check_user_credentials(&username, &password) {
         /*
@@ -42,20 +75,22 @@ fn main() -> Result<(), Error>{
                 Then the server rejects the login, and the user stays on the login page.
         */
         Ok(true) => {
-            let cookie_value = "cookieValue"; // TODO: Assign cookie value
+            let cookie_value = cookie; // TODO: Assign cookie value
             add_cookie_to_database(&username, &cookie_value).expect("Failed to add cookie to db");
             let template = ProfileTemplate {};
             println!("{}", template.render().unwrap());
             return Ok(());
         }
         Ok(false) => {
-            println!("Credentials are incorrect. try again or register or fuck off");
+            println!("Please enter correct credentials.");
             let template = LoginTemplate {};
             println!("{}", template.render().unwrap());
             return Ok(());
         }
         Err(err) => {
             eprintln!("Error checking credentials: {}", err);
+            let template = LoginTemplate {};
+            println!("{}", template.render().unwrap());
             return Ok(());
         }
     }

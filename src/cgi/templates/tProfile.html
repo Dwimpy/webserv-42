@@ -77,6 +77,38 @@
         </div>
         <button type="submit" class="btn-submit">Upload Profile Picture</button>
     </form>
+    <button id="logout" class="button" >Logout</button>
 </div>
 </body>
+<script>
+    function deleteAllCookies() {
+        const cookies = document.cookie.split('; ');
+
+        for (const cookie of cookies) {
+            const [name] = cookie.split('=');
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        }
+    }
+
+    function checkAndDeleteCookies() {
+        const cookies = document.cookie;
+
+        if (cookies !== '') {
+            console.log('User has cookies. Deleting them...');
+            deleteAllCookies();
+            console.log('Cookies deleted.');
+        } else {
+            console.log('User has no cookies.');
+        }
+        const redirectTo = "/index.html"; // Replace with your desired URL
+
+        // Redirect to the specified URL
+        window.location.href = redirectTo;
+    }
+    const button = document.getElementById("logout");
+
+    // Add a click event listener to the button
+    button.addEventListener("click", checkAndDeleteCookies);
+    </script>
+
 </html>

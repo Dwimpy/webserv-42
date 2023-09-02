@@ -7,6 +7,7 @@ use rusqlite::Error;
 use std::env;
 use askama::Template;
 
+
 mod utils;
 use utils::utils::{add_cookie_to_database, check_cookie_in_database, check_user_credentials, create_db, fetch_users_from_db};
 
@@ -23,11 +24,11 @@ struct RegistrationTemplate;
 fn main() -> Result<(), Error> {
 
     let cookie = env::var("Cookie").unwrap_or_else(|_| String::from(""));
-    let username = env::var("USERNAME").unwrap_or_else(|_| String::from(""));
-    let password = env::var("PWD").unwrap_or_else(|_| String::from(""));
+    // let username = env::var("USERNAME").unwrap_or_else(|_| String::from(""));
+    // let password = env::var("PWD").unwrap_or_else(|_| String::from(""));
     println!("cookie: {}<br>", cookie);
-    println!("username: {}<br>", username);
-    println!("pwd: {}<br>", password);
+    // println!("username: {}<br>", username);
+    // println!("pwd: {}<br>", password);
 
     create_db().expect("Failed to create db");
     println!("<br>------- DB --------- <br>");
@@ -51,31 +52,6 @@ fn main() -> Result<(), Error> {
         }
         Ok(false) => {
             println!("No Cookies, redirecting to login page<br>");
-            if let Ok(current_dir) = env::current_dir() {
-                if let Some(dir_str) = current_dir.to_str() {
-                    println!("Current Directory: {}", dir_str);
-                } else {
-                    eprintln!("Unable to convert current directory to a string");
-                }
-            } else {
-                eprintln!("Unable to get current directory");
-            }
-            // let executable_path = "";
-            //
-            // // Define the command to execute the Rust executable
-            // let output = Command::new(executable_path)
-            //     .output()
-            //     .expect("Failed to execute command");
-            //
-            // // Check if the command was successful
-            // if output.status.success() {
-            //     let stdout = String::from_utf8_lossy(&output.stdout);
-            //     let stderr = String::from_utf8_lossy(&output.stderr);
-            //     println!("Command executed successfully. STDOUT: {}", stdout);
-            // } else {
-            //     let stderr = String::from_utf8_lossy(&output.stderr);
-            //     eprintln!("Error executing command: {}", stderr);
-            // }
             let template = LoginTemplate {};
             println!("{}", template.render().unwrap());
             return Ok(());
