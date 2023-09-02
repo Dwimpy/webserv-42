@@ -70,7 +70,7 @@ pub mod utils {
         let count: i32 = stmt.query_row(&[username, password], |row| row.get(0))?;
 
         // If the count is 1, it means a matching user was found, and the credentials are correct
-        println!("<script> alert(\"{}, {}, {}\")</script>", count, username, password);
+        println!("{}, {}, {}", count, username, password);
         Ok(count > 1)
         // Ok(count == 1) // TODO: Uncomment this line and delete the line above
     }

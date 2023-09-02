@@ -50,7 +50,32 @@ fn main() -> Result<(), Error> {
             return Ok(());
         }
         Ok(false) => {
-            println!("<script> alert(\"No Cookies, redirecting to login page\")</script>");
+            println!("No Cookies, redirecting to login page<br>");
+            if let Ok(current_dir) = env::current_dir() {
+                if let Some(dir_str) = current_dir.to_str() {
+                    println!("Current Directory: {}", dir_str);
+                } else {
+                    eprintln!("Unable to convert current directory to a string");
+                }
+            } else {
+                eprintln!("Unable to get current directory");
+            }
+            // let executable_path = "";
+            //
+            // // Define the command to execute the Rust executable
+            // let output = Command::new(executable_path)
+            //     .output()
+            //     .expect("Failed to execute command");
+            //
+            // // Check if the command was successful
+            // if output.status.success() {
+            //     let stdout = String::from_utf8_lossy(&output.stdout);
+            //     let stderr = String::from_utf8_lossy(&output.stderr);
+            //     println!("Command executed successfully. STDOUT: {}", stdout);
+            // } else {
+            //     let stderr = String::from_utf8_lossy(&output.stderr);
+            //     eprintln!("Error executing command: {}", stderr);
+            // }
             let template = LoginTemplate {};
             println!("{}", template.render().unwrap());
             return Ok(());

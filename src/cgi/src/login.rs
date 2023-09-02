@@ -49,7 +49,7 @@ fn main() -> Result<(), Error>{
             return Ok(());
         }
         Ok(false) => {
-            println!("<script> alert(\"Credentials are incorrect. try again or register or fuck off\")</script>");
+            println!("Credentials are incorrect. try again or register or fuck off");
             let template = LoginTemplate {};
             println!("{}", template.render().unwrap());
             return Ok(());
