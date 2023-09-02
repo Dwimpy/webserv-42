@@ -1,13 +1,13 @@
 #include "Server.hpp"
 #include <unistd.h>
 
-Server::Server() : _socketHandler(SocketHandler()), _config(ServerConfig())
+Server::Server() : _config(ServerConfig())
 {}
 
 Server::Server(const ServerConfig &config) : _config(config)
 {}
 
-Server::Server(const ConfigFile &config): _socketHandler(SocketHandler()), _configFile(config), _config(ServerConfig())
+Server::Server(const ConfigFile &config): _configFile(config), _config(ServerConfig())
 {}
 
 Server::~Server()

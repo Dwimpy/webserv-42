@@ -1,7 +1,6 @@
 #include <vector>
 #include "Server.hpp"
 #include "ServerConfigurator.hpp"
-#include "SocketHandler.hpp"
 
 typedef std::map<int, std::map<int, t_pollfd *> > indexToPollMap;
 

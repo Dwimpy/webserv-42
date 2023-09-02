@@ -1,5 +1,4 @@
 #pragma once
-#include "SocketHandler.hpp"
 #include "ClientSocket.hpp"
 #include <string>
 #include <chrono>

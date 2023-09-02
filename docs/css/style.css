@@ -24,17 +24,23 @@ a{
 .nav{
     font-size: 2em;
     font-weight: bold;
+    display: flex;
+    flex-direction: row;
 
 }
 
 .title{
     display: flex;
     justify-content: center;
+    margin: 10px;
+
 }
 
 header{
     position: fixed;
     top: 0;
+    display: flex;
+
 }
 
 main{

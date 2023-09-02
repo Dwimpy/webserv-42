@@ -7,7 +7,6 @@
 #include <sys/socket.h>
 #include "ServerConfig.hpp"
 #include "ServerSocket.hpp"
-#include "SocketHandler.hpp"
 #include "HttpRequestHandler.hpp"
 #include "ConfigFile.hpp"
 #include "HttpRequest.hpp"
@@ -42,7 +41,6 @@ class Server {
 
   private:
 	char							_buffer[8192];
-	SocketHandler					_socketHandler;
 	const ServerConfig				_config;
 	const ConfigFile					_configFile;
 	ServerSocket					_serverSocket;
