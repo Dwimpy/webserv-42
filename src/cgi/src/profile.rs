@@ -50,7 +50,7 @@ fn main() -> Result<(), Error> {
             return Ok(());
         }
         Ok(false) => {
-            println!("<script> alert(\"No Cookies, redirecting to login page\")</script>");
+            // println!("<script> alert(\"No Cookies, redirecting to login page\")</script>");
             let template = LoginTemplate {};
             println!("{}", template.render().unwrap());
             return Ok(());
