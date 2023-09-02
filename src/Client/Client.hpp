@@ -16,6 +16,7 @@ class Client{
 	void	setClientFd(int fd);
 	void	setClientFd(int fd) const;
 	ClientSocket 	&getClientSocket();
+	static std::string	generateCookieId(int length);
 
   private:
 	std::string		_sessionId;
