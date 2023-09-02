@@ -1,7 +1,71 @@
-ASDFASDFASDFASDF
-ASDFASDFASDFASDF
-ASDFASDFASDFASDF
-ASDFASDFASDFASDF
-ASDFASDFASDFASDF
-ASDFASDFASDFASDF
-ASDFASDFASDFASDF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        /* Add your CSS styles here */
+        /* Style the form container */
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Style the form fields */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Style the submit button */
+        .btn-submit {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="profile-container">
+    <h1>User Profile</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="John Doe" readonly>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" value="johndoe@example.com" readonly>
+        </div>
+        <div class="form-group">
+            <label for="birthdate">Date of Birth:</label>
+            <input type="text" id="birthdate" name="birthdate" value="January 1, 1990" readonly>
+        </div>
+        <div class="form-group">
+            <label for="profilePicture">Profile Picture:</label>
+            <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
+        </div>
+        <button type="submit" class="btn-submit">Upload Profile Picture</button>
+    </form>
+</div>
+</body>
+</html>

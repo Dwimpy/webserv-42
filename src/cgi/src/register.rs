@@ -1,28 +1,17 @@
 extern crate askama;
 extern crate r2d2;
-
 extern crate r2d2_sqlite;
 extern crate rusqlite;
 
-use r2d2::Pool;
-use r2d2_sqlite::SqliteConnectionManager;
-use rusqlite::params;
 use rusqlite::Connection;
 use std::io::{self, Read};
-
 use rusqlite::Error;
-
-
-use std::collections::HashMap;
-use std::io::prelude::*;
 use std::env;
 use askama::Template;
-mod database;
-use database::establish_connection;
 
 
 #[derive(Template)]
-#[template(path = "tRegisterPage.html")]
+#[template(path = "tRegistration.html")]
 struct TemplateData;
 struct RegisterTemplate {
     file_contents: String,

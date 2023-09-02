@@ -19,9 +19,10 @@ build = "build.rs"
 name = "register_landing_page"
 path = "src/register_landing_page.rs"
 
+
 [[bin]]
-name = "register"
-path = "src/register.rs"
+name = "profile"
+path = "src/profile.rs"
 
 [[bin]]
 name = "login"

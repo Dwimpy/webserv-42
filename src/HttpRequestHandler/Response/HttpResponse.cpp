@@ -16,7 +16,15 @@ void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
     env.push_back("HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" );
     env.push_back("RESPONSE_HEADER=HTTP/1.1 200 OK" );
     env.push_back("CONTENT_TYPE=application/x-www-form-urlencoded" );
-	env.push_back("Cookie=user:cookie" );
+	std::string var = request.getValueByKey("Cookie");
+	env.push_back("Cookie=" + var);
+	env.push_back("USERNAME=" + var.substr(0, 6));
+	env.push_back("PWD=" + var.substr(7, 12));
+
+	std::cout << "cookie: " << var << std::endl;
+	std::cout << "username: " << var.substr(0, 6) << std::endl;
+	std::cout << "pwd: " << var.substr(7, 12) << std::endl;
+//	env.push_back("Cookie=user:cookie" );
 //    env.push_back("$_POST[\"username\"] = \"johndoe\"");
 //    env.push_back("$_POST[\"password\"] = \"secretpassword\"");
 //    env.push_back("CONTENT_BODY=username=s&password=s");
@@ -103,9 +111,13 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     else if (_flag == 1)
         cgiPath += "register_landing_page";
     else if (_flag == 2)
-        cgiPath += "login";
+        cgiPath += "profile";
+	else if (_flag == 3)
+		cgiPath += "login";
     else
         error("no valid flag/path");
+
+	std::cout << "uri: " << cgiPath << std::endl;
 
     dup2(_response_fd[1], STDOUT_FILENO);
     close(_response_fd[1]);
@@ -172,13 +184,16 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 	else
         appendNewLine(request);
     std::string uri = request.getRequestUri();
-    if (uri == "/register_landing_page.rs" || uri == "/register.rs" || uri == "/login.rs")
+
+    if (uri == "/register_landing_page.rs" || uri == "/profile.rs" || uri == "/login.rs" || uri == "/register.rs")
     {
         if (uri == "/register_landing_page.rs")
             _flag = 1;
-        else if (uri == "login.rs")
+        else if (uri == "/profile.rs")
             _flag = 2;
-        else
+		else if (uri == "/login.rs")
+			_flag = 3;
+        else if (uri == "/register.rs")
             _flag = 0;
 
         if(pipe(_response_fd) == -1)

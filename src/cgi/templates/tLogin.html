@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<link rel="shortcut icon" href="assets/planet.png" />
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<head>
+  <title>Login Page</title>
+</head>
+<body>
+<h2>Login</h2>
+
+  <form action="/login.rs" method="post">
+    <label for="username">Username:</label>
+    <input class="input-group__input" type="text" id="username" name="username" required><br><br>
+    <label for="password">Password:</label>
+    <input class="input-group__input" type="password" id="password" name="password" required><br><br>
+    <input class="button" type="submit" value="Login">
+  </form>
+
+  <form action="/register.rs" method="get">
+    <div>
+      <h2 class="title">
+        Not registered yet?
+      </h2>
+      <a class="title" href="/register.rs">Register here</a>
+    </div>
+  </form>
+
+</body>
+</html>

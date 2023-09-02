@@ -1,13 +1,10 @@
 extern crate askama;
 extern crate r2d2;
 
-
-
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use askama::Template;
-mod database;
 use std::env;
 use std::io;
 
