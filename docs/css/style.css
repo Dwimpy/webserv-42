@@ -126,4 +126,48 @@ footer{
      outline-offset: 0.5em;
  }
 
-
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    min-width: 30em;
+    margin: 0 auto;
+    padding: 3em;
+    height: fit-content;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: #5E5DF0 0 10px 20px -10px;
+    text-align: center;
+    position: relative;
+}
+h6 {
+    font-size: 22px;
+}
+.card-block {
+    padding: 1.25rem;
+}
+.text-muted {
+    color: #919aa3 !important;
+    font-weight: 600;
+}
+.separator {
+    border-bottom: 1px solid #e0e0e0;
+    font-weight: 600;
+}
+.button-container{
+    display: flex;
+    justify-content: center;
+}
+.name{
+    padding-top: 0;
+    margin-top: 0;
+    font-size: 32px;
+}
+.profile-picture{
+    height: 10em;
+    mix-blend-mode: multiply;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    /*filter: contrast(1);*/
+}

@@ -118,7 +118,7 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     else
         error("no valid flag/path");
 
-	std::cout << "uri: " << cgiPath << std::endl;
+//	std::cout << "uri: " << cgiPath << std::endl;
 
     dup2(_response_fd[1], STDOUT_FILENO);
     close(_response_fd[1]);

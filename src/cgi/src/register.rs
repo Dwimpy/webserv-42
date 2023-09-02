@@ -39,21 +39,27 @@ fn main() -> Result<(), Error> {
     // Initialize username and password variables
     let mut username = "";
     let mut password = "";
+    let mut email = "";
+    let mut birthdate = "";
 
     // Iterate through the pairs and extract values
     for (key, value) in &pairs {
         match *key {
             "username" => username = *value,
             "password" => password = *value,
+            "email" =>  email = *value,
+            "birthdate" =>  birthdate = *value,
             _ => (),
         }
     }
 
     // Print the username and password
-    // println!("Username: {}", username);
-    // println!("Password: {}", password);
+    println!("Username: {}", username);
+    println!("email: {}", email);
+    println!("birthdate: {}", birthdate);
+    println!("Password: {}", password);
 
-    return match add_user_to_db(&username, &password) {
+    return match add_user_to_db(&username, &password, &birthdate, &email) {
         Ok(_) => {
             add_cookie_to_database(&username, &cookie).expect("Failed to add cookie to db");
             // println!("User added to db");

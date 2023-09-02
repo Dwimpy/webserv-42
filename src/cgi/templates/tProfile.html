@@ -6,45 +6,6 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <title>User Profile</title>
-    <style>
-        /* Add your CSS styles here */
-        /* Style the form container */
-        .profile-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* Style the form fields */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: bold;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* Style the submit button */
-        .btn-submit {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <header class="header">
     <div class ="header__inner">
@@ -57,27 +18,25 @@
 </header>
 <body>
 <div class="profile-container">
-    <h1>User Profile</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" value="John Doe" readonly>
+    <div class="card card-block user-card-full ">
+        <img class="profile-picture" src="assets/icon1.png" alt="Icon">
+        <h6 class="name">{{ username }}</h6>
+        <p class="text-muted">User Profile</p>
+        <div class="card-block">
+            <h6 class="separator">Information</h6>
+            <div class="row">
+                <h6 class="">Email</h6>
+                <p class="text-muted">{{ email }}</p>
+                <h6 class="">Date of Birth</h6>
+                <p class="text-muted">{{ birthdate }}</p>
+                <h6 class="">Cookie</h6>
+                <p class="text-muted">{{ cookie }}</p>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="text" id="email" name="email" value="johndoe@example.com" readonly>
+        <div class="button-container">
+            <button id="logout" class="button center" >Logout</button>
         </div>
-        <div class="form-group">
-            <label for="birthdate">Date of Birth:</label>
-            <input type="text" id="birthdate" name="birthdate" value="January 1, 1990" readonly>
-        </div>
-        <div class="form-group">
-            <label for="profilePicture">Profile Picture:</label>
-            <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
-        </div>
-        <button type="submit" class="btn-submit">Upload Profile Picture</button>
-    </form>
-    <button id="logout" class="button" >Logout</button>
+    </div>
 </div>
 </body>
 <script>
@@ -109,6 +68,6 @@
 
     // Add a click event listener to the button
     button.addEventListener("click", checkAndDeleteCookies);
-    </script>
+</script>
 
 </html>

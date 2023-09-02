@@ -13,7 +13,6 @@ use std::io;
 struct TemplateData;
 
 fn main() {
-        println!("Content-Type: text/html\n\n");
         let template = TemplateData {};
         println!("{}", template.render().unwrap());
 }

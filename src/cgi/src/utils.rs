@@ -2,6 +2,14 @@ pub mod utils {
     use rusqlite::Connection;
     use rusqlite::Error;
 
+    pub struct User {
+        pub username: String,
+        pub cookie: String,
+        pub email: String,
+        pub birthdate: String,
+    }
+
+
     pub fn create_db() -> Result<(), Error> {
         let db_path = "mydb.sqlite";
         let conn = Connection::open(db_path)?;
@@ -32,6 +40,30 @@ pub mod utils {
         // ).expect("Failed to insert data");
 
         Ok(())
+    }
+
+    pub fn get_user_by_cookie(cookie: &str) -> Result<User, rusqlite::Error> {
+        let db_path = "mydb.sqlite";
+        // Open a connection to your SQLite database file
+        let conn = Connection::open(db_path)?;
+
+        // Prepare an SQL query
+        let mut stmt = conn.prepare("SELECT username, cookie, email, birthdate FROM users WHERE cookie = ?")?;
+
+        // Execute the query, binding the username as a parameter
+        let user_result = stmt.query_row(&[cookie], |row| {
+            Ok(User {
+                username: row.get(0)?,
+                cookie: row.get(1)?,
+                email: row.get(2)?,
+                birthdate: row.get(3)?,
+            })
+        });
+
+        match user_result {
+            Ok(user) => Ok(user),
+            Err(err) => Err(err),
+        }
     }
 
     pub fn fetch_users_from_db() -> Result<(), Error> {
@@ -113,15 +145,14 @@ pub mod utils {
         Ok(count > 0)
     }
 
-    pub fn add_user_to_db(username: &str, password: &str) -> Result<(), Error> {
+    pub fn add_user_to_db(username: &str, password: &str, birthdate: &str, email: &str) -> Result<(), Error> {
         let db_path = "mydb.sqlite";
         let conn = Connection::open(db_path)?;
 
         if !user_exists(&conn, username)? {
-            let cookie_value = "cookieValue";
             conn.execute(
-                "INSERT INTO users (username, password, cookie) VALUES (?, ?, ?)",
-                &[username, password, "cookieValue"],
+                "INSERT INTO users (username, password, cookie, email, birthdate) VALUES (?, ?, ?, ?, ?)",
+                &[username, password, "empty", email, birthdate],
             )?;
             println!("User '{}' added to the database.", username);
         } else {

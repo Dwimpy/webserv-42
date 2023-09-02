@@ -10,7 +10,7 @@ HttpRequest::HttpRequest(const std::string &request): _versionMajor(1), _version
 
 	HttpRequestParser::parseRequest(*this, str, str + request.size());
 	HttpRequestParser::resetParser();
-	getFullBody();
+//	getFullBody();
 }
 
 HttpRequest::~HttpRequest()
@@ -119,7 +119,7 @@ const std::string HttpRequest::getFullBody() const
 		if (idx != _body.size())
 			str << "&";
 	}
-	std::cout << str.str() << std::endl;
+//	std::cout << str.str() << std::endl;
 	return (str.str());
 }
 

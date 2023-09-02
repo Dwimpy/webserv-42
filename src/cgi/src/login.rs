@@ -10,13 +10,19 @@ use std::thread::sleep;
 use std::env;
 
 use std::io;
-
 mod utils;
-use utils::utils::{add_cookie_to_database, check_cookie_in_database, check_user_credentials, create_db, fetch_users_from_db};
+use utils::utils::{add_cookie_to_database, check_cookie_in_database, check_user_credentials, create_db, fetch_users_from_db, get_user_by_cookie};
+use utils::utils::User;
+
 
 #[derive(Template)]
 #[template(path = "tProfile.html")]
-struct ProfileTemplate;
+struct ProfileTemplate {
+    username: String,
+    email: String,
+    birthdate: String,
+    cookie: String,
+}
 
 #[derive(Template)]
 #[template(path = "tLogin.html")]
@@ -77,14 +83,27 @@ fn main() -> Result<(), Error>{
         Ok(true) => {
             let cookie_value = cookie; // TODO: Assign cookie value
             add_cookie_to_database(&username, &cookie_value).expect("Failed to add cookie to db");
-            let template = ProfileTemplate {};
-            println!("{}", template.render().unwrap());
-            return Ok(());
+
+            match get_user_by_cookie(&cookie_value) {
+                Ok(user) => {
+                    let template = ProfileTemplate {
+                        username: user.username,
+                        email: user.email,
+                        birthdate: user.birthdate,
+                        cookie: user.cookie,
+                    };
+                    println!("{}", template.render().unwrap());
+                    return Ok(());
+                }
+                Err(err) => {
+                        eprintln!("Error: {:?}", err);
+                    std::process::exit(1);
+                    }
+            }
+
         }
         Ok(false) => {
-
             println!("Please enter correct credentials.");
-
             let template = LoginTemplate {};
             println!("{}", template.render().unwrap());
             return Ok(());

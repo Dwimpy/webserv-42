@@ -7,13 +7,18 @@ use rusqlite::Error;
 use std::env;
 use askama::Template;
 
-
 mod utils;
-use utils::utils::{add_cookie_to_database, check_cookie_in_database, check_user_credentials, create_db, fetch_users_from_db};
+use utils::utils::{add_cookie_to_database, check_cookie_in_database, check_user_credentials, create_db, fetch_users_from_db, get_user_by_cookie};
+use utils::utils::User;
 
 #[derive(Template)]
 #[template(path = "tProfile.html")]
-struct ProfileTemplate;
+struct ProfileTemplate {
+    username: String,
+    email: String,
+    birthdate: String,
+    cookie: String,
+}
 #[derive(Template)]
 #[template(path = "tLogin.html")]
 struct LoginTemplate;
@@ -21,12 +26,13 @@ struct LoginTemplate;
 #[template(path = "tRegistration.html")]
 struct RegistrationTemplate;
 
+
 fn main() -> Result<(), Error> {
 
     let cookie = env::var("Cookie").unwrap_or_else(|_| String::from(""));
     // let username = env::var("USERNAME").unwrap_or_else(|_| String::from(""));
     // let password = env::var("PWD").unwrap_or_else(|_| String::from(""));
-    println!("cookie: {}<br>", cookie);
+    // println!("cookie: {}<br>", cookie);
     // println!("username: {}<br>", username);
     // println!("pwd: {}<br>", password);
 
@@ -46,15 +52,26 @@ fn main() -> Result<(), Error> {
                 Then the server prompts the user to log in or register to access their profile.
         */
         Ok(true) => {
-            let template = ProfileTemplate {};
-            println!("{}", template.render().unwrap());
-            return Ok(());
+
+            match get_user_by_cookie(&cookie) {
+                Ok(user) => {
+                    let template = ProfileTemplate {
+                        username : user.username,
+                        email : user.email,
+                        birthdate : user.birthdate,
+                        cookie: user.cookie,
+                    };
+                    println!("{}", template.render().unwrap());
+                    return Ok(());
+                }
+                Err(err) => {
+                    eprintln!("Error: {:?}", err);
+                    std::process::exit(1);
+                }
+            }
         }
         Ok(false) => {
-
-            println!("No Cookies, redirecting to login page<br>");
-
-
+            // println!("No Cookies, redirecting to login page<br>");
             let template = LoginTemplate {};
             println!("{}", template.render().unwrap());
             return Ok(());
