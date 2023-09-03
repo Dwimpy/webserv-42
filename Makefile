@@ -19,7 +19,7 @@ VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRe
 				  ./src/ResourceManager ./src/Client ./src/ServerManager ./src/ConfigFile/ ./src/ConfigFile/Directive \
 				  ./src/ConfigFile/LocationBlock ./src/ConfigFile/ServerBlock ./src/ConfigFile/ServerConfigurator \
 				  ./src/Parser/HttpRequestParser ./src/Parser/ConfigFileParser ./src/Socket/ISocket ./src/Socket/ServerSocket \
-				  ./src/Socket/ClientSocket
+				  ./src/Socket/ClientSocket ./src/EventHandler
 
 
 # Includes
@@ -46,6 +46,7 @@ INCLUDE			+= -I ./src/Parser/ConfigFileParser
 INCLUDE			+= -I ./src/Socket/ISocket
 INCLUDE			+= -I ./src/Socket/ServerSocket
 INCLUDE			+= -I ./src/Socket/ClientSocket
+INCLUDE			+= -I ./src/EventHandler
 
 
 
@@ -54,7 +55,7 @@ SRC_DIR			= ./src
 OBJ_DIR			= ./obj
 
 # Compiler
-CC			= c++
+CC			= g++
 CFLAGS		= -O3 -flto #-Wall -Werror -Wextra
 
 ifdef FSANITIZE

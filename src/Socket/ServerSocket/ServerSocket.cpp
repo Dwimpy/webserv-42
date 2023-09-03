@@ -75,6 +75,8 @@ int ServerSocket::accept(Client &client)
 	clientFd = ::accept(this->_fd, (t_sockaddr *)&client.getClientSocket().getClientAddr(), &client.getClientSocket().getClientAddrLen());
 	setsockopt(clientFd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
 	setsockopt(clientFd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+	fcntl(this->_fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+
 	client.getClientSocket().setFd(clientFd);
 	return (clientFd);
 }

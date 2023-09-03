@@ -15,14 +15,11 @@ class ServerManager{
 	void 	pollIncomingConnections();
 	void	handleServerRequests(t_pollfd *pollfd);
 
+	static int findServerFromFd(std::vector<Server> &serverList, int fd);
 
   private:
-	int							_pollReady;
 	std::vector<Server>			_serverList;
-	std::vector<t_pollfd>		_activeSockets;
 	ServerConfigurator			_serverConfigurator;
-	indexToPollMap				_serverToPollMap;
-	std::map<t_pollfd *, int> 	_pollToServerMap;
 
 	void	parseConfigurationFile(const std::string &filePath);
 	void	createAndConfigureServers();

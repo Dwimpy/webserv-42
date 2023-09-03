@@ -27,24 +27,6 @@ bool Server::startServer()
 }
 
 
-void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPollMap &map)
-{
-	int		clientFd;
-
-	clientFd = 0;
-	while (true)
-	{
-		Client	newClient;
-		clientFd = _serverSocket.accept(newClient);
-		if (clientFd == -1)
-			break ;
-		this->_connectedClients.__emplace_back(newClient);
-		pollfds.__emplace_back((t_pollfd){clientFd, POLLIN, 0});
-		(map)[_serverSocket.getSocketFD()][clientFd] = &pollfds.back();
-		std::cout << "Connection Accepted" << std::endl;
-	}
-}
-
 void Server::acceptIncomingConnections(int kq, struct kevent change[25])
 {
 	int		clientFd;
@@ -59,6 +41,7 @@ void Server::acceptIncomingConnections(int kq, struct kevent change[25])
 		clientFd = _serverSocket.accept(newClient);
 		if (clientFd == -1)
 			break ;
+		std::cout << "Connection Accepted. Assigned to FD: " << clientFd << "\n";
 		this->_connectedClients.__emplace_back(newClient);
 		i++;
 	}
@@ -69,69 +52,12 @@ void	Server::removeClient()
 	for (std::vector<Client>::iterator it = _connectedClients.begin(); it != _connectedClients.end();)
 	{
 		if (it->getClientSocket().getFd() == -1)
+		{
 			it = _connectedClients.erase(it);
+		}
 		else
 			++it;
 	}
-}
-
-void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, std::map<t_pollfd *, int> &map)
-{
-	int		clientFd;
-
-	clientFd = 0;
-	while (true)
-	{
-		Client	newClient;
-		clientFd = _serverSocket.accept(newClient);
-		if (clientFd < 0)
-		{
-			if (errno == EWOULDBLOCK)
-				std::cerr << "Accept timed out" << std::endl;
-			else
-				break ;
-		}
-		else
-		{
-			this->_connectedClients.__emplace_back(newClient);
-			pollfds.__emplace_back((t_pollfd){clientFd, POLLIN, 0});
-			map[&pollfds.back()] = this->_serverSocket.getSocketFD() - 3;
-		}
-	}
-}
-
-bool	Server::sendResponse(t_pollfd currentClient)
-{
-	ssize_t	bytes_received;
-	memset(_buffer, 0, sizeof(_buffer));
-	if ((bytes_received = recv(currentClient.fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)
-	{
-		close(currentClient.fd);
-		perror("Error receiving data");
-	}
-	else if (bytes_received == 0)
-	{
-		perror("ERROR connection closed by client");
-		close(currentClient.fd);
-	}
-	else
-	{
-		std::string response_msg = std::string(_buffer);
-		HttpRequest request(response_msg);
-		std::cout << _buffer << std::endl;
-		HttpResponse responseObj(request, _config);
-		std::string response = responseObj.getResponse();
-		bytes_received = send(currentClient.fd, response.c_str(), response.size(), 0);
-		if (bytes_received < 0)
-		{
-			perror("ERROR socket closed");
-			close(currentClient.fd);
-			return (false);
-		}
-		close(currentClient.fd);
-		return (true);
-	}
-	return (false);
 }
 
 bool	Server::sendResponse(int fd)
@@ -141,6 +67,7 @@ bool	Server::sendResponse(int fd)
 	if ((bytes_received = recv(fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)
 	{
 		perror("Error receiving data");
+		std::cout << "SERVER RECV: fd: " << fd << std::endl;
 	}
 	else if (bytes_received == 0)
 	{
@@ -193,22 +120,6 @@ bool	Server::sendResponse(Client client)
 	return (true);
 }
 
-void	Server::handleIncomingRequests(indexToPollMap &map)
-{
-    std::map<int, t_pollfd *>::iterator it;
-
-	for (it = map[this->_serverSocket.getSocketFD()].begin(); it != map[this->_serverSocket.getSocketFD()].end();)
-	{
-		if (it->second->revents == POLLIN)
-		{
-			sendResponse(*it->second);
-			it->second->fd = -1;
-			it->second->revents = 0;
-		}
-		it++;
-	}
-}
-
 const ConfigFile &Server::getConfiguration() const
 {
 	return (this->_configFile);
@@ -217,4 +128,8 @@ const ConfigFile &Server::getConfiguration() const
 ServerSocket Server::getSocket() const
 {
 	return (this->_serverSocket);
+}
+std::vector<Client> &Server::getConnectedClients()
+{
+	return (this->_connectedClients);
 }
