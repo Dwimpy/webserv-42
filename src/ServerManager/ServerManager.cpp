@@ -1,9 +1,6 @@
 #include "ServerManager.hpp"
-
 #include "EventHandler.hpp"
 
-#include <sys/event.h>
-#include <unistd.h>
 
 static bool	shouldExit = false;
 
