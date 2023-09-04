@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <title>Upload Image</title>
+</head>
+<body>
+  <h1>Upload Image</h1>
+    <form action="upload.py" method="post" enctype="multipart/form-data">
+      <input type="file" name="image" accept="image/*">
+      <input type="submit" value="Upload Image">
+    </form>
+  <form action="/profile.rs" method="post">
+    <input class="button" type="submit" value="Go To Profile">
+  </form>
+</body>
+</html>

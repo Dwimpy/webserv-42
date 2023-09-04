@@ -76,7 +76,7 @@ void	Server::sendResponse(int fd)
 	}
 	else
 	{
-//		std::cout << _buffer << std::endl;
+		std::cout << _buffer << std::endl;
 		std::string response_msg = std::string(_buffer);
 		HttpRequest request(response_msg);
 		std::cout << request.getValueByKey("key1");

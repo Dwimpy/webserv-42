@@ -2,6 +2,7 @@ pub mod utils {
     use rusqlite::Connection;
     use rusqlite::Error;
 
+
     pub struct User {
         pub username: String,
         pub cookie: String,
@@ -17,7 +18,7 @@ pub mod utils {
         conn.execute(
             "CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
+            username TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             email TEXT,
             birthdate TEXT,
@@ -145,7 +146,7 @@ pub mod utils {
         Ok(count > 0)
     }
 
-    pub fn add_user_to_db(username: &str, password: &str, birthdate: &str, email: &str) -> Result<(), Error> {
+    pub fn add_user_to_db(username: &str, password: &str, birthdate: &str, email: &str) -> Result<i32, Error> {
         let db_path = "mydb.sqlite";
         let conn = Connection::open(db_path)?;
 
@@ -155,10 +156,13 @@ pub mod utils {
                 &[username, password, "empty", email, birthdate],
             )?;
             println!("User '{}' added to the database.", username);
+            Ok(1)
         } else {
             println!("User '{}' already exists in the database.", username);
+            Ok(2)
         }
 
-        Ok(())
+        // Ok(())
     }
+
 }

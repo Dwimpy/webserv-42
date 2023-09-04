@@ -30,9 +30,11 @@
 *.exe
 *.out
 *.app
+
 .idea/
 .vscode/
 .CMakeFiles/
 ./vscode
 ./idea
 ./CMakeFiles
+

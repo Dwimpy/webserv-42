@@ -5,6 +5,7 @@ askama = "0.12.0"
 r2d2 = "0.8.10"
 rusqlite = "0.29.0"
 r2d2_sqlite = "0.22.0"
+thiserror = "1.0"
 
 #rocket = "0.5"
 

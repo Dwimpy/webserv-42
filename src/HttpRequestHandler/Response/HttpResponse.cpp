@@ -98,7 +98,7 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     std::string cgiScript;
     createEnv(env, request);
     char *environment[env.size() + 1];
-    std::string cgiPath = getProjectDir()  + "/src/cgi/target/release/" ;
+    std::string cgiPath = getProjectDir()  + "/src/cgi/target/release/";
 
     if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
         error("404 CGI path not found!"); /* set 404 page */
@@ -115,10 +115,12 @@ void    HttpResponse::childProcess(const HttpRequest &request)
         cgiPath += "profile";
 	else if (_flag == 3)
 		cgiPath += "login";
+	else if (_flag == 4)
+		cgiPath = getProjectDir() + "/../../src/upload.py";
+//		cgiPath = getProjectDir() + upload.py;
     else
         error("no valid flag/path");
 
-//	std::cout << "uri: " << cgiPath << std::endl;
 
     dup2(_response_fd[1], STDOUT_FILENO);
     close(_response_fd[1]);
@@ -127,11 +129,21 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     if (dup_request_to_stdin(request))
         exit(error("tmpfile creation failed!"));
 
-	char *args[2];
-	args[0] = (char *)cgiPath.c_str();
-	args[1] = nullptr;
 
-    if (execve(cgiPath.c_str(), args, environment) == -1)
+		char *args[2];
+//	if (_flag == 4)
+//	{
+//		args[0] = (char*) "python3";
+//		args[1] = (char*) cgiPath.c_str();
+//		args[2] = nullptr;
+//	}
+//	else
+//	{
+		args[0] = (char *)cgiPath.c_str();
+		args[1] = nullptr;
+//	}
+//	std::cout << cgiPath.c_str() << std::endl;
+    if (execve(cgiPath.c_str(), args,  environment) == -1)
         exit(error("execve failed!"));
 }
 
@@ -188,7 +200,8 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 
     std::string uri = request.getRequestUri();
 
-    if (uri == "/register_landing_page.rs" || uri == "/profile.rs" || uri == "/login.rs" || uri == "/register.rs")
+    if (uri == "/register_landing_page.rs" || uri == "/profile.rs" \
+			|| uri == "/login.rs" || uri == "/register.rs" || uri == "/upload.py")
     {
         if (uri == "/register_landing_page.rs")
             _flag = 1;
@@ -196,6 +209,8 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
             _flag = 2;
 		else if (uri == "/login.rs")
 			_flag = 3;
+		else if (uri == "/upload.py")
+			_flag = 4;
         else if (uri == "/register.rs")
             _flag = 0;
 

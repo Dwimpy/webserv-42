@@ -10,7 +10,7 @@ use std::io;
 
 #[derive(Template)]
 #[template(path = "tRegistration.html")]
-struct TemplateData;
+struct TemplateData{}
 
 fn main() {
         let template = TemplateData {};
