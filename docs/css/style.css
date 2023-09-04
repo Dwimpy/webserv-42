@@ -75,6 +75,10 @@ main{
     margin-top: 0.5em;
 }
 
+.file::-webkit-file-upload-button{
+    visibility: hidden;
+}
+
 footer{
     position: fixed;
     bottom: 0;
