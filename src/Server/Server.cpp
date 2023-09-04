@@ -3,6 +3,8 @@
 #include <sys/event.h>
 #include <unistd.h>
 
+static int flag = 0;
+
 Server::Server() : _config(ServerConfig())
 {}
 
@@ -93,22 +95,52 @@ void	Server::sendResponse(Client client)
 {
 	ssize_t	bytes_received;
 	memset(_buffer, 0, sizeof(_buffer));
-
+	size_t	count;
+	count = 0;
 	if ((bytes_received = recv(client.getClientSocket().getFd(), _buffer, sizeof(_buffer) - 1, 0)) < 0)
 		perror("Error receiving data");
 	else if (bytes_received == 0)
 		perror("ERROR connection closed by client");
 	else
 	{
-//		std::cout << _buffer << std::endl;
+		std::ofstream output("text.png");
 		std::string response_msg = std::string(_buffer);
+//		std::cout << _buffer << std::endl;
 		HttpRequest request(response_msg);
-		std::cout << request.getValueByKey("key1");
-		HttpResponse responseObj(request, _config);
-		std::string response = responseObj.getResponse();
-		bytes_received = send(client.getClientSocket().getFd(), response.c_str(), response.size(), 0);
-		if (bytes_received < 0)
-			perror("ERROR socket closed");
+//		std::cout << "\n\n\n\n" << request.getValueByKey("Content-Type") << std::endl;
+//		std::cout << "EMPTY" << std::endl;
+		std::string accept;
+		if(request.getValueByKey("Content-Type").substr(0, 5) == "multi" || request.getValueByKey("Content-Type").substr(0, 5)  == "image" || flag == 1)
+		{
+			flag = 0;
+			std::string newBuffer;
+			accept = "HTTP/1.1 202 Accepted\r\n\r\n";
+			send(client.getClientSocket().getFd(), accept.c_str(), accept.length(), 0);
+			while (((bytes_received = recv(client.getClientSocket().getFd(), _buffer, sizeof(_buffer) - 1, 0)) > 0))
+			{
+//				if(!flag)
+				newBuffer += std::string(_buffer);
+				count += bytes_received;
+				send(client.getClientSocket().getFd(), accept.c_str(), accept.length(), 0);
+//				flag = 1;
+			}
+			newBuffer += std::string(_buffer);
+			std::cout << newBuffer << std::endl;
+			output << newBuffer;
+			output.close();
+			std::cout << request.getValueByKey("Content-Length") << std::endl;
+			std::cout << "\n\n Bytes Received: " << count << std::endl;
+//			send(client.getClientSocket().getFd(), newBuffer.c_str(), newBuffer.length(), 0);
+
+		}
+			else
+			{
+				HttpResponse responseObj(request, _config);
+				std::string response = responseObj.getResponse();
+				bytes_received = send(client.getClientSocket().getFd(), response.c_str(), response.size(), 0);
+				if (bytes_received < 0)
+					perror("ERROR socket closed");
+			}
 	}
 }
 

@@ -30,7 +30,7 @@ class Server {
 	void				removeClient();
 
   private:
-	char							_buffer[8192];
+	char							_buffer[800];
 	const ServerConfig				_config;
 	const ConfigFile						_configFile;
 	ServerSocket					_serverSocket;

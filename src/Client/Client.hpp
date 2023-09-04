@@ -13,7 +13,6 @@ class Client{
 
 	const ClientSocket	&getClientSocket() const;
 	void	setClientFd(int fd);
-	void	setClientFd(int fd) const;
 	ClientSocket 	&getClientSocket();
 	static std::string	generateCookieId(int length);
 
@@ -23,5 +22,6 @@ class Client{
 	ClientSocket	_clientSocket;
 	std::chrono::time_point<std::chrono::system_clock> _timeSinceUpdate;
 
-	void	generateSessionId(int length);
 };
+
+std::string	generateSessionId(int length);
