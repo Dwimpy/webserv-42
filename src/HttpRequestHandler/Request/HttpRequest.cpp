@@ -1,6 +1,7 @@
 #include "HttpRequest.hpp"
 #include "../../Parser/HttpRequestParser/HttpRequestParser.hpp"
 #include <iostream>
+#include <sstream>
 
 HttpRequest::HttpRequest(const std::string &request): _versionMajor(1), _versionMinor(1)
 {
@@ -9,6 +10,7 @@ HttpRequest::HttpRequest(const std::string &request): _versionMajor(1), _version
 
 	HttpRequestParser::parseRequest(*this, str, str + request.size());
 	HttpRequestParser::resetParser();
+//	getFullBody();
 }
 
 HttpRequest::~HttpRequest()
@@ -52,6 +54,21 @@ void	HttpRequest::pushHeader(const Header& header)
 	_headers.push_back(header);
 }
 
+void	HttpRequest::pushBodyHeader(const Header& header)
+{
+	_body.push_back(header);
+}
+
+void	HttpRequest::pushToLastBodyHeaderKey(char c)
+{
+	_body.back().pushToKey(c);
+};
+
+void	HttpRequest::pushToLastBodyHeaderValue(char c)
+{
+	_body.back().pushToValue(c);
+}
+
 bool	HttpRequest::isEmptyHeader()
 {
 	return (this->_headers.empty());
@@ -80,6 +97,30 @@ const unsigned int &HttpRequest::getVersionMajor()
 const unsigned int &HttpRequest::getVersionMinor()
 {
 	return (this->_versionMinor);
+}
+
+const std::vector<Header>	&HttpRequest::getBody(const std::string &key) const
+{
+	return (this->_body);
+}
+
+const std::string HttpRequest::getFullBody() const
+{
+	std::ostringstream str;
+	size_t	idx;
+
+	idx = 0;
+	for (std::vector<Header>::const_iterator it = _body.begin(); it < _body.end(); it++)
+	{
+		idx++;
+		str << it->getKey();
+		str << "=";
+		str << it->getValue();
+		if (idx != _body.size())
+			str << "&";
+	}
+//	std::cout << str.str() << std::endl;
+	return (str.str());
 }
 
 const std::string HttpRequest::getValueByKey(const std::string &key)

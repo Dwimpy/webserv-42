@@ -16,7 +16,15 @@ void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
     env.push_back("HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" );
     env.push_back("RESPONSE_HEADER=HTTP/1.1 200 OK" );
     env.push_back("CONTENT_TYPE=application/x-www-form-urlencoded" );
-	env.push_back("Cookie=user:cookie" );
+	std::string var = request.getValueByKey("Cookie");
+	env.push_back("Cookie=" + var);
+	env.push_back("USERNAME=" + var.substr(0, 6));
+	env.push_back("PWD=" + var.substr(7, 12));
+
+//	std::cout << "cookie: " << var << std::endl;
+//	std::cout << "username: " << var.substr(0, 6) << std::endl;
+//	std::cout << "pwd: " << var.substr(7, 12) << std::endl;
+//	env.push_back("Cookie=user:cookie" );
 //    env.push_back("$_POST[\"username\"] = \"johndoe\"");
 //    env.push_back("$_POST[\"password\"] = \"secretpassword\"");
 //    env.push_back("CONTENT_BODY=username=s&password=s");
@@ -43,7 +51,7 @@ void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
 //        _request.env.push_back("HTTP_COOKIE=");
 }
 
-int HttpResponse::dup_request_to_stdin() {
+int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
 //    int fd = tmp_fd();
 //    FILE*   tmp = tmpfile();
 //    int fd = fileno(tmp);
@@ -52,7 +60,8 @@ int HttpResponse::dup_request_to_stdin() {
         return EXIT_FAILURE;
     std::string query;
     //cookie here
-    query.append("username=s&password=s");
+//    query.append("username=s&password=s");
+    query.append(request.getFullBody());
     if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
     {
         close(fd[STDIN_FILENO]);
@@ -103,15 +112,19 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     else if (_flag == 1)
         cgiPath += "register_landing_page";
     else if (_flag == 2)
-        cgiPath += "login";
+        cgiPath += "profile";
+	else if (_flag == 3)
+		cgiPath += "login";
     else
         error("no valid flag/path");
+
+//	std::cout << "uri: " << cgiPath << std::endl;
 
     dup2(_response_fd[1], STDOUT_FILENO);
     close(_response_fd[1]);
     close(_response_fd[0]);
 
-    if (dup_request_to_stdin())
+    if (dup_request_to_stdin(request))
         exit(error("tmpfile creation failed!"));
 
 	char *args[2];
@@ -171,14 +184,19 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
         appendCookie(request);
 	else
         appendNewLine(request);
+//		deleteCookie(request);
+
     std::string uri = request.getRequestUri();
-    if (uri == "/register_landing_page.rs" || uri == "/register.rs" || uri == "/login.rs")
+
+    if (uri == "/register_landing_page.rs" || uri == "/profile.rs" || uri == "/login.rs" || uri == "/register.rs")
     {
         if (uri == "/register_landing_page.rs")
             _flag = 1;
-        else if (uri == "login.rs")
+        else if (uri == "/profile.rs")
             _flag = 2;
-        else
+		else if (uri == "/login.rs")
+			_flag = 3;
+        else if (uri == "/register.rs")
             _flag = 0;
 
         if(pipe(_response_fd) == -1)
@@ -219,12 +237,18 @@ void	HttpResponse::appendHttpProtocol(const HttpRequest &request)
 
 void	HttpResponse::appendCookie(const HttpRequest &request)
 {
-	_response << "Set-Cookie: " << "name.gen()" << "=" << "value.gen()" << << "\r\n\r\n";
+	_response << "Set-Cookie: " << Client::generateCookieId(6) << "=" << Client::generateCookieId(12) << "\r\n\r\n";
 }
 void	HttpResponse::appendNewLine(const HttpRequest &request)
 {
 	_response << "\r\n";
 }
+
+void	HttpResponse::deleteCookie(const HttpRequest &request)
+{
+	_response << "Set-Cookie: " << request.getValueByKey("Cookie") << "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;" << "\r\n\r\n";
+}
+
 
 void	HttpResponse::appendStatusCode(const HttpRequest &request)
 {

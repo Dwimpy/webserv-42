@@ -6,6 +6,8 @@ r2d2 = "0.8.10"
 rusqlite = "0.29.0"
 r2d2_sqlite = "0.22.0"
 
+#rocket = "0.5"
+
 
 
 
@@ -19,10 +21,15 @@ build = "build.rs"
 name = "register_landing_page"
 path = "src/register_landing_page.rs"
 
+
 [[bin]]
-name = "register"
-path = "src/register.rs"
+name = "profile"
+path = "src/profile.rs"
 
 [[bin]]
 name = "login"
 path = "src/login.rs"
+
+[[bin]]
+name = "register"
+path = "src/register.rs"

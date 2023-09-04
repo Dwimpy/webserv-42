@@ -1,13 +1,15 @@
 #include "Server.hpp"
+
+#include <sys/event.h>
 #include <unistd.h>
 
-Server::Server() : _socketHandler(SocketHandler()), _config(ServerConfig())
+Server::Server() : _config(ServerConfig())
 {}
 
 Server::Server(const ServerConfig &config) : _config(config)
 {}
 
-Server::Server(const ConfigFile &config): _socketHandler(SocketHandler()), _configFile(config), _config(ServerConfig())
+Server::Server(const ConfigFile &config): _configFile(config), _config(ServerConfig())
 {}
 
 Server::~Server()
@@ -25,48 +27,72 @@ bool Server::startServer()
 }
 
 
-void Server::acceptIncomingConnections(std::vector<t_pollfd> &pollfds, indexToPollMap &map)
+void Server::acceptIncomingConnections(int kq, struct kevent change[25])
 {
 	int		clientFd;
+	size_t	i;
 
+	i = 0;
 	clientFd = 0;
+//	this->removeClient();
 	while (true)
 	{
 		Client	newClient;
 		clientFd = _serverSocket.accept(newClient);
 		if (clientFd == -1)
 			break ;
+		std::cout << "Connection Accepted. Assigned to FD: " << clientFd << "\n";
 		this->_connectedClients.__emplace_back(newClient);
-		pollfds.__emplace_back((t_pollfd){clientFd, POLLIN, 0});
-		(map)[_serverSocket.getSocketFD()][clientFd] = &pollfds.back();
+		i++;
 	}
 }
 
-bool	Server::sendResponse(t_pollfd currentClient)
+void	Server::removeClient()
+{
+	for (std::vector<Client>::iterator it = _connectedClients.begin(); it != _connectedClients.end();)
+	{
+		if (it->getClientSocket().getFd() == -1)
+		{
+			it = _connectedClients.erase(it);
+		}
+		else
+			++it;
+	}
+}
+
+bool	Server::sendResponse(int fd)
 {
 	ssize_t	bytes_received;
 	memset(_buffer, 0, sizeof(_buffer));
-	if ((bytes_received = recv(currentClient.fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)
+	if ((bytes_received = recv(fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)
 	{
-		perror("ERROR reading from socket");
-		close(currentClient.fd);
-		return (false);
+		perror("Error receiving data");
+		std::cout << "SERVER RECV: fd: " << fd << std::endl;
 	}
 	else if (bytes_received == 0)
 	{
-		perror("ERROR socket closed");
-		close(currentClient.fd);
-		return (false);
+		perror("ERROR connection closed by client");
 	}
-	std::cout << "\033[0;92m" << _buffer << "\033[0;39m" << std::endl;
-	std::string response_msg = std::string(_buffer);
-	HttpRequest request(response_msg);
-	HttpResponse responseObj(request, _config);
-	std::string response = responseObj.getResponse();
-	send(currentClient.fd, response.c_str(), response.size(), 0);
-	close(currentClient.fd);
-	return (true);
+	else
+	{
+//		std::cout << _buffer << std::endl;
+		std::string response_msg = std::string(_buffer);
+		HttpRequest request(response_msg);
+		std::cout << request.getValueByKey("key1");
+		HttpResponse responseObj(request, _config);
+		std::string response = responseObj.getResponse();
+		bytes_received = send(fd, response.c_str(), response.size(), 0);
+		if (bytes_received < 0)
+		{
+			perror("ERROR socket closed");
+
+			return (false);
+		}
+		return (true);
+	}
+	return (false);
 }
+
 
 bool	Server::sendResponse(Client client)
 {
@@ -94,50 +120,6 @@ bool	Server::sendResponse(Client client)
 	return (true);
 }
 
-void	Server::handleIncomingRequests(indexToPollMap &map)
-{
-    std::map<int, t_pollfd *>::iterator it;
-
-	for (it = map[this->_serverSocket.getSocketFD()].begin(); it != map[this->_serverSocket.getSocketFD()].end();)
-	{
-		if (it->second->revents == POLLIN)
-		{
-			sendResponse(*it->second);
-			it->second->fd = -1;
-			it->second->revents = 0;
-		}
-		it++;
-	}
-}
-
-void Server::removeFd()
-{
-	std::vector<Client>::iterator it;
-
-	for (it = _connectedClients.begin(); it != _connectedClients.end(); )
-	{
-		if (it->getClientSocket().getFd() == -1)
-			it = _connectedClients.erase(it);
-		else
-			++it;
-	}
-}
-
-void	Server::removeClient()
-{
-	std::vector<Client >::const_iterator it = _connectedClients.cbegin();
-
-	while (it != _connectedClients.cend())
-	{
-		if (it->getClientSocket().getFd() == -1)
-		{
-			it = _connectedClients.erase(it);
-		}
-		else
-			++it;
-	}
-}
-
 const ConfigFile &Server::getConfiguration() const
 {
 	return (this->_configFile);
@@ -146,4 +128,8 @@ const ConfigFile &Server::getConfiguration() const
 ServerSocket Server::getSocket() const
 {
 	return (this->_serverSocket);
+}
+std::vector<Client> &Server::getConnectedClients()
+{
+	return (this->_connectedClients);
 }

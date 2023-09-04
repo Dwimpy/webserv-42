@@ -50,7 +50,7 @@ bool ServerSocket::listen()
 {
 	try
 	{
-		if ((::listen(this->_fd, 512)) < 0)
+		if ((::listen(this->_fd, 1024)) < 0)
 			throw std::runtime_error("Error listening on Socket\n");
 		return (true);
 	} catch (std::exception &e)
@@ -68,8 +68,15 @@ int &ServerSocket::getSocketFD()
 int ServerSocket::accept(Client &client)
 {
 	int clientFd;
+	struct timeval timeout;
 
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 0;
 	clientFd = ::accept(this->_fd, (t_sockaddr *)&client.getClientSocket().getClientAddr(), &client.getClientSocket().getClientAddrLen());
+	setsockopt(clientFd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+	setsockopt(clientFd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+	fcntl(this->_fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+
 	client.getClientSocket().setFd(clientFd);
 	return (clientFd);
 }

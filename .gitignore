@@ -31,6 +31,10 @@
 *.out
 *.app
 
-# Folders
-.vscode/
 .idea/
+.vscode/
+.CMakeFiles/
+./vscode
+./idea
+./CMakeFiles
+

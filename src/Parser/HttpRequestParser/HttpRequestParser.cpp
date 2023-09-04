@@ -48,6 +48,18 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 				break ;
 			case StateHeaderValue: parseStateHeaderValue(request, c);
 				break ;
+			case StateEndRequest: parseStateEndRequest(request, c);
+				break ;
+			case StateBodyStart: parseStateBodyStart(request, c);
+				break ;
+			case StateBodyKey: parseStateBodyKey(request, c);
+				break ;
+			case StateBodyValue: parseStateBodyValue(request, std::string(start - 1).substr(0, 3), c);
+				break ;
+			case StateBodyAtSign: parseStateBodyAtSign(request, c);
+				break ;
+			case StateBodyNextHeader: parseStateBodyNextHeader(request, c);
+				break ;
 		}
 	}
 }
@@ -81,7 +93,7 @@ bool HttpRequestParser::isReserverChar(char c)
 
 bool HttpRequestParser::isSpace(char c)
 {
-	return (c == ' ');
+	return (c == ' ' || c == '\t');
 }
 
 void HttpRequestParser::parseRequestMethodStart(HttpRequest &request, char c)
@@ -202,7 +214,9 @@ void HttpRequestParser::parseVersionHTTPVersionMinor(HttpRequest &request, char 
 
 void HttpRequestParser::parseStateHeaderStart(HttpRequest &request, char c)
 {
-	if (isControlChar(c))
+	if (c == '\r')
+		HttpRequestParser::_state = StateEndRequest;
+	else if (isControlChar(c))
 		HttpRequestParser::_result = ParserError;
 	else
 	{
@@ -210,6 +224,14 @@ void HttpRequestParser::parseStateHeaderStart(HttpRequest &request, char c)
 		request.pushToLastHeaderKey(c);
 		HttpRequestParser::_state = StateHeaderName;
 	}
+}
+
+void HttpRequestParser::parseStateEndRequest(HttpRequest &request, char c)
+{
+	if (c == '\n')
+		HttpRequestParser::_state = StateBodyStart;
+	else
+		HttpRequestParser::_result = ParserError;
 }
 
 void HttpRequestParser::parseStateHeaderName(HttpRequest &request, char c)
@@ -247,6 +269,75 @@ void HttpRequestParser::parseStateNewLineCR(HttpRequest &request, char c)
 	else
 		HttpRequestParser::_state = StateNewLineLF;
 }
+
+void HttpRequestParser::parseStateBodyStart(HttpRequest &request, char c)
+{
+	if (isSpace(c)) {}
+	else if (c == '\0')
+		HttpRequestParser::_result = ParserComplete;
+	else if (!isChar(c))
+		HttpRequestParser::_result = ParserError;
+	else
+	{
+		request.pushBodyHeader(Header());
+		request.pushToLastBodyHeaderKey(c);
+		HttpRequestParser::_state = StateBodyKey;
+	}
+}
+
+void HttpRequestParser::parseStateBodyKey(HttpRequest &request, char c)
+{
+	if (c == '=')
+		HttpRequestParser::_state = StateBodyValue;
+	else if (!isChar(c) && !isDigit(c) && !isReserverChar(c))
+		HttpRequestParser::_result = ParserError;
+	else
+		request.pushToLastBodyHeaderKey(c);
+}
+
+
+void HttpRequestParser::parseStateBodyValue(HttpRequest &request, std::string str, char c)
+{
+	if (c == '\0')
+		HttpRequestParser::_result = ParserComplete;
+	else if (c == '&')
+		HttpRequestParser::_state = StateBodyStart;
+	else if (str == "%40")
+	{
+		HttpRequestParser::_state = StateBodyAtSign;
+	}
+	else if (!isChar(c) && !isDigit(c) && !isReserverChar(c) && c != '.' && c != '-')
+		HttpRequestParser::_result = ParserError;
+	else
+		request.pushToLastBodyHeaderValue(c);
+}
+
+void HttpRequestParser::parseStateBodyAtSign(HttpRequest &request, char c)
+{
+	if (c != '0') {}
+	else{
+
+		request.pushToLastBodyHeaderValue('@');
+		HttpRequestParser::_state = StateBodyValue;
+	}
+}
+
+
+void HttpRequestParser::parseStateBodyNextHeader(HttpRequest &request, char c)
+{
+	if (isSpace(c)) {}
+	else if (c == '\0')
+		HttpRequestParser::_result = ParserComplete;
+	else if (!isChar(c))
+		HttpRequestParser::_result = ParserError;
+	else
+	{
+		request.pushBodyHeader(Header());
+		request.pushToLastHeaderKey(c);
+		HttpRequestParser::_state = StateBodyKey;
+	}
+}
+
 
 void HttpRequestParser::parseStateNewLineLF(HttpRequest &request, char c)
 {
