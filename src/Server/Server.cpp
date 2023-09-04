@@ -60,10 +60,11 @@ void	Server::removeClient()
 	}
 }
 
-bool	Server::sendResponse(int fd)
+void	Server::sendResponse(int fd)
 {
 	ssize_t	bytes_received;
 	memset(_buffer, 0, sizeof(_buffer));
+
 	if ((bytes_received = recv(fd, _buffer, sizeof(_buffer) - 1, 0)) < 0)
 	{
 		perror("Error receiving data");
@@ -83,41 +84,32 @@ bool	Server::sendResponse(int fd)
 		std::string response = responseObj.getResponse();
 		bytes_received = send(fd, response.c_str(), response.size(), 0);
 		if (bytes_received < 0)
-		{
 			perror("ERROR socket closed");
-
-			return (false);
-		}
-		return (true);
 	}
-	return (false);
 }
 
 
-bool	Server::sendResponse(Client client)
+void	Server::sendResponse(Client client)
 {
 	ssize_t	bytes_received;
 	memset(_buffer, 0, sizeof(_buffer));
+
 	if ((bytes_received = recv(client.getClientSocket().getFd(), _buffer, sizeof(_buffer) - 1, 0)) < 0)
-	{
-		perror("ERROR reading from socket");
-		close(client.getClientSocket().getFd());
-		return (false);
-	}
+		perror("Error receiving data");
 	else if (bytes_received == 0)
+		perror("ERROR connection closed by client");
+	else
 	{
-		perror("ERROR socket closed");
-		close(client.getClientSocket().getFd());
-		return (false);
+//		std::cout << _buffer << std::endl;
+		std::string response_msg = std::string(_buffer);
+		HttpRequest request(response_msg);
+		std::cout << request.getValueByKey("key1");
+		HttpResponse responseObj(request, _config);
+		std::string response = responseObj.getResponse();
+		bytes_received = send(client.getClientSocket().getFd(), response.c_str(), response.size(), 0);
+		if (bytes_received < 0)
+			perror("ERROR socket closed");
 	}
-    std::cout << "\033[0;92m" << _buffer << "\033[0;39m" << std::endl;
-	std::string response_msg = std::string(_buffer);
-	HttpRequest request(response_msg);
-	HttpResponse responseObj(request, _config);
-	std::string response = responseObj.getResponse();
-	send(client.getClientSocket().getFd(), response.c_str(), response.size(), 0);
-	close(client.getClientSocket().getFd());
-	return (true);
 }
 
 const ConfigFile &Server::getConfiguration() const
@@ -132,4 +124,8 @@ ServerSocket Server::getSocket() const
 std::vector<Client> &Server::getConnectedClients()
 {
 	return (this->_connectedClients);
+}
+const ConfigFile &Server::getConfiguration()
+{
+	return (this->_configFile);
 }

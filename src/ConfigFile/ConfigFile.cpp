@@ -110,3 +110,8 @@ void ConfigFile::inspectConfig() const
 			 std::cout << "\tKey: " << innerIt->first << "\tValue: " << innerIt->second << std::endl;
 	}
 }
+
+ const std::string &ConfigFile::getServerName() const
+{
+	return (_serverDirectives.find("server_name")->second);
+}

@@ -19,8 +19,9 @@ class ConfigFile{
 	void	inspectConfig();
 	void	inspectConfig() const;
 
-	int 	getPort();
-	int 	getPort() const;
+	int 				getPort();
+	int 				getPort() const;
+	const std::string	&getServerName() const;
 
   private:
 	serverDirectives	_serverDirectives;

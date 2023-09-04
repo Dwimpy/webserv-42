@@ -20,10 +20,11 @@ class Server {
 	bool	startServer();
 
 	void	acceptIncomingConnections(int kq, struct kevent change[25]);
-	bool	sendResponse(Client client);
-	bool	sendResponse(int fd);
+	void	sendResponse(Client client);
+	void	sendResponse(int fd);
 
 	const ConfigFile		&getConfiguration() const;
+	const ConfigFile			&getConfiguration();
 	std::vector<Client> &getConnectedClients();
 	ServerSocket		getSocket() const;
 	void				removeClient();
@@ -31,7 +32,7 @@ class Server {
   private:
 	char							_buffer[8192];
 	const ServerConfig				_config;
-	const ConfigFile					_configFile;
+	const ConfigFile						_configFile;
 	ServerSocket					_serverSocket;
 	std::vector<Client>				_connectedClients;
 };

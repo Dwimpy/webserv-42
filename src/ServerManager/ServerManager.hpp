@@ -5,13 +5,17 @@
 class ServerManager{
 
   public:
+
+
 	ServerManager();
 	~ServerManager();
 	void	buildServers(const std::string &filePath);
 	bool	startServers();
 	void	runServers();
 
-	static int findServerFromFd(std::vector<Server> &serverList, int fd);
+	int		getNameWidth();
+
+	static int findServerFromFd(std::vector<Server> &serverList, Client &client, int fd);
 
   private:
 	std::vector<Server>			_serverList;

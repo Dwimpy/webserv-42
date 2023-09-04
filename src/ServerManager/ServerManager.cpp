@@ -1,6 +1,9 @@
 #include "ServerManager.hpp"
 #include "EventHandler.hpp"
 
+const std::string GREEN = "\033[32m";
+const std::string RED = "\033[31m";
+const std::string RESET = "\033[0m";
 
 static bool	shouldExit = false;
 
@@ -29,13 +32,32 @@ void ServerManager::runServers()
 
 bool ServerManager::startServers()
 {
+
 	for (size_t i = 0; i < _serverList.size(); ++i)
 	{
 		if (!_serverList[i].startServer())
 			return (false);
-		std::cout << "Server Started:\n   Listening on port: " << _serverList[i].getConfiguration().getPort() << std::endl;
+		std::cout << "Server "
+				  << "[ " << GREEN << std::setw(getNameWidth()) << std::left << _serverList[i].getConfiguration().getServerName() << RESET
+				  << " ]" << " started:\t" << "Listening on port: " << "[ "
+				  << GREEN  << std::setw(6) << _serverList[i].getConfiguration().getPort() << RESET << " ]" << std::endl;
 	}
 	return (true);
+}
+
+int	ServerManager::getNameWidth()
+{
+	int	max;
+	int	len;
+
+	max = 0;
+	for (ssize_t i = 0; i < _serverList.size(); ++i)
+	{
+		len = _serverList[i].getConfiguration().getServerName().length();
+		if (len > max)
+			max = len;
+	}
+	return (max);
 }
 
 void	ServerManager::parseConfigurationFile(const std::string &filePath)
@@ -49,15 +71,10 @@ void	ServerManager::createAndConfigureServers()
 	configs = _serverConfigurator.buildConfigFiles();
 
 	for (size_t i = 0; i < configs.size(); ++i)
-	{
-		std::cout << "Server " << i + 1 << "\n";
 		_serverList.__emplace_back(configs[i]);
-		std::cout << "Port: " << _serverList.back().getConfiguration().getPort() << "\n";
-		std::cout << "\n";
-	}
 }
 
-int ServerManager::findServerFromFd(std::vector<Server> &serverList, int fd)
+int ServerManager::findServerFromFd(std::vector<Server> &serverList, Client &client, int fd)
 {
 	for (ssize_t k = 0; k < serverList.size(); ++k)
 	{
@@ -65,7 +82,8 @@ int ServerManager::findServerFromFd(std::vector<Server> &serverList, int fd)
 		{
 			if (serverList[k].getConnectedClients()[j].getClientSocket().getFd() == fd)
 			{
-				serverList[k].getConnectedClients()[j].setClientFd((-1));
+				client = serverList[k].getConnectedClients()[j];
+				serverList[k].getConnectedClients()[j].setClientFd(-1);
 				return (k);
 			}
 		}

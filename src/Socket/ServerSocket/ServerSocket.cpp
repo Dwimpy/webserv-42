@@ -22,7 +22,6 @@ bool ServerSocket::create(int port)
 		int reuse = 1;
 		setsockopt(this->_fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 		fcntl(this->_fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-		std::cout << "Socket created" << std::endl;
 		return (true);
 	} catch (std::exception &e)
 	{
@@ -37,7 +36,6 @@ bool ServerSocket::bind()
 	{
 		if ((::bind(this->_fd, (t_sockaddr *) &this->_serverAddr, sizeof(this->_serverAddr)) < 0))
 			throw std::runtime_error("Error binding to address\n");
-		std::cout << "Binding complete" << std::endl;
 		return (true);
 	} catch (const std::exception &e)
 	{
