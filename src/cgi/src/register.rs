@@ -15,7 +15,9 @@ use utils::utils::{add_cookie_to_database, check_cookie_in_database, check_user_
 
 #[derive(Template)]
 #[template(path = "tRegisterLandingPage.html")]
-struct LandingPageTemplate;
+struct LandingPageTemplate{
+    message: String,
+}
 
 
 fn main() -> Result<(), Error> {
@@ -60,14 +62,34 @@ fn main() -> Result<(), Error> {
     println!("Password: {}", password);
 
     return match add_user_to_db(&username, &password, &birthdate, &email) {
-        Ok(_) => {
+        Ok(1) => {
             add_cookie_to_database(&username, &cookie).expect("Failed to add cookie to db");
             // println!("User added to db");
-            let template = LandingPageTemplate {};
+            let template = LandingPageTemplate {
+                message: String::from("Alles gut! Enjoy!"),
+            };
+            println!("{}", template.render().unwrap());
+            Ok(())
+        }
+        Ok(2) => {
+            // add_cookie_to_database(&username, &cookie).expect("Failed to add cookie to db");
+            // println!("User added to db");
+            let template = LandingPageTemplate {
+                message: String::from("FAIL! User already exists"),
+            };
+            println!("{}", template.render().unwrap());
+            Ok(())
+        }
+        Ok(_) =>{
+            let template = LandingPageTemplate {
+                message: String::from("FAIL! User already exists"),
+            };
             println!("{}", template.render().unwrap());
             Ok(())
         }
         Err(err) => {
+            // let template = LandingPageTemplate {};
+            // println!("{}", template.render().unwrap());
             eprintln!("Error adding user to db: {}", err);
             Ok(())
         }
