@@ -105,6 +105,10 @@ rust:
 cgi:
 	@cd ./src/cgi && cargo build --release
 
+flask:
+	@python3.9 -m pip install --upgrade pip
+	@pip3 install flask
+
  clean:
 			@$(RM) -rdf $(OBJ_DIR)
 			@$(RM) -rdf $(DSYM)
