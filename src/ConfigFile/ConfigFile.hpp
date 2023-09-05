@@ -22,6 +22,8 @@ class ConfigFile{
 	int 				getPort();
 	int 				getPort() const;
 	const std::string	&getServerName() const;
+	bool 				isAllowedMethodServer(const std::string &method);
+	bool				isValidLocation(const std::string &location);
 
   private:
 	serverDirectives	_serverDirectives;

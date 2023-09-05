@@ -8,6 +8,22 @@ ClientSocket::~ClientSocket()
 
 }
 
+bool ClientSocket::receive()
+{
+	ssize_t	bytes_received;
+	memset(_buffer, 0, sizeof(_buffer));
+	bytes_received = recv(this->_fd, _buffer, sizeof(_buffer), 0);
+	if (bytes_received <= 0)
+		return (false);
+	_buffer[bytes_received] = '\0';
+	return (true);
+}
+
+char	*ClientSocket::getBuffer()
+{
+	return (this->_buffer);
+}
+
 t_sockaddr_in &ClientSocket::getClientAddr()
 {
 	return (this->_clientAddr);

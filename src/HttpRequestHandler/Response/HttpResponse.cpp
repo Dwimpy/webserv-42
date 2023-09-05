@@ -3,6 +3,214 @@
 #include <iostream>
 #include <string>
 
+HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &config): _statusCode(200), _statusError("OK")
+{
+	fileExists(request, config);
+
+	appendResponseHeader(request);
+    if (request.getValueByKey("Cookie") == "")
+        appendCookie(request);
+	else
+        appendNewLine(request);
+//		deleteCookie(request);
+
+    std::string uri = request.getRequestUri();
+
+    if (uri == "/register_landing_page.rs" || uri == "/profile.rs" \
+			|| uri == "/login.rs" || uri == "/register.rs" || uri == "/upload.py")
+    {
+        if (uri == "/register_landing_page.rs")
+            _flag = 1;
+        else if (uri == "/profile.rs")
+            _flag = 2;
+		else if (uri == "/login.rs")
+			_flag = 3;
+		else if (uri == "/upload.py")
+			_flag = 4;
+        else if (uri == "/register.rs")
+            _flag = 0;
+
+        if(pipe(_response_fd) == -1)
+            std::cerr << ("tmpfile creation failed!") << std::endl;
+
+        switch (fork())
+        {
+            case -1:
+                std::cerr << ("fork creation failed!") << std::endl;
+                break;
+            case 0:
+                childProcess(request);
+        }
+
+        if (parent_process() != EXIT_SUCCESS){
+            error("EXITED PARENT");
+        }
+        if (write_response() != EXIT_SUCCESS)
+        {
+//            std::cerr << ("interrupted by signal!") << std::endl;
+            error("interrupted by signal!");
+        }
+    }
+    else
+        appendFileContents();
+}
+
+HttpResponse::HttpResponse(const HttpRequest &request, ConfigFile &config)
+{
+	processRequestUri(request, config);
+// TODO: Check location before actually checking the methods allowed
+	if (!checkAllowedMethod(request, config))
+	{
+		_statusError = "KO";
+		_statusCode = 504;
+		_errorMessage = "Unauthorized method";
+// TODO: Append error page
+//		appendErrorPage(_statusCode);
+	}
+	config.inspectConfig();
+}
+
+void HttpResponse::processRequestUri(const HttpRequest &request, ConfigFile &config)
+{
+	size_t	first;
+	size_t	last;
+	std::string request_uri;
+	std::string	location;
+
+	request_uri = request.getRequestUri();
+	first = request_uri.find_first_of("/");
+	last = request_uri.find_last_of("/");
+	if (first != last)
+	{
+		location = request_uri.substr(first, last);
+		if (!config.isValidLocation(location))
+		{
+			_statusCode = 404;
+			_statusError = "KO";
+			_errorMessage = "Location not found";
+			std::cout << "INVALID" << std::endl;
+		}
+	}
+}
+
+void HttpResponse::processMethod(const HttpRequest &request)
+{
+	if (request.getRequestMethod() == "GET")
+		processGetRequest(request);
+}
+
+void HttpResponse::processGetRequest(const HttpRequest &request)
+{
+
+}
+
+bool HttpResponse::checkAllowedMethod(const HttpRequest &request, ConfigFile &config)
+{
+
+	return (config.isAllowedMethodServer(request.getRequestMethod()));
+}
+
+void HttpResponse::processRequestHeader(const HttpRequest &request)
+{
+
+}
+
+void HttpResponse::appendResponseHeader(const HttpRequest &request)
+{
+	appendHttpProtocol(request);
+	appendStatusCode(request);
+	appendContentType(request);
+}
+
+HttpResponse::HttpResponse()
+{}
+
+HttpResponse::~HttpResponse()
+{}
+
+void	HttpResponse::appendHttpProtocol(const HttpRequest &request)
+{
+	_response << "HTTP/" << request.getVersionMajor() << "." << request.getVersionMinor() << " ";
+}
+
+void	HttpResponse::appendCookie(const HttpRequest &request)
+{
+	_response << "Set-Cookie: " << Client::generateCookieId(6) << "=" << Client::generateCookieId(12) << "\r\n\r\n";
+}
+void	HttpResponse::appendNewLine(const HttpRequest &request)
+{
+	_response << "\r\n";
+}
+
+void	HttpResponse::deleteCookie(const HttpRequest &request)
+{
+	_response << "Set-Cookie: " << request.getValueByKey("Cookie") << "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;" << "\r\n\r\n";
+}
+
+
+void	HttpResponse::appendStatusCode(const HttpRequest &request)
+{
+	_response << _statusCode << " " << _statusError << "\r\n";
+}
+
+void	HttpResponse::appendContentType(const HttpRequest &request)
+{
+	_response << "Content-Type: " << getContentType(request) << "\r\n";
+}
+
+void	HttpResponse::appendFileContents()
+{
+	std::ifstream	infile(_fileName);
+	char			c;
+
+	while (infile.get(c))
+		_response << c;
+	infile.close();
+}
+
+void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &config)
+{
+	_fileName = config.getDocumentRoot() + getFileName(request);
+	std::ifstream	infile(_fileName);
+
+	if (infile.good())
+	{
+		infile.close();
+		return ;
+	}
+	else
+	{
+		this->_statusCode = 404;
+		this->_statusError = "KO";
+        this->_fileName = "./docs/error_pages/404.html";
+	}
+}
+
+std::string	HttpResponse::getContentType(const HttpRequest &request)
+{
+	size_t		idx;
+	std::string	responseMsg;
+
+	responseMsg = request.getValueByKey("Accept");
+	idx = responseMsg.find_first_of(',');
+	if (idx == std::string::npos)
+		return (responseMsg);
+	return (responseMsg.substr(0, idx));
+}
+
+std::string	HttpResponse::getFileName(const HttpRequest &request)
+{
+	if (request.getRequestUri() == "/")
+		return ("/index.html");
+	return (request.getRequestUri());
+}
+
+std::string HttpResponse::getResponse()
+{
+	return (this->_response.str());
+}
+
+
 void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
 {
     env.push_back("REQUEST_METHOD=POST" );
@@ -184,145 +392,4 @@ int HttpResponse::write_response()
     }
     close(_response_fd[0]);
     return	EXIT_SUCCESS;
-}
-
-HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &config): _statusCode(200), _statusError("OK")
-{
-	fileExists(request, config);
-	appendHttpProtocol(request);
-	appendStatusCode(request);
-	appendContentType(request);
-    if (request.getValueByKey("Cookie") == "")
-        appendCookie(request);
-	else
-        appendNewLine(request);
-//		deleteCookie(request);
-
-    std::string uri = request.getRequestUri();
-
-    if (uri == "/register_landing_page.rs" || uri == "/profile.rs" \
-			|| uri == "/login.rs" || uri == "/register.rs" || uri == "/upload.py")
-    {
-        if (uri == "/register_landing_page.rs")
-            _flag = 1;
-        else if (uri == "/profile.rs")
-            _flag = 2;
-		else if (uri == "/login.rs")
-			_flag = 3;
-		else if (uri == "/upload.py")
-			_flag = 4;
-        else if (uri == "/register.rs")
-            _flag = 0;
-
-        if(pipe(_response_fd) == -1)
-            std::cerr << ("tmpfile creation failed!") << std::endl;
-
-        switch (fork())
-        {
-            case -1:
-                std::cerr << ("fork creation failed!") << std::endl;
-                break;
-            case 0:
-                childProcess(request);
-        }
-
-        if (parent_process() != EXIT_SUCCESS){
-            error("EXITED PARENT");
-        }
-        if (write_response() != EXIT_SUCCESS)
-        {
-//            std::cerr << ("interrupted by signal!") << std::endl;
-            error("interrupted by signal!");
-        }
-    }
-    else
-        appendFileContents();
-}
-
-HttpResponse::HttpResponse()
-{}
-
-HttpResponse::~HttpResponse()
-{}
-
-void	HttpResponse::appendHttpProtocol(const HttpRequest &request)
-{
-	_response << "HTTP/" << request.getVersionMajor() << "." << request.getVersionMinor() << " ";
-}
-
-void	HttpResponse::appendCookie(const HttpRequest &request)
-{
-	_response << "Set-Cookie: " << Client::generateCookieId(6) << "=" << Client::generateCookieId(12) << "\r\n\r\n";
-}
-void	HttpResponse::appendNewLine(const HttpRequest &request)
-{
-	_response << "\r\n";
-}
-
-void	HttpResponse::deleteCookie(const HttpRequest &request)
-{
-	_response << "Set-Cookie: " << request.getValueByKey("Cookie") << "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;" << "\r\n\r\n";
-}
-
-
-void	HttpResponse::appendStatusCode(const HttpRequest &request)
-{
-	_response << _statusCode << " " << _statusError << "\r\n";
-}
-
-void	HttpResponse::appendContentType(const HttpRequest &request)
-{
-	_response << "Content-Type: " << getContentType(request) << "\r\n";
-}
-
-void	HttpResponse::appendFileContents()
-{
-	std::ifstream	infile(_fileName);
-	char			c;
-
-	while (infile.get(c))
-		_response << c;
-	infile.close();
-}
-
-void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &config)
-{
-	_fileName = config.getDocumentRoot() + getFileName(request);
-	std::ifstream	infile(_fileName);
-
-	if (infile.good())
-	{
-		infile.close();
-		return ;
-	}
-	else
-	{
-		this->_statusCode = 404;
-		this->_statusError = "KO";
-        this->_fileName = "./docs/error_pages/404.html";
-	}
-}
-
-std::string	HttpResponse::getContentType(const HttpRequest &request)
-{
-	size_t		idx;
-	std::string	responseMsg;
-
-	responseMsg = request.getValueByKey("Accept");
-	idx = responseMsg.find_first_of(',');
-	if (idx == std::string::npos)
-		return (responseMsg);
-	return (responseMsg.substr(0, idx));
-}
-
-std::string	HttpResponse::getFileName(const HttpRequest &request)
-{
-	if (request.getRequestUri() == "/")
-		return ("/index.html");
-	return (request.getRequestUri());
-}
-
-std::string HttpResponse::getResponse()
-{
-	return (this->_response.str());
 }

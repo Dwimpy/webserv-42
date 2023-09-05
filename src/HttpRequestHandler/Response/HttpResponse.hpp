@@ -9,11 +9,17 @@ class HttpResponse{
 
   public:
 	HttpResponse(const HttpRequest &request, const ServerConfig &config);
+	HttpResponse(const HttpRequest &request, ConfigFile &config);
 	HttpResponse();
 	~HttpResponse();
-	void				appendHttpProtocol(const HttpRequest &request);
-	void				appendStatusCode(const HttpRequest &request);
-	void				appendContentType(const HttpRequest &request);
+
+	void				processRequestHeader(const HttpRequest &request);
+	void				appendResponseHeader(const HttpRequest &request);
+	bool 				checkAllowedMethod(const HttpRequest &request, ConfigFile &config);
+
+	void				processMethod(const HttpRequest &request);
+	void				processRequestUri(const HttpRequest &request, ConfigFile &config);
+	void 				processGetRequest(const HttpRequest & request);
     void	            appendCookie(const HttpRequest &request);
     void	            appendNewLine(const HttpRequest &request);
 	void				appendFileContents();
@@ -27,13 +33,21 @@ class HttpResponse{
     void                childProcess(const HttpRequest &request);
     int                 parent_process();
     int                 dup_request_to_stdin(const HttpRequest &request);
+
   private:
 	unsigned int		_statusCode;
 	std::string			_statusError;
+	std::string			_errorMessage;
 	std::string			_fileName;
 	std::stringstream	_response;
 //    int                 _response_fd;
+	int					_flag;
     int                 _response_fd[2];
 
-    int                 _flag;
+
+	void				appendHttpProtocol(const HttpRequest &request);
+	void				appendStatusCode(const HttpRequest &request);
+	void				appendContentType(const HttpRequest &request);
 };
+
+int    error(std::string error);

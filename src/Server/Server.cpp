@@ -79,7 +79,6 @@ void	Server::sendResponse(int fd)
 		std::cout << _buffer << std::endl;
 		std::string response_msg = std::string(_buffer);
 		HttpRequest request(response_msg);
-		std::cout << request.getValueByKey("key1");
 		HttpResponse responseObj(request, _config);
 		std::string response = responseObj.getResponse();
 		bytes_received = send(fd, response.c_str(), response.size(), 0);
@@ -93,23 +92,22 @@ void	Server::sendResponse(Client client)
 {
 	ssize_t	bytes_received;
 	memset(_buffer, 0, sizeof(_buffer));
+	std::string	request_msg;
 
-	if ((bytes_received = recv(client.getClientSocket().getFd(), _buffer, sizeof(_buffer) - 1, 0)) < 0)
-		perror("Error receiving data");
-	else if (bytes_received == 0)
-		perror("ERROR connection closed by client");
-	else
-	{
-		std::cout << _buffer << std::endl;
-		std::string response_msg = std::string(_buffer);
-		HttpRequest request(response_msg);
-		std::cout << request.getValueByKey("key1");
+	request_msg = client.recieve();
+//	if ((bytes_received = recv(client.getClientSocket().getFd(), _buffer, sizeof(_buffer) - 1, 0)) < 0)
+//		perror("Error receiving data");
+		std::cout << request_msg << std::endl;
+		HttpRequest request(request_msg);
+		std::cout << request.getRequestBody();
+//		std::cout << "\n\n" << request.getValueByKey("Content-Type") << std::endl;
 		HttpResponse responseObj(request, _config);
+//		std::cout << request_msg << std::endl;
+		HttpResponse responseTest(request, _configFile);
 		std::string response = responseObj.getResponse();
 		bytes_received = send(client.getClientSocket().getFd(), response.c_str(), response.size(), 0);
 		if (bytes_received < 0)
 			perror("ERROR socket closed");
-	}
 }
 
 const ConfigFile &Server::getConfiguration() const

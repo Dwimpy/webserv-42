@@ -1,5 +1,7 @@
 #include "Client.hpp"
 
+#include <sstream>
+
 Client::Client():_clientSocket(ClientSocket()), _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
 {
 	generateSessionId(64);
@@ -30,6 +32,15 @@ std::string	Client::generateCookieId(int length)
 	for (int i =0; i < length; ++i)
 		sessionId += chars[distribution(generator)];
 	return(sessionId);
+}
+
+std::string Client::recieve()
+{
+	std::ostringstream os;
+
+	while (_clientSocket.receive())
+		os << std::string(_clientSocket.getBuffer());
+	return (os.str());
 }
 
 const std::string &Client::getClientSession() const

@@ -4,7 +4,6 @@
 
 Directive::Directive(std::string name, std::string value)
 {
-
 }
 
 Directive::Directive()
@@ -168,6 +167,6 @@ bool	Directive::autoIndexValidKey(std::string value)
 
 bool	Directive::cgiValidKey(std::string value)
 {
-	return (value == "on" || value == "off");
+	return (true);
 }
 

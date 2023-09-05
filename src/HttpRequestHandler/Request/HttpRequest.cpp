@@ -48,25 +48,20 @@ void	HttpRequest::pushToLastHeaderValue(char c)
 	_headers.back().pushToValue(c);
 }
 
+void	HttpRequest::pushToBody(char c)
+{
+	_body.__emplace_back(c);
+}
+
+std::string HttpRequest::getRequestBody()
+{
+	std::string s(_body.begin(), _body.end());
+	return (s);
+}
 
 void	HttpRequest::pushHeader(const Header& header)
 {
 	_headers.push_back(header);
-}
-
-void	HttpRequest::pushBodyHeader(const Header& header)
-{
-	_body.push_back(header);
-}
-
-void	HttpRequest::pushToLastBodyHeaderKey(char c)
-{
-	_body.back().pushToKey(c);
-};
-
-void	HttpRequest::pushToLastBodyHeaderValue(char c)
-{
-	_body.back().pushToValue(c);
 }
 
 bool	HttpRequest::isEmptyHeader()
@@ -99,26 +94,21 @@ const unsigned int &HttpRequest::getVersionMinor()
 	return (this->_versionMinor);
 }
 
-const std::vector<Header>	&HttpRequest::getBody(const std::string &key) const
-{
-	return (this->_body);
-}
-
 const std::string HttpRequest::getFullBody() const
 {
 	std::ostringstream str;
 	size_t	idx;
 
-	idx = 0;
-	for (std::vector<Header>::const_iterator it = _body.begin(); it < _body.end(); it++)
-	{
-		idx++;
-		str << it->getKey();
-		str << "=";
-		str << it->getValue();
-		if (idx != _body.size())
-			str << "&";
-	}
+//	idx = 0;
+//	for (std::vector<char>::const_iterator it = _body.begin(); it < _body.end(); it++)
+//	{
+//		idx++;
+//		str << it->getKey();
+//		str << "=";
+//		str << it->getValue();
+//		if (idx != _body.size())
+//			str << "&";
+//	}
 //	std::cout << str.str() << std::endl;
 	return (str.str());
 }
@@ -178,4 +168,7 @@ const std::string &HttpRequest::getRequestUri() const
 {
 	return (this->_requestUri);
 }
-
+const std::string &HttpRequest::getRequestMethod() const
+{
+	return (this->_requestMethod);
+}

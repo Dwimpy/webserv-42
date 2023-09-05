@@ -32,7 +32,7 @@ class Server {
   private:
 	char							_buffer[8192];
 	const ServerConfig				_config;
-	const ConfigFile						_configFile;
+	ConfigFile						_configFile;
 	ServerSocket					_serverSocket;
 	std::vector<Client>				_connectedClients;
 };
