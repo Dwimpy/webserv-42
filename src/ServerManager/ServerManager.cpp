@@ -9,7 +9,6 @@ static bool	shouldExit = false;
 
 ServerManager::ServerManager(): _serverConfigurator(ServerConfigurator())
 {
-	signal(SIGINT, signalHandler);
 }
 
 ServerManager::~ServerManager()
@@ -89,11 +88,4 @@ int ServerManager::findServerFromFd(std::vector<Server> &serverList, Client &cli
 		}
 	}
 	return (-2);
-}
-
-
-void	signalHandler(int signal)
-{
-	if (signal == SIGINT)
-		shouldExit = true;
 }
