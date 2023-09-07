@@ -84,9 +84,9 @@ bool	EventHandler::doEventsServerSocket(std::vector<Server> &serverList, ssize_t
 	if (_event_list[index].flags & EVFILT_READ && (size >= 0 && size < serverList.size()) && _event_list[index].ident == serverList[size].getSocket().getSocketFD())
 	{
 		serverList[size].acceptIncomingConnections(_kq, _monitor_list.data());
-		for (ssize_t i = 0; i < serverList[size].getConnectedClients().size(); ++i)
+		for (auto & i : serverList[size].getConnectedClients())
 		{
-			clientfd = serverList[size].getConnectedClients()[i].getClientSocket().getFd();
+			clientfd = i.getClientSocket().getFd();
 
 			if (clientfd >= 0)
 				if (!registerClientEvent(clientfd))

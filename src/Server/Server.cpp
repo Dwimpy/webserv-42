@@ -2,6 +2,7 @@
 
 #include <sys/event.h>
 #include <unistd.h>
+#include <algorithm>
 
 Server::Server() : _config(ServerConfig())
 {}
@@ -30,8 +31,11 @@ bool Server::startServer()
 void Server::acceptIncomingConnections(int kq, struct kevent change[25])
 {
 	int		clientFd;
+	struct timeval timeout;
 	size_t	i;
 
+	timeout.tv_sec = 5;
+	timeout.tv_usec = 0;
 	i = 0;
 	clientFd = 0;
 //	this->removeClient();
@@ -41,7 +45,7 @@ void Server::acceptIncomingConnections(int kq, struct kevent change[25])
 		clientFd = _serverSocket.accept(newClient);
 		if (clientFd == -1)
 			break ;
-		std::cout << "Connection Accepted. Assigned to FD: " << clientFd << "\n";
+
 		this->_connectedClients.__emplace_back(newClient);
 		i++;
 	}
@@ -76,7 +80,7 @@ void	Server::sendResponse(int fd)
 	}
 	else
 	{
-		std::cout << _buffer << std::endl;
+//		std::cout << _buffer << std::endl;
 		std::string response_msg = std::string(_buffer);
 		HttpRequest request(response_msg);
 		HttpResponse responseObj(request, _config);
@@ -90,24 +94,13 @@ void	Server::sendResponse(int fd)
 
 void	Server::sendResponse(Client client)
 {
-	ssize_t	bytes_received;
 	memset(_buffer, 0, sizeof(_buffer));
 	std::string	request_msg;
 
 	request_msg = client.recieve();
-//	if ((bytes_received = recv(client.getClientSocket().getFd(), _buffer, sizeof(_buffer) - 1, 0)) < 0)
-//		perror("Error receiving data");
-		std::cout << request_msg << std::endl;
-		HttpRequest request(request_msg);
-		std::cout << request.getRequestBody();
-//		std::cout << "\n\n" << request.getValueByKey("Content-Type") << std::endl;
-		HttpResponse responseObj(request, _config);
-//		std::cout << request_msg << std::endl;
-		HttpResponse responseTest(request, _configFile);
-		std::string response = responseObj.getResponse();
-		bytes_received = send(client.getClientSocket().getFd(), response.c_str(), response.size(), 0);
-		if (bytes_received < 0)
-			perror("ERROR socket closed");
+	HttpRequest request(request_msg);
+	HttpResponse responseObj(request, _config);
+	client.send(responseObj.getResponse().c_str(), responseObj.getResponseSize());
 }
 
 const ConfigFile &Server::getConfiguration() const

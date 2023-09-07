@@ -147,7 +147,7 @@ std::string HttpRequest::getFileName()
 	if (type == "jpeg" || type == "jpg")
 		return ("assets/background.jpeg");
 	if (type == "png")
-		return ("assets/planet.png");
+		return ("assets_test/planet.png");
 	if (type == "js")
 		return ("js/script.js");
 	return ("index.html");

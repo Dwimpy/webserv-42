@@ -12,11 +12,14 @@ class Client{
 	const std::string &getClientSession() const;
 
 	const ClientSocket	&getClientSocket() const;
+
 	void	setClientFd(int fd);
 	void	setClientFd(int fd) const;
 	ClientSocket 	&getClientSocket();
-	std::string			recieve();
 	static std::string	generateCookieId(int length);
+
+	std::string			recieve();
+	void				send(const char *str, ssize_t size);
 
   private:
 	std::string		_sessionId;

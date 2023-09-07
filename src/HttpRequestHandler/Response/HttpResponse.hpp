@@ -33,6 +33,7 @@ class HttpResponse{
     void                childProcess(const HttpRequest &request);
     int                 parent_process();
     int                 dup_request_to_stdin(const HttpRequest &request);
+	ssize_t				getResponseSize();
 
   private:
 	unsigned int		_statusCode;

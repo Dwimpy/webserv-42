@@ -119,14 +119,9 @@ void ConfigFile::inspectConfig() const
 bool ConfigFile::isAllowedMethodServer(const std::string &method)
 {
 	if (_serverDirectives.find("allowed_methods") == _serverDirectives.end())
-	{
-		std::cout << "GOING IN " << std::endl;
 		return (method == "GET" || method == "POST" || method == "DELETE");
-	}
 	else
 	{
-		std::cout << "GOING OUT " << std::endl;
-
 		if (_serverDirectives["allowed_methods"].find(method) != std::string::npos)
 			return (true);
 		return (false);

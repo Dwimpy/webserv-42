@@ -1,7 +1,6 @@
 #include "Client.hpp"
 
 #include <sstream>
-
 Client::Client():_clientSocket(ClientSocket()), _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
 {
 	generateSessionId(64);
@@ -19,6 +18,25 @@ void	Client::generateSessionId(int length)
 
 	for (int i =0; i < length; ++i)
 		this->_sessionId += chars[distribution(generator)];
+}
+
+void	Client::send(const char *str, ssize_t size)
+{
+	size_t	offset;
+	size_t	bufferSize;
+	size_t	bytes_sent;
+
+	bufferSize = sizeof(_clientSocket.getBuffer());
+	offset = 0;
+	while (size > 0)
+	{
+		_clientSocket.addToBuffer(str + offset, size);
+		bytes_sent = _clientSocket.send();
+		if (bytes_sent == 0)
+			break;
+		offset += bufferSize;
+		size -= bufferSize;
+	}
 }
 
 std::string	Client::generateCookieId(int length)

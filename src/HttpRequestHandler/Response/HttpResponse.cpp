@@ -55,9 +55,9 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
         appendFileContents();
 }
 
-HttpResponse::HttpResponse(const HttpRequest &request, ConfigFile &config)
+HttpResponse::HttpResponse(const HttpRequest &request, ConfigFile &config): _statusCode(200), _statusError("OK")
 {
-	processRequestUri(request, config);
+//	processRequestUri(request, config);
 // TODO: Check location before actually checking the methods allowed
 	if (!checkAllowedMethod(request, config))
 	{
@@ -67,7 +67,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, ConfigFile &config)
 // TODO: Append error page
 //		appendErrorPage(_statusCode);
 	}
-	config.inspectConfig();
+//	config.inspectConfig();
 }
 
 void HttpResponse::processRequestUri(const HttpRequest &request, ConfigFile &config)
@@ -160,12 +160,15 @@ void	HttpResponse::appendContentType(const HttpRequest &request)
 
 void	HttpResponse::appendFileContents()
 {
-	std::ifstream	infile(_fileName);
-	char			c;
-
-	while (infile.get(c))
-		_response << c;
+	std::ifstream	infile(_fileName, std::ios::binary);
+	infile.seekg(0, std::ios::end);
+	std::string data;
+	data.resize(infile.tellg());
+	infile.seekg(0, std::ios::beg);
+	infile.read(&data[0], data.size());
 	infile.close();
+	_response << data;
+
 }
 
 void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &config)
@@ -184,6 +187,11 @@ void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &co
 		this->_statusError = "KO";
         this->_fileName = "./docs/error_pages/404.html";
 	}
+}
+
+ssize_t	HttpResponse::getResponseSize()
+{
+	return (static_cast<ssize_t>(this->_response.str().size()));
 }
 
 std::string	HttpResponse::getContentType(const HttpRequest &request)
