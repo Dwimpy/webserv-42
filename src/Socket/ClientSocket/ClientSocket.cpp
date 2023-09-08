@@ -20,21 +20,17 @@ bool ClientSocket::receive()
 	return (true);
 }
 
-ssize_t ClientSocket::send()
+ssize_t ClientSocket::send(ssize_t bufferSize)
 {
 	ssize_t	bytes_sent;
-	bytes_sent = ::send(this->_fd, _buffer, 8, 0);
-	if (bytes_sent < 0)
-		perror("Error: sending data socket closed");
+	bytes_sent = ::send(this->_fd, _sendBuffer, bufferSize, 0);
 	return (bytes_sent);
 }
 
 void ClientSocket::addToBuffer(const char *str, size_t size)
 {
-	ssize_t bytes_to_copy;
-	bytes_to_copy = std::min(size, sizeof(_buffer));
-	memset(_buffer, 0, sizeof(_buffer));
-	std::memcpy(_buffer, str, bytes_to_copy);
+	std::memcpy(_sendBuffer, str, size);
+	_sendBuffer[1023] = '\0';
 }
 
 char	*ClientSocket::getBuffer()

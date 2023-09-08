@@ -73,7 +73,7 @@ void	ServerManager::createAndConfigureServers()
 		_serverList.__emplace_back(configs[i]);
 }
 
-int ServerManager::findServerFromFd(std::vector<Server> &serverList, Client &client, int fd)
+int ServerManager::findServerFromFd(std::vector<Server> &serverList, size_t &client, int fd)
 {
 	for (ssize_t k = 0; k < serverList.size(); ++k)
 	{
@@ -81,8 +81,7 @@ int ServerManager::findServerFromFd(std::vector<Server> &serverList, Client &cli
 		{
 			if (serverList[k].getConnectedClients()[j].getClientSocket().getFd() == fd)
 			{
-				client = serverList[k].getConnectedClients()[j];
-				serverList[k].getConnectedClients()[j].setClientFd(-1);
+				client = j;
 				return (k);
 			}
 		}

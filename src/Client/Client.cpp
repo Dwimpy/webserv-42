@@ -20,24 +20,27 @@ void	Client::generateSessionId(int length)
 		this->_sessionId += chars[distribution(generator)];
 }
 
-void	Client::send(const char *str, ssize_t size)
+void Client::send(const char *str, ssize_t size)
 {
-	size_t	offset;
-	size_t	bufferSize;
-	size_t	bytes_sent;
+    ssize_t offset = 0;
+    ssize_t bufferSize = 1022; // Choose an appropriate buffer size
+    ssize_t bytes_sent = 0;
 
-	bufferSize = sizeof(_clientSocket.getBuffer());
-	offset = 0;
-	while (size > 0)
-	{
-		_clientSocket.addToBuffer(str + offset, size);
-		bytes_sent = _clientSocket.send();
-		if (bytes_sent == 0)
-			break;
-		offset += bufferSize;
-		size -= bufferSize;
-	}
+    while (size > 0)
+    {
+        if (size < bufferSize)
+            bufferSize = size; // Send the remaining data if it's smaller than the buffer size
+        _clientSocket.addToBuffer(str + offset, bufferSize);
+       	bytes_sent = _clientSocket.send(bufferSize);
+
+        if (bytes_sent <= 0)
+            break ;
+
+        offset += bytes_sent;
+        size -= bytes_sent;
+    }
 }
+
 
 std::string	Client::generateCookieId(int length)
 {

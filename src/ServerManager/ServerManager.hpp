@@ -15,7 +15,7 @@ class ServerManager{
 
 	int		getNameWidth();
 
-	static int findServerFromFd(std::vector<Server> &serverList, Client &client, int fd);
+	static int findServerFromFd(std::vector<Server> &serverList, size_t &client, int fd);
 
   private:
 	std::vector<Server>			_serverList;

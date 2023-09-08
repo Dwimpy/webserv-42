@@ -100,14 +100,15 @@ bool	EventHandler::doEventsServerSocket(std::vector<Server> &serverList, ssize_t
 bool	EventHandler::doEventsClientSockets(std::vector<Server> &serverList, ssize_t index)
 {
 	ssize_t		server_number;
-	Client		client;
+	size_t		client;
 
 	if (_event_list[index].ident & EVFILT_READ)
 	{
 		server_number = ServerManager::findServerFromFd(serverList, client, _event_list[index].ident);
-		serverList[server_number].sendResponse(client);
+		serverList[server_number].sendResponse(serverList[server_number].getConnectedClients()[client]);
 		if (registerClientRemove(_event_list[index].ident) < 0)
 			perror("kevent [ EV_DELETE ]");
+		serverList[server_number].getConnectedClients()[client].setClientFd(-1);
 		close(_event_list[index].ident);
 		return (true);
 	}

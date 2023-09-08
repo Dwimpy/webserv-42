@@ -9,7 +9,7 @@ class ClientSocket: public ISocket{
 	void	close();
 	void	setFd(int fd);
 	bool			receive();
-	ssize_t			send();
+	ssize_t			send(ssize_t bufferSize);
 
 	t_sockaddr_in	&getClientAddr();
 	socklen_t		&getClientAddrLen();
@@ -19,6 +19,7 @@ class ClientSocket: public ISocket{
   private:
 	int				_fd;
 	char			_buffer[8];
+	char			_sendBuffer[1024];
 	t_sockaddr_in	_clientAddr;
 	socklen_t 		_clientAddrLen;
 };
