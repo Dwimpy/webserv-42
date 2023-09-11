@@ -30,7 +30,6 @@ ssize_t ClientSocket::send(ssize_t bufferSize)
 void ClientSocket::addToBuffer(const char *str, size_t size)
 {
 	std::memcpy(_sendBuffer, str, size);
-	_sendBuffer[1023] = '\0';
 }
 
 char	*ClientSocket::getBuffer()

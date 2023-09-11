@@ -108,8 +108,8 @@ bool	EventHandler::doEventsClientSockets(std::vector<Server> &serverList, ssize_
 		serverList[server_number].sendResponse(serverList[server_number].getConnectedClients()[client]);
 		if (registerClientRemove(_event_list[index].ident) < 0)
 			perror("kevent [ EV_DELETE ]");
-		serverList[server_number].getConnectedClients()[client].setClientFd(-1);
 		close(_event_list[index].ident);
+		serverList[server_number].getConnectedClients()[client].setClientFd(-1);
 		return (true);
 	}
 	return (false);

@@ -23,7 +23,7 @@ void	Client::generateSessionId(int length)
 void Client::send(const char *str, ssize_t size)
 {
     ssize_t offset = 0;
-    ssize_t bufferSize = 1022; // Choose an appropriate buffer size
+    ssize_t bufferSize = 1024; // Choose an appropriate buffer size
     ssize_t bytes_sent = 0;
 
     while (size > 0)
