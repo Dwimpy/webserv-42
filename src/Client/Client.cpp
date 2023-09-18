@@ -20,6 +20,16 @@ void	Client::generateSessionId(int length)
 		this->_sessionId += chars[distribution(generator)];
 }
 
+void Client::setServer(int fd)
+{
+	this->_assignedServer = fd;
+}
+
+int &Client::getAssignedServer()
+{
+	return (this->_assignedServer);
+}
+
 void Client::send(const char *str, ssize_t size)
 {
     ssize_t offset = 0;

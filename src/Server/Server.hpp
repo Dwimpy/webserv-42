@@ -22,7 +22,6 @@ class Server {
 	void	acceptIncomingConnections(int kq, struct kevent change[25]);
 	void	sendResponse(Client client);
 	void	sendResponse(int fd);
-
 	const ConfigFile		&getConfiguration() const;
 	const ConfigFile			&getConfiguration();
 	std::vector<Client> &getConnectedClients();

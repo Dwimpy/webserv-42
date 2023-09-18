@@ -14,17 +14,20 @@ class EventHandler{
 
 	void	initialize();
 	void	eventLoop(std::vector<Server > serverList);
+	void	eventLoop(std::deque<Server > serverList);
 	void	registerServers(std::vector<Server> &serverList);
+	void	registerServers(std::deque<Server> &serverList);
 
   private:
 	int			_kq;
 	std::vector<t_kevent >	_monitor_list;
 	std::vector<t_kevent > 	_event_list;
 
-	bool	registerClientEvent(int clientfd);
-	int		registerClientRemove(int fd);
-	bool	doEventsServerSocket(std::vector<Server> &serverList, ssize_t &size, ssize_t &index);
-	bool	doEventsClientSockets(std::vector<Server> &serverList, ssize_t index);
+
+	bool	registerClientEvent(Client &client) const;
+	int		registerClientRemove(Client &client) const;
+	bool	doEventsServerSocket(std::deque<Server> &serverList, ssize_t &size, ssize_t &index);
+	bool	doEventsClientSockets(std::deque<Server> &serverList, ssize_t index);
 	bool	hasDisconnected(ssize_t index);
-	void	removeDisconnectedClients(std::vector<Server> &serverList);
+	void	removeDisconnectedClients(std::deque<Server> &serverList);
 };

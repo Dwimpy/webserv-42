@@ -18,7 +18,7 @@ class ServerManager{
 	static int findServerFromFd(std::vector<Server> &serverList, size_t &client, int fd);
 
   private:
-	std::vector<Server>			_serverList;
+	std::deque<Server>			_serverList;
 	ServerConfigurator			_serverConfigurator;
 
 	void	parseConfigurationFile(const std::string &filePath);

@@ -70,7 +70,7 @@ void	ServerManager::createAndConfigureServers()
 	configs = _serverConfigurator.buildConfigFiles();
 
 	for (size_t i = 0; i < configs.size(); ++i)
-		_serverList.__emplace_back(configs[i]);
+		_serverList.push_back(configs[i]);
 }
 
 int ServerManager::findServerFromFd(std::vector<Server> &serverList, size_t &client, int fd)

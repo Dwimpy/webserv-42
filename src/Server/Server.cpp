@@ -31,24 +31,21 @@ bool Server::startServer()
 void Server::acceptIncomingConnections(int kq, struct kevent change[25])
 {
 	int		clientFd;
-	struct timeval timeout;
 	size_t	i;
 
-	timeout.tv_sec = 5;
-	timeout.tv_usec = 0;
 	i = 0;
 	clientFd = 0;
 //	this->removeClient();
-	while (true)
-	{
+//	while (true)
+//	{
 		Client	newClient;
 		clientFd = _serverSocket.accept(newClient);
-		if (clientFd == -1)
-			break ;
-
+		if (clientFd <= 0)
+			return ;
+		newClient.setServer(this->_serverSocket.getSocketFD() - 3);
 		this->_connectedClients.__emplace_back(newClient);
 		i++;
-	}
+//	}
 }
 
 void	Server::removeClient()
@@ -56,9 +53,7 @@ void	Server::removeClient()
 	for (std::vector<Client>::iterator it = _connectedClients.begin(); it != _connectedClients.end();)
 	{
 		if (it->getClientSocket().getFd() == -1)
-		{
 			it = _connectedClients.erase(it);
-		}
 		else
 			++it;
 	}
@@ -101,6 +96,7 @@ void	Server::sendResponse(Client client)
 	HttpRequest request(request_msg);
 	HttpResponse responseObj(request, _config);
 	client.send(responseObj.getResponse().c_str(), responseObj.getResponseSize());
+	close(client.getClientSocket().getFd());
 }
 
 const ConfigFile &Server::getConfiguration() const

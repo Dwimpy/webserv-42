@@ -174,6 +174,7 @@ void	HttpResponse::appendFileContents()
 void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &config)
 {
 	_fileName = config.getDocumentRoot() + getFileName(request);
+
 	std::ifstream	infile(_fileName);
 	if (infile.good())
 	{
@@ -182,7 +183,6 @@ void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &co
 	}
 	else
 	{
-		std::cout << _fileName << std::endl;
 		this->_statusCode = 404;
 		this->_statusError = "KO";
         this->_fileName = "./docs/error_pages/404.html";
