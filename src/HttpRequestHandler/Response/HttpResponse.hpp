@@ -13,6 +13,8 @@ class HttpResponse{
 	HttpResponse();
 	~HttpResponse();
 
+	void    			createEnv(std::vector<std::string> &env, const HttpRequest &request);
+
 	void				processRequestHeader(const HttpRequest &request);
 	void				appendResponseHeader(const HttpRequest &request);
 	bool 				checkAllowedMethod(const HttpRequest &request, ConfigFile &config);

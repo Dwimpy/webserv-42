@@ -22,6 +22,10 @@ build = "build.rs"
 name = "register_landing_page"
 path = "src/register_landing_page.rs"
 
+[[bin]]
+name = "error"
+path = "src/error.rs"
+
 
 [[bin]]
 name = "profile"

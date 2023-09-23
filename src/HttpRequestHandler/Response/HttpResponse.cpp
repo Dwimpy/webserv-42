@@ -17,7 +17,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
     std::string uri = request.getRequestUri();
 
     if (uri == "/register_landing_page.rs" || uri == "/profile.rs" \
-			|| uri == "/login.rs" || uri == "/register.rs" || uri == "/upload.py")
+			|| uri == "/login.rs" || uri == "/register.rs" || uri == "/upload.py" || uri == "/error.rs")
     {
         if (uri == "/register_landing_page.rs")
             _flag = 1;
@@ -31,7 +31,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
             _flag = 0;
 
         if(pipe(_response_fd) == -1)
-            std::cerr << ("tmpfile creation failed!") << std::endl;
+            std::cerr << ("pipe creation failed!") << std::endl;
 
         switch (fork())
         {
@@ -219,7 +219,7 @@ std::string HttpResponse::getResponse()
 }
 
 
-void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
+void    HttpResponse::createEnv(std::vector<std::string> &env, const HttpRequest &request)
 {
     env.push_back("REQUEST_METHOD=POST" );
     env.push_back("QUERY_STRING=" );
@@ -236,6 +236,8 @@ void    createEnv(std::vector<std::string> &env, const HttpRequest &request)
 	env.push_back("Cookie=" + var);
 	env.push_back("USERNAME=" + var.substr(0, 6));
 	env.push_back("PWD=" + var.substr(7, 12));
+	env.push_back("Error_code=" + std::to_string(this->_statusCode));
+	env.push_back("Error_msg=" + this->_errorMessage);
 
 //	std::cout << "cookie: " << var << std::endl;
 //	std::cout << "username: " << var.substr(0, 6) << std::endl;
@@ -312,16 +314,11 @@ void    HttpResponse::childProcess(const HttpRequest &request)
 {
     std::vector<std::string> env;
     std::string cgiScript;
-    createEnv(env, request);
-    char *environment[env.size() + 1];
     std::string cgiPath = getProjectDir()  + "/src/cgi/target/release/";
 
     if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
         error("404 CGI path not found!"); /* set 404 page */
 
-    for (size_t i = 0; i < env.size(); i++)
-        environment[i] = const_cast<char *>(env[i].c_str());
-    environment[env.size()] = nullptr;
 
     if (_flag == 0)
         cgiPath += "register";
@@ -335,7 +332,18 @@ void    HttpResponse::childProcess(const HttpRequest &request)
 		cgiPath = getProjectDir() + "/../../src/upload.py";
 //		cgiPath = getProjectDir() + upload.py;
     else
-        error("no valid flag/path");
+	{
+		_errorMessage = "custom error";
+		_statusCode = 429;
+		cgiPath += "error";
+	}
+
+    createEnv(env, request);
+    char *environment[env.size() + 1];
+    for (size_t i = 0; i < env.size(); i++)
+        environment[i] = const_cast<char *>(env[i].c_str());
+    environment[env.size()] = nullptr;
+//        error("no valid flag/path");
 
 
     dup2(_response_fd[1], STDOUT_FILENO);
@@ -345,20 +353,10 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     if (dup_request_to_stdin(request))
         exit(error("tmpfile creation failed!"));
 
+	char *args[2];
+	args[0] = (char *)cgiPath.c_str();
+	args[1] = nullptr;
 
-		char *args[2];
-//	if (_flag == 4)
-//	{
-//		args[0] = (char*) "python3";
-//		args[1] = (char*) cgiPath.c_str();
-//		args[2] = nullptr;
-//	}
-//	else
-//	{
-		args[0] = (char *)cgiPath.c_str();
-		args[1] = nullptr;
-//	}
-//	std::cout << cgiPath.c_str() << std::endl;
     if (execve(cgiPath.c_str(), args,  environment) == -1)
         exit(error("execve failed!"));
 }
