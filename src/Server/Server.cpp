@@ -93,6 +93,7 @@ void	Server::sendResponse(Client client)
 	std::string	request_msg;
 
 	request_msg = client.recieve();
+	std::cout << request_msg << std::endl;
 	HttpRequest request(request_msg);
 	HttpResponse responseObj(request, _config);
 	client.send(responseObj.getResponse().c_str(), responseObj.getResponseSize());
