@@ -3,6 +3,18 @@
 #include <iostream>
 #include <string>
 
+std::vector<std::string> splitStringByDot(const std::string& input) {
+	std::vector<std::string> tokens;
+	std::istringstream iss(input);
+	std::string token;
+
+	while (std::getline(iss, token, '.')) {
+		tokens.push_back(token);
+	}
+
+	return tokens;
+}
+
 HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &config): _statusCode(200), _statusError("OK")
 {
 	fileExists(request, config);
@@ -16,19 +28,17 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 
     std::string uri = request.getRequestUri();
 
-    if (uri == "/register_landing_page.rs" || uri == "/profile.rs" \
-			|| uri == "/login.rs" || uri == "/register.rs" || uri == "/upload.py" || uri == "/error.rs")
+	std::vector<std::string> result = splitStringByDot(uri);
+//	std::cout << result.back() << std::endl << std::endl;
+    if (result.back() == "rs" || result.back() == "py")
     {
-        if (uri == "/register_landing_page.rs")
+
+      	if (result.back() == "py")
             _flag = 1;
-        else if (uri == "/profile.rs")
-            _flag = 2;
-		else if (uri == "/login.rs")
-			_flag = 3;
-		else if (uri == "/upload.py")
-			_flag = 4;
-        else if (uri == "/register.rs")
-            _flag = 0;
+		else if (uri == "/error.rs")
+            _flag = 6;
+		else
+			_flag = 0;
 
         if(pipe(_response_fd) == -1)
             std::cerr << ("pipe creation failed!") << std::endl;
@@ -319,18 +329,11 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
         error("404 CGI path not found!"); /* set 404 page */
 
-
+	std::vector<std::string> result = splitStringByDot(request.getRequestUri());
     if (_flag == 0)
-        cgiPath += "register";
-    else if (_flag == 1)
-        cgiPath += "register_landing_page";
-    else if (_flag == 2)
-        cgiPath += "profile";
-	else if (_flag == 3)
-		cgiPath += "login";
-	else if (_flag == 4)
+        cgiPath += result.front();
+	else if (_flag == 1)
 		cgiPath = getProjectDir() + "/../../src/upload.py";
-//		cgiPath = getProjectDir() + upload.py;
     else
 	{
 		_errorMessage = "custom error";
