@@ -35,8 +35,6 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 
       	if (result.back() == "py")
             _flag = 1;
-		else if (uri == "/error.rs")
-            _flag = 6;
 		else
 			_flag = 0;
 
@@ -327,18 +325,19 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     std::string cgiPath = getProjectDir()  + "/src/cgi/target/release/";
 
     if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
+	{
         error("404 CGI path not found!"); /* set 404 page */
-
+	}
 	std::vector<std::string> result = splitStringByDot(request.getRequestUri());
-    if (_flag == 0)
-        cgiPath += result.front();
-	else if (_flag == 1)
+    if (_flag == 1)
 		cgiPath = getProjectDir() + "/../../src/upload.py";
+//	else if (_flag == 1)
     else
 	{
-		_errorMessage = "custom error";
-		_statusCode = 429;
-		cgiPath += "error";
+        cgiPath += result.front();
+//		_errorMessage = "custom error";
+//		_statusCode = 429;
+//		cgiPath += "error";
 	}
 
     createEnv(env, request);
@@ -373,6 +372,7 @@ int	HttpResponse::parent_process() {
         if (WEXITSTATUS(status))
         {
             std::cerr << ("execve failed!") << std::endl;
+			_statusError = "KO";
             return (EXIT_FAILURE);
         }
     }
@@ -381,6 +381,7 @@ int	HttpResponse::parent_process() {
         std::cerr << ("interrupted by signal!") << std::endl;
         return (EXIT_FAILURE);
     }
+	_statusError = "OK";
     return EXIT_SUCCESS;
 }
 
@@ -390,6 +391,13 @@ int HttpResponse::write_response()
     long long 		bytes = 1;
 
 //    lseek(_response_fd, 0, SEEK_SET);
+	if (_statusError == "KO")
+	{
+		_fileName = "./docs/error_pages/404.html";
+		appendFileContents();
+		close(_response_fd[0]);
+		return EXIT_SUCCESS;
+	}
     while (bytes > 0) {
         bytes = read(_response_fd[0], buffer, sizeof(buffer));
         if (bytes < 0) {
