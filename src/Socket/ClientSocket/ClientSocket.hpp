@@ -14,12 +14,16 @@ class ClientSocket: public ISocket{
 	t_sockaddr_in	&getClientAddr();
 	socklen_t		&getClientAddrLen();
 	const int		&getFd() const;
-	char			*getBuffer();
+	unsigned char	*getBuffer();
 	void			addToBuffer(const char *str, size_t size);
+
+	ssize_t 		getBytesReceived();
+
   private:
 	int				_fd;
-	char			_buffer[8];
+	unsigned char	_buffer[1];
 	char			_sendBuffer[1024];
 	t_sockaddr_in	_clientAddr;
 	socklen_t 		_clientAddrLen;
+	ssize_t 		_bytes_received;
 };

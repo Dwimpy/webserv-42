@@ -12,11 +12,12 @@ ClientSocket::~ClientSocket()
 bool ClientSocket::receive()
 {
 	ssize_t	bytes_received;
-	memset(_buffer, 0, sizeof(_buffer));
+//	memset(_buffer, 0, sizeof(_buffer));
 	bytes_received = recv(this->_fd, _buffer, sizeof(_buffer), 0);
 	if (bytes_received <= 0)
 		return (false);
 	_buffer[bytes_received] = '\0';
+	_bytes_received = bytes_received;
 	return (true);
 }
 
@@ -32,9 +33,14 @@ void ClientSocket::addToBuffer(const char *str, size_t size)
 	std::memcpy(_sendBuffer, str, size);
 }
 
-char	*ClientSocket::getBuffer()
+unsigned char	*ClientSocket::getBuffer()
 {
 	return (this->_buffer);
+}
+
+ssize_t 	ClientSocket::getBytesReceived()
+{
+	return (this->_bytes_received);
 }
 
 t_sockaddr_in &ClientSocket::getClientAddr()

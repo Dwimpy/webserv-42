@@ -103,16 +103,36 @@ void	uploadFile(HttpRequest request)
 
 	std::string body;
 	body = request.getFullBody();
-	const std::string tmpFileName = "tempfile.png";
-	const std::string tmpFileName2 = "tempfile2.png";
+	const std::string tmpFileName = "planet.png";
+	const std::string tmpFileName2 = "planet2.png";
+//	const std::string tmpFileName = "planet.txt";
 
-	std::ofstream tempFile(tmpFileName.c_str(), std::ios::binary);
-	std::ofstream tempFile2(tmpFileName2.c_str(), std::ios::binary);
-	if (!tempFile) {
-		std::cerr << "Failed to create temporary file." << std::endl;
+	std::ofstream tempFile(tmpFileName.c_str(), std::ios::binary | std::ios::trunc);
+	std::ofstream tempFile2(tmpFileName2.c_str(), std::ios::binary | std::ios::trunc);
+
+	std::ifstream inTemp("tmp.png", std::ios::binary);
+
+	std::string::size_type startPos2 = body.find("--" + boundary);
+	if (startPos2 == std::string::npos) {
+		std::cerr << "First boundary not found in input data file." << std::endl;
 		return ;
 	}
 	std::string pngDel = "\r\n\r\n";
+	startPos2 = body.find(pngDel);
+	if (startPos2 == std::string::npos) {
+		std::cerr << "Boundary not found in input data file." << std::endl;
+		return ;
+	}
+	startPos2 += pngDel.length();
+	std::string::size_type endPos2 = body.find("--" + boundary, startPos2);
+	if (endPos2 == std::string::npos) {
+		std::cerr << "Ending boundary not found in input data file." << std::endl;
+		return ;
+	}
+	std::string::size_type lastCRLF2 = body.rfind("\r\n", endPos2);
+	std::string binaryData2 = body.substr(startPos2, lastCRLF2 - startPos2);
+//	std::string pngDel = "\r\n\r\n";
+
 	std::string::size_type startPos = body.find(pngDel);
 	if (startPos == std::string::npos) {
 		std::cerr << "Boundary not found in input data." << std::endl;
@@ -126,18 +146,30 @@ void	uploadFile(HttpRequest request)
 		std::cerr << "Ending boundary not found in input data." << std::endl;
 		return ;
 	}
+//	std::string::size_type endPos2 = body.find("\r\n", startPos);
 
+	std::string::size_type lastCRLF = body.rfind("\r\n", endPos);
 
-	std::string binaryData = body.substr(startPos, endPos - startPos);
+	if (lastCRLF == std::string::npos) {
+		std::cerr << "No '\\r\\n' found before the ending boundary." << std::endl;
+		return;
+	}
+	std::cout << "last CRLF :" << lastCRLF << std::endl;
+	std::cout << "endPos :" << endPos << std::endl;
+	std::cout << "lastCRLF2 :" << lastCRLF2 << std::endl;
+	// Extract the binary data
+	std::string binaryData = body.substr(startPos, lastCRLF - startPos);
+
+//	std::string binaryData = body.substr(startPos, endPos - startPos);
 
 	if (!tempFile) {
 		std::cerr << "Failed to create temporary file." << std::endl;
 		return ;
 	}
-	std::cout << "body " << std::endl << body << std::endl;
-	std::cout << "binary " << std::endl << binaryData << std::endl;
-	tempFile.write(binaryData.c_str(), binaryData.size());
-	tempFile2.write(body.c_str(), body.size());
+//	std::cout << "body " << std::endl << body << std::endl;
+//	std::cout << "binary " << std::endl << binaryData << std::endl;
+	tempFile.write(binaryData.c_str(), lastCRLF - startPos);
+	tempFile2.write(binaryData2.c_str(), lastCRLF2 - startPos2);
 	tempFile.close();
 	tempFile2.close();
 }
@@ -151,8 +183,8 @@ void	Server::sendResponse(Client client)
 //	std::cout << request_msg << std::endl;
 	HttpRequest request(request_msg);
 	HttpResponse responseObj(request, _config);
-//	if (request.getRequestMethod() == "POST")
-//		uploadFile(request);
+	if (request.getRequestMethod() == "POST")
+		uploadFile(request);
 	client.send(responseObj.getResponse().c_str(), responseObj.getResponseSize());
 	close(client.getClientSocket().getFd());
 }

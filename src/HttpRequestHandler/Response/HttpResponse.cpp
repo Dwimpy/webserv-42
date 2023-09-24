@@ -282,7 +282,7 @@ int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
     if (pipe(fd) == -1)
         return EXIT_FAILURE;
     std::string query;
-    query.append(request.getFullBody());
+//    query.append(request.getFullBody());
     if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
     {
         close(fd[STDIN_FILENO]);

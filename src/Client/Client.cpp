@@ -1,6 +1,9 @@
 #include "Client.hpp"
 
+#include <iostream>
 #include <sstream>
+#include <fstream>
+#include <string.h>
 Client::Client():_clientSocket(ClientSocket()), _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
 {
 	generateSessionId(64);
@@ -68,9 +71,16 @@ std::string	Client::generateCookieId(int length)
 std::string Client::recieve()
 {
 	std::ostringstream os;
-
+	std::string str;
+	int fd = open("tmp.png", O_CREAT | O_RDWR | O_TRUNC, 0644);
 	while (_clientSocket.receive())
-		os << std::string(_clientSocket.getBuffer());
+	{
+//		std::cout << _clientSocket.getBuffer();
+		write(fd, _clientSocket.getBuffer(), _clientSocket.getBytesReceived());
+		os << std::string(
+		  reinterpret_cast<const char *>(_clientSocket.getBuffer()));
+	}
+	close(fd);
 	return (os.str());
 }
 

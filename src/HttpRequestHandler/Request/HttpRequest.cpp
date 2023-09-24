@@ -5,8 +5,8 @@
 
 HttpRequest::HttpRequest(const std::string &request): _versionMajor(1), _versionMinor(1)
 {
-	const char *str;
-	str = request.c_str();
+	const unsigned char *str;
+	str = (const unsigned char *)request.c_str();
 
 	HttpRequestParser::parseRequest(*this, str, str + request.size());
 	HttpRequestParser::resetParser();
@@ -48,7 +48,7 @@ void	HttpRequest::pushToLastHeaderValue(char c)
 	_headers.back().pushToValue(c);
 }
 
-void	HttpRequest::pushToBody(char c)
+void	HttpRequest::pushToBody(unsigned char c)
 {
 	_body.__emplace_back(c);
 }
@@ -111,7 +111,7 @@ const std::string HttpRequest::getFullBody() const
 //	}
 //	std::cout << str.str() << std::endl;
 
-	for (std::vector<char>::const_iterator it = _body.cbegin(); it != _body.cend(); ++it) {
+	for (std::vector<unsigned char>::const_iterator it = _body.cbegin(); it != _body.cend(); ++it) {
 		str << *it;
 	}
 

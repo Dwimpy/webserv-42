@@ -5,11 +5,11 @@
 HttpRequestParser::ParserState HttpRequestParser::_state = StateRequestMethodStart;
 HttpRequestParser::ParserResult HttpRequestParser::_result = ParserRunning;
 
-void HttpRequestParser::consume(HttpRequest &request, const char *start, const char *end)
+void HttpRequestParser::consume(HttpRequest &request, const unsigned char *start, const unsigned char *end)
 {
 	while (start != end && HttpRequestParser::_result != ParserError)
 	{
-		char c = *start++;
+		unsigned char c = *start++;
 		switch (HttpRequestParser::_state)
 		{
 			case StateRequestMethodStart: parseRequestMethodStart(request, c);
@@ -56,39 +56,39 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 	}
 }
 
-void HttpRequestParser::parseRequest(HttpRequest &request, const char *start, const char *end)
+void HttpRequestParser::parseRequest(HttpRequest &request, const unsigned char *start, const unsigned char *end)
 {
 	consume(request, start, end);
 }
 
-bool HttpRequestParser::isChar(char c)
+bool HttpRequestParser::isChar(unsigned char c)
 {
 	return (std::isalpha(c));
 }
 
-bool HttpRequestParser::isDigit(char c)
+bool HttpRequestParser::isDigit(unsigned char c)
 {
 	return (std::isdigit(c));
 }
 
-bool HttpRequestParser::isControlChar(char c)
+bool HttpRequestParser::isControlChar(unsigned char c)
 {
 	return (c >= 0 && c <= 31) || (c == 127);
 }
 
-bool HttpRequestParser::isReserverChar(char c)
+bool HttpRequestParser::isReserverChar(unsigned char c)
 {
 	static const std::string specialChars = ":/?#[]@!$&'()*+,;={} \t";
 
 	return (specialChars.find(c) != std::string::npos);
 }
 
-bool HttpRequestParser::isSpace(char c)
+bool HttpRequestParser::isSpace(unsigned char c)
 {
 	return (c == ' ' || c == '\t');
 }
 
-void HttpRequestParser::parseRequestMethodStart(HttpRequest &request, char c)
+void HttpRequestParser::parseRequestMethodStart(HttpRequest &request, unsigned char c)
 {
 	if (!isChar(c) || isControlChar(c) || isReserverChar(c))
 		HttpRequestParser::_result = ParserError;
@@ -99,7 +99,7 @@ void HttpRequestParser::parseRequestMethodStart(HttpRequest &request, char c)
 	}
 }
 
-void HttpRequestParser::parseRequestMethod(HttpRequest &request, char c)
+void HttpRequestParser::parseRequestMethod(HttpRequest &request, unsigned char c)
 {
 	if (isSpace(c))
 		HttpRequestParser::_state = StateRequestURIStart;
@@ -112,7 +112,7 @@ void HttpRequestParser::parseRequestMethod(HttpRequest &request, char c)
 	}
 }
 
-void HttpRequestParser::parseRequestUriStart(HttpRequest &request, char c)
+void HttpRequestParser::parseRequestUriStart(HttpRequest &request, unsigned char c)
 {
 	if (isControlChar(c))
 		HttpRequestParser::_result = ParserError;
@@ -123,7 +123,7 @@ void HttpRequestParser::parseRequestUriStart(HttpRequest &request, char c)
 	}
 }
 
-void HttpRequestParser::parseRequestUri(HttpRequest &request, char c)
+void HttpRequestParser::parseRequestUri(HttpRequest &request, unsigned char c)
 {
 	if (isSpace(c))
 		HttpRequestParser::_state = StateVersionH;
@@ -134,7 +134,7 @@ void HttpRequestParser::parseRequestUri(HttpRequest &request, char c)
 
 }
 
-void HttpRequestParser::parseVersionH(HttpRequest &request, char c)
+void HttpRequestParser::parseVersionH(HttpRequest &request, unsigned char c)
 {
 	if (c != 'H')
 		HttpRequestParser::_result = ParserError;
@@ -142,7 +142,7 @@ void HttpRequestParser::parseVersionH(HttpRequest &request, char c)
 		HttpRequestParser::_state = StateVersionHT;
 }
 
-void HttpRequestParser::parseVersionHT(HttpRequest &request, char c)
+void HttpRequestParser::parseVersionHT(HttpRequest &request, unsigned char c)
 {
 	if (c != 'T')
 		HttpRequestParser::_result = ParserError;
@@ -150,7 +150,7 @@ void HttpRequestParser::parseVersionHT(HttpRequest &request, char c)
 		HttpRequestParser::_state = StateVersionHTT;
 }
 
-void HttpRequestParser::parseVersionHTT(HttpRequest &request, char c)
+void HttpRequestParser::parseVersionHTT(HttpRequest &request, unsigned char c)
 {
 	if (c != 'T')
 		HttpRequestParser::_result = ParserError;
@@ -158,7 +158,7 @@ void HttpRequestParser::parseVersionHTT(HttpRequest &request, char c)
 		HttpRequestParser::_state = StateVersionHTTP;
 }
 
-void HttpRequestParser::parseVersionHTTP(HttpRequest &request, char c)
+void HttpRequestParser::parseVersionHTTP(HttpRequest &request, unsigned char c)
 {
 	if (c != 'P')
 		HttpRequestParser::_result = ParserError;
@@ -166,7 +166,7 @@ void HttpRequestParser::parseVersionHTTP(HttpRequest &request, char c)
 		HttpRequestParser::_state = StateVersionHTTPSlash;
 }
 
-void HttpRequestParser::parseVersionHTTPSlash(HttpRequest &request, char c)
+void HttpRequestParser::parseVersionHTTPSlash(HttpRequest &request, unsigned char c)
 {
 	if (c != '/')
 		HttpRequestParser::_result = ParserError;
@@ -174,18 +174,18 @@ void HttpRequestParser::parseVersionHTTPSlash(HttpRequest &request, char c)
 		HttpRequestParser::_state = StateVersionHTTPVersionMajor;
 }
 
-void HttpRequestParser::parseVersionHTTPVersionMajor(HttpRequest &request, char c)
+void HttpRequestParser::parseVersionHTTPVersionMajor(HttpRequest &request, unsigned char c)
 {
 	if (!isDigit(c))
 		HttpRequestParser::_result = ParserError;
 	else
 	{
-		request.setVersionMajor(std::stoi(&c));
+		request.setVersionMajor(c - '0');
 		HttpRequestParser::_state = StateVersionHTTPVersionDot;
 	}
 }
 
-void HttpRequestParser::parseVersionHTTPVersionDot(HttpRequest &request, char c)
+void HttpRequestParser::parseVersionHTTPVersionDot(HttpRequest &request, unsigned char c)
 {
 	if (c != '.')
 		HttpRequestParser::_result = ParserError;
@@ -193,18 +193,18 @@ void HttpRequestParser::parseVersionHTTPVersionDot(HttpRequest &request, char c)
 		HttpRequestParser::_state = StateVersionHTTPVersionMinor;
 }
 
-void HttpRequestParser::parseVersionHTTPVersionMinor(HttpRequest &request, char c)
+void HttpRequestParser::parseVersionHTTPVersionMinor(HttpRequest &request, unsigned char c)
 {
 	if (!isDigit(c))
 		HttpRequestParser::_result = ParserError;
 	else
 	{
-		request.setVersionMinor(std::stoi(&c));
+		request.setVersionMinor(c - '0');
 		HttpRequestParser::_state = StateNewLineCR;
 	}
 }
 
-void HttpRequestParser::parseStateHeaderStart(HttpRequest &request, char c)
+void HttpRequestParser::parseStateHeaderStart(HttpRequest &request, unsigned char c)
 {
 	if (c == '\r')
 		HttpRequestParser::_state = StateEndRequest;
@@ -218,7 +218,7 @@ void HttpRequestParser::parseStateHeaderStart(HttpRequest &request, char c)
 	}
 }
 
-void HttpRequestParser::parseStateEndRequest(HttpRequest &request, char c)
+void HttpRequestParser::parseStateEndRequest(HttpRequest &request, unsigned char c)
 {
 	if (c == '\n')
 		HttpRequestParser::_state = StateBodyStart;
@@ -226,7 +226,7 @@ void HttpRequestParser::parseStateEndRequest(HttpRequest &request, char c)
 		HttpRequestParser::_result = ParserError;
 }
 
-void HttpRequestParser::parseStateHeaderName(HttpRequest &request, char c)
+void HttpRequestParser::parseStateHeaderName(HttpRequest &request, unsigned char c)
 {
 	if (isControlChar(c))
 		HttpRequestParser::_result = ParserError;
@@ -236,7 +236,7 @@ void HttpRequestParser::parseStateHeaderName(HttpRequest &request, char c)
 		request.pushToLastHeaderKey(c);
 }
 
-void HttpRequestParser::parseStateSpaceAfterName(HttpRequest &request, char c)
+void HttpRequestParser::parseStateSpaceAfterName(HttpRequest &request, unsigned char c)
 {
 	if (c != ' ')
 		HttpRequestParser::_result = ParserError;
@@ -244,7 +244,7 @@ void HttpRequestParser::parseStateSpaceAfterName(HttpRequest &request, char c)
 		HttpRequestParser::_state = StateHeaderValue;
 }
 
-void HttpRequestParser::parseStateHeaderValue(HttpRequest &request, char c)
+void HttpRequestParser::parseStateHeaderValue(HttpRequest &request, unsigned char c)
 {
 	if (c == '\r')
 		HttpRequestParser::_state = StateNewLineLF;
@@ -255,19 +255,21 @@ void HttpRequestParser::parseStateHeaderValue(HttpRequest &request, char c)
 }
 
 
-void HttpRequestParser::parseStateBodyStart(HttpRequest &request, char c)
+void HttpRequestParser::parseStateBodyStart(HttpRequest &request, unsigned char c)
 {
-	if (isSpace(c)) {}
-	else if (c == '\0')
-		HttpRequestParser::_result = ParserComplete;
-	else
-	{
-		request.pushToBody(c);
-	}
+//	if (isSpace(c)) {}
+//	if (c == '\r')
+//		HttpRequestParser::_result = ParserComplete;
+//	else
+//	{
+	if (c == '\0')
+		std::cout << "FUCL" << std::endl;
+	request.pushToBody(c);
+//	}
 }
 
 
-void HttpRequestParser::parseStateNewLineCR(HttpRequest &request, char c)
+void HttpRequestParser::parseStateNewLineCR(HttpRequest &request, unsigned char c)
 {
 	if (c != '\r')
 		HttpRequestParser::_result = ParserError;
@@ -275,7 +277,7 @@ void HttpRequestParser::parseStateNewLineCR(HttpRequest &request, char c)
 		HttpRequestParser::_state = StateNewLineLF;
 }
 
-void HttpRequestParser::parseStateNewLineLF(HttpRequest &request, char c)
+void HttpRequestParser::parseStateNewLineLF(HttpRequest &request, unsigned char c)
 {
 	if (c != '\n')
 		HttpRequestParser::_result = ParserError;

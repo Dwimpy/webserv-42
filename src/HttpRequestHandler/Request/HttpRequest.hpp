@@ -10,7 +10,7 @@ class HttpRequestParser;
 class HttpRequest {
 
 	typedef std::vector<Header> request_headers;
-	typedef std::vector<char>	request_body;
+	typedef std::vector<unsigned char>	request_body;
 
   public:
 	HttpRequest(const std::string &request);
@@ -25,7 +25,7 @@ class HttpRequest {
 	void	pushBodyHeader(const Header& header);
 	void	pushToLastBodyHeaderKey(char c);
 	void	pushToLastBodyHeaderValue(char c);
-	void	pushToBody(char c);
+	void	pushToBody(unsigned char c);
 
 	size_t		getHeadersSize();
 	bool			isEmptyHeader();
