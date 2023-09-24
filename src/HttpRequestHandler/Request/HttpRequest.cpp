@@ -97,7 +97,7 @@ const unsigned int &HttpRequest::getVersionMinor()
 const std::string HttpRequest::getFullBody() const
 {
 	std::ostringstream str;
-	size_t	idx;
+//	size_t	idx;
 
 //	idx = 0;
 //	for (std::vector<char>::const_iterator it = _body.begin(); it < _body.end(); it++)
@@ -110,6 +110,12 @@ const std::string HttpRequest::getFullBody() const
 //			str << "&";
 //	}
 //	std::cout << str.str() << std::endl;
+
+	for (std::vector<char>::const_iterator it = _body.cbegin(); it != _body.cend(); ++it) {
+		str << *it;
+	}
+
+//	std::cout << std::endl;
 	return (str.str());
 }
 
