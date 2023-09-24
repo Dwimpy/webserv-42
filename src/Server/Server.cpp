@@ -140,8 +140,6 @@ void	uploadFile(HttpRequest request)
 	tempFile2.write(body.c_str(), body.size());
 	tempFile.close();
 	tempFile2.close();
-
-
 }
 
 void	Server::sendResponse(Client client)
@@ -150,7 +148,7 @@ void	Server::sendResponse(Client client)
 	std::string	request_msg;
 
 	request_msg = client.recieve();
-	std::cout << request_msg << std::endl;
+//	std::cout << request_msg << std::endl;
 	HttpRequest request(request_msg);
 	HttpResponse responseObj(request, _config);
 //	if (request.getRequestMethod() == "POST")
