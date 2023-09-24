@@ -278,15 +278,10 @@ void    HttpResponse::createEnv(std::vector<std::string> &env, const HttpRequest
 }
 
 int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
-//    int fd = tmp_fd();
-//    FILE*   tmp = tmpfile();
-//    int fd = fileno(tmp);
     int fd[2];
     if (pipe(fd) == -1)
         return EXIT_FAILURE;
     std::string query;
-    //cookie here
-//    query.append("username=s&password=s");
     query.append(request.getFullBody());
     if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
     {
@@ -294,9 +289,7 @@ int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
         close(fd[STDOUT_FILENO]);
         return EXIT_FAILURE;
     }
-//    std::cerr << "request query " << query.c_str() << std::endl;
     close(fd[STDOUT_FILENO]);
-//    lseek(fd, 0, SEEK_SET);
     dup2(fd[STDIN_FILENO], STDIN_FILENO);
     close(fd[STDIN_FILENO]);
     return EXIT_SUCCESS;
@@ -322,31 +315,34 @@ void    HttpResponse::childProcess(const HttpRequest &request)
 {
     std::vector<std::string> env;
     std::string cgiScript;
+
     std::string cgiPath = getProjectDir()  + "/src/cgi/target/release/";
 
-    if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
+	if (_flag == 1)
 	{
-        error("404 CGI path not found!"); /* set 404 page */
+		cgiPath = getProjectDir() + "/src/cgi/src/upload.py";
 	}
+	else
+	{
+    	if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
+		{
+    	    error("404 CGI path not found!"); /* set 404 page */
+		}
+	}
+
 	std::vector<std::string> result = splitStringByDot(request.getRequestUri());
-    if (_flag == 1)
-		cgiPath = getProjectDir() + "/../../src/upload.py";
-//	else if (_flag == 1)
-    else
+
+	if (_flag != 1)
 	{
         cgiPath += result.front();
-//		_errorMessage = "custom error";
-//		_statusCode = 429;
-//		cgiPath += "error";
 	}
 
     createEnv(env, request);
-    char *environment[env.size() + 1];
+
+	char *environment[env.size() + 1];
     for (size_t i = 0; i < env.size(); i++)
         environment[i] = const_cast<char *>(env[i].c_str());
     environment[env.size()] = nullptr;
-//        error("no valid flag/path");
-
 
     dup2(_response_fd[1], STDOUT_FILENO);
     close(_response_fd[1]);
