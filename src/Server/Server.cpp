@@ -82,11 +82,36 @@ void	Server::sendResponse(int fd)
 	}
 }
 
-void	uploadFile(HttpRequest request)
+std::string	extractFileName(std::string &body)
 {
-	std::cout << "BODY 2"<< std::endl;
-	std::string boundaryText = "boundary=";
+	std::string filename = "untitled.txt";
+
+	size_t filenamePos = body.find("filename=");
+
+	if (filenamePos != std::string::npos) {
+		// Move the position to the start of the filename
+		filenamePos += 10; // "filename=" is 10 characters long
+
+		// Find the closing double-quote (") after the filename
+		size_t closingQuotePos = body.find("\"", filenamePos);
+
+		if (closingQuotePos != std::string::npos) {
+			// Extract the filename between the double-quotes
+			filename = body.substr(filenamePos, closingQuotePos - filenamePos);
+			std::cout << "Extracted filename: " << filename << std::endl;
+		} else {
+			std::cerr << "Closing double-quote not found." << std::endl;
+		}
+	} else {
+		std::cerr << "Filename not found in the data." << std::endl;
+	}
+	return filename;
+}
+
+std::string	getBoundary(const HttpRequest &request)
+{
 	std::string boundary;
+	std::string boundaryText = "boundary=";
 	std::string input = request.getValueByKey("Content-Type");
 	size_t boundaryPos = input.find(boundaryText);
 	if (boundaryPos != std::string::npos) {
@@ -96,28 +121,26 @@ void	uploadFile(HttpRequest request)
 	} else {
 		std::cerr << "Boundary not found in the input string." << std::endl;
 	}
+	return boundary;
+}
 
+void	uploadFile(const HttpRequest &request)
+{
 	std::string body;
+	std::string boundary = getBoundary(request);
 	body = request.getFullBody();
-//	std::cout << "BODY "<< body << std::endl;
-	const std::string tmpFileName = "icon1.png";
-	//	const std::string tmpFileName = "planet.txt";
-	std::ofstream tempFile(tmpFileName.c_str(), std::ios::binary | std::ios::trunc);
+	std::string fileName = extractFileName(body);
+
+	std::ofstream tempFile(fileName.c_str(), std::ios::binary | std::ios::trunc);
 
 	std::string pngDel = "\r\n\r\n";
-
-	//	std::string pngDel = "\r\n\r\n";
 
 	std::string::size_type startPos = body.find(pngDel);
 	if (startPos == std::string::npos) {
 		std::cerr << "Boundary not found in input data." << std::endl;
-//		tempFile.write(body.c_str(), body.size());
 		tempFile.close();
 		return ;
 	}
-	else
-		std::cerr << "Boundary found in input data. Position : " << startPos << std::endl;
-
 
 	startPos += pngDel.length();
 
@@ -127,7 +150,6 @@ void	uploadFile(HttpRequest request)
 		tempFile.close();
 		return ;
 	}
-	//	std::string::size_type endPos2 = body.find("\r\n", startPos);
 
 	std::string::size_type lastCRLF = body.rfind("\r\n", endPos);
 
@@ -136,21 +158,15 @@ void	uploadFile(HttpRequest request)
 		tempFile.close();
 		return;
 	}
-	std::cout << "last CRLF :" << lastCRLF << std::endl;
-	std::cout << "endPos :" << endPos << std::endl;
 
 	// Extract the binary data
 	std::string binaryData = body.substr(startPos, lastCRLF - startPos);
-
-	//	std::string binaryData = body.substr(startPos, endPos - startPos);
 
 	if (!tempFile) {
 		std::cerr << "Failed to create temporary file." << std::endl;
 		tempFile.close();
 		return ;
 	}
-	//	std::cout << "body " << std::endl << body << std::endl;
-	//	std::cout << "binary " << std::endl << binaryData << std::endl;
 	tempFile.write(binaryData.c_str(), lastCRLF - startPos);
 	tempFile.close();
 }
