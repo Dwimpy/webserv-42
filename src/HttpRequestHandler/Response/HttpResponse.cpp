@@ -27,7 +27,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 //		deleteCookie(request);
 
     std::string uri = request.getRequestUri();
-	std::cout << uri << std::endl;
+//	std::cout << uri << std::endl;
 	std::vector<std::string> result = splitStringByDot(uri);
     if (result.back() == "rs" || result.back() == "py")
     {
@@ -276,12 +276,45 @@ void    HttpResponse::createEnv(std::vector<std::string> &env, const HttpRequest
 //        _request.env.push_back("HTTP_COOKIE=");
 }
 
+std::string	extractFileName2(std::string &body)
+{
+	std::string filename = "untitled.txt";
+
+	size_t filenamePos = body.find("filename=");
+
+	if (filenamePos != std::string::npos) {
+		// Move the position to the start of the filename
+		filenamePos += 10; // "filename=" is 10 characters long
+
+		// Find the closing double-quote (") after the filename
+		size_t closingQuotePos = body.find("\"", filenamePos);
+
+		if (closingQuotePos != std::string::npos) {
+			// Extract the filename between the double-quotes
+			filename = body.substr(filenamePos, closingQuotePos - filenamePos);
+			//			std::cout << "Extracted filename: " << filename << std::endl;
+		} else {
+			std::cerr << "Closing double-quote not found." << std::endl;
+		}
+	} else {
+		std::cerr << "Filename not found in the data." << std::endl;
+	}
+	return "docs/uploads/" + filename;
+}
+
 int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
     int fd[2];
     if (pipe(fd) == -1)
         return EXIT_FAILURE;
     std::string query;
-//    query.append(request.getFullBody());
+    std::string body;
+	body = request.getFullBody();
+	std::string text(request.getValueByKey("Content-Type"));
+	size_t closingQuotePos = text.find("multipart/form-data");
+	if (closingQuotePos == std::string::npos)
+    	query.append(body);
+	else
+		query.append(extractFileName2(body));
     if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
     {
         close(fd[STDIN_FILENO]);

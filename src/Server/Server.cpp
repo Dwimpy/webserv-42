@@ -98,14 +98,14 @@ std::string	extractFileName(std::string &body)
 		if (closingQuotePos != std::string::npos) {
 			// Extract the filename between the double-quotes
 			filename = body.substr(filenamePos, closingQuotePos - filenamePos);
-			std::cout << "Extracted filename: " << filename << std::endl;
+//			std::cout << "Extracted filename: " << filename << std::endl;
 		} else {
 			std::cerr << "Closing double-quote not found." << std::endl;
 		}
 	} else {
 		std::cerr << "Filename not found in the data." << std::endl;
 	}
-	return filename;
+	return "docs/uploads/" + filename;
 }
 
 std::string	getBoundary(const HttpRequest &request)
@@ -117,7 +117,7 @@ std::string	getBoundary(const HttpRequest &request)
 	if (boundaryPos != std::string::npos) {
 		// Extract everything after the boundary
 		boundary = input.substr(boundaryPos + boundaryText.length());
-		std::cout << "Extracted data: " << boundary << " position: " << boundaryPos << std::endl;
+//		std::cout << "Extracted data: " << boundary << " position: " << boundaryPos << std::endl;
 	} else {
 		std::cerr << "Boundary not found in the input string." << std::endl;
 	}
@@ -130,8 +130,12 @@ void	uploadFile(const HttpRequest &request)
 	std::string boundary = getBoundary(request);
 	body = request.getFullBody();
 	std::string fileName = extractFileName(body);
-
 	std::ofstream tempFile(fileName.c_str(), std::ios::binary | std::ios::trunc);
+	if (!tempFile) {
+		std::cerr << "Failed to create temporary file." << std::endl;
+		tempFile.close();
+		return ;
+	}
 
 	std::string pngDel = "\r\n\r\n";
 
@@ -161,12 +165,6 @@ void	uploadFile(const HttpRequest &request)
 
 	// Extract the binary data
 	std::string binaryData = body.substr(startPos, lastCRLF - startPos);
-
-	if (!tempFile) {
-		std::cerr << "Failed to create temporary file." << std::endl;
-		tempFile.close();
-		return ;
-	}
 	tempFile.write(binaryData.c_str(), lastCRLF - startPos);
 	tempFile.close();
 }
@@ -176,23 +174,11 @@ void	uploadFile(const HttpRequest &request)
 void	Server::sendResponse(Client client)
 {
 	memset(_buffer, 0, sizeof(_buffer));
-	std::string	request_msg;
 
 	client.recieve();
 	HttpResponse responseObj(client.getRequest(), _config);
-	request_msg = client.getRequest().getFullBody();
-
 	if (client.getRequest().getRequestMethod() == "POST")
-	{
 		uploadFile(client.getRequest());
-		//		int fd = open("compare.png", O_RDWR | O_CREAT | O_TRUNC, 0644);
-//		std::vector<char> test(request_msg.begin() + 137, request_msg.end() - 44);
-//		for (char c : test) {
-//			std::cout << c << std::endl;
-//			write(fd, &c, 1);
-//		}
-//		close(fd);
-	}
 	client.send(responseObj.getResponse().c_str(), responseObj.getResponseSize());
 	close(client.getClientSocket().getFd());
 
