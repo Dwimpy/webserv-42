@@ -48,6 +48,7 @@ class HttpRequest {
 	const unsigned int	&getVersionMinor() const;
 	void				feedData(const char *str, ssize_t bytes);
 
+	std::string			extractFileName(std::string &body) const;
 
   private:
 	std::string			_requestMethod;

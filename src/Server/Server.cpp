@@ -82,32 +82,6 @@ void	Server::sendResponse(int fd)
 	}
 }
 
-std::string	extractFileName(std::string &body)
-{
-	std::string filename = "untitled.txt";
-
-	size_t filenamePos = body.find("filename=");
-
-	if (filenamePos != std::string::npos) {
-		// Move the position to the start of the filename
-		filenamePos += 10; // "filename=" is 10 characters long
-
-		// Find the closing double-quote (") after the filename
-		size_t closingQuotePos = body.find("\"", filenamePos);
-
-		if (closingQuotePos != std::string::npos) {
-			// Extract the filename between the double-quotes
-			filename = body.substr(filenamePos, closingQuotePos - filenamePos);
-//			std::cout << "Extracted filename: " << filename << std::endl;
-		} else {
-			std::cerr << "Closing double-quote not found." << std::endl;
-		}
-	} else {
-		std::cerr << "Filename not found in the data." << std::endl;
-	}
-	return "docs/uploads/" + filename;
-}
-
 std::string	getBoundary(const HttpRequest &request)
 {
 	std::string boundary;
@@ -129,7 +103,7 @@ void	uploadFile(const HttpRequest &request)
 	std::string body;
 	std::string boundary = getBoundary(request);
 	body = request.getFullBody();
-	std::string fileName = extractFileName(body);
+	std::string fileName = request.extractFileName(body);
 	std::ofstream tempFile(fileName.c_str(), std::ios::binary | std::ios::trunc);
 	if (!tempFile) {
 		std::cerr << "Failed to create temporary file." << std::endl;
@@ -176,9 +150,9 @@ void	Server::sendResponse(Client client)
 	memset(_buffer, 0, sizeof(_buffer));
 
 	client.recieve();
-	HttpResponse responseObj(client.getRequest(), _config);
 	if (client.getRequest().getRequestMethod() == "POST")
 		uploadFile(client.getRequest());
+	HttpResponse responseObj(client.getRequest(), _config);
 	client.send(responseObj.getResponse().c_str(), responseObj.getResponseSize());
 	close(client.getClientSocket().getFd());
 

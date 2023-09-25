@@ -182,3 +182,29 @@ const std::string &HttpRequest::getRequestMethod() const
 {
 	return (this->_requestMethod);
 }
+
+std::string	HttpRequest::extractFileName(std::string &body) const
+{
+	std::string filename = "untitled.txt";
+
+	size_t filenamePos = body.find("filename=");
+
+	if (filenamePos != std::string::npos) {
+		// Move the position to the start of the filename
+		filenamePos += 10; // "filename=" is 10 characters long
+
+		// Find the closing double-quote (") after the filename
+		size_t closingQuotePos = body.find("\"", filenamePos);
+
+		if (closingQuotePos != std::string::npos) {
+			// Extract the filename between the double-quotes
+			filename = body.substr(filenamePos, closingQuotePos - filenamePos);
+			//			std::cout << "Extracted filename: " << filename << std::endl;
+		} else {
+			std::cerr << "Closing double-quote not found." << std::endl;
+		}
+	} else {
+		std::cerr << "Filename not found in the data." << std::endl;
+	}
+	return "docs/uploads/" + filename;
+}

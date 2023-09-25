@@ -1,25 +1,5 @@
 #!/usr/local/bin/python3.9
 
-# import cgi, os
-# import sys
-
-
-# try:
-#     filename = sys.stdin.read()
-#     # # message = parsed['name']
-#     # # Test if the file was uploaded
-#     if filename:
-#         # strip leading path from file name to avoid
-#         # directory traversal attacks
-#         fn = os.path.basename(filename)
-#         if (os.filename.exists(filename)):
-#             content = 'File already exists!'
-#         else:
-#             content = 'Success!'
-#     else:
-#         content = 'File is not uploaded2!'
-# except:
-#     content = 'File is not uploaded!'
 import sys
 import os
 
@@ -31,12 +11,14 @@ try:
     if filename:
         # Strip leading path from file name to avoid directory traversal attacks
         fn = os.path.basename(filename)
-        if os.path.exists(filename):  # Fix the typo here
+        if os.path.exists(filename):
             content = 'Success!'
+        else:
+            content = 'File is not uploaded! Cant find file'
     else:
-        content = 'File is not uploaded!'
+        content = 'File is not uploaded! No filename as input'
 except:
-    content = 'File is not uploaded!'
+    content = 'File is not uploaded! Unexpected Error'
 
 print("""\
 <html>

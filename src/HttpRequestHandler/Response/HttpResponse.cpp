@@ -276,31 +276,6 @@ void    HttpResponse::createEnv(std::vector<std::string> &env, const HttpRequest
 //        _request.env.push_back("HTTP_COOKIE=");
 }
 
-std::string	extractFileName2(std::string &body)
-{
-	std::string filename = "untitled.txt";
-
-	size_t filenamePos = body.find("filename=");
-
-	if (filenamePos != std::string::npos) {
-		// Move the position to the start of the filename
-		filenamePos += 10; // "filename=" is 10 characters long
-
-		// Find the closing double-quote (") after the filename
-		size_t closingQuotePos = body.find("\"", filenamePos);
-
-		if (closingQuotePos != std::string::npos) {
-			// Extract the filename between the double-quotes
-			filename = body.substr(filenamePos, closingQuotePos - filenamePos);
-			//			std::cout << "Extracted filename: " << filename << std::endl;
-		} else {
-			std::cerr << "Closing double-quote not found." << std::endl;
-		}
-	} else {
-		std::cerr << "Filename not found in the data." << std::endl;
-	}
-	return "docs/uploads/" + filename;
-}
 
 int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
     int fd[2];
@@ -314,7 +289,7 @@ int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
 	if (closingQuotePos == std::string::npos)
     	query.append(body);
 	else
-		query.append(extractFileName2(body));
+		query.append(request.extractFileName(body));
     if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
     {
         close(fd[STDIN_FILENO]);
