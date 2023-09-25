@@ -19,19 +19,20 @@ class Server {
 	~Server();
 	bool	startServer();
 
-	void	acceptIncomingConnections(int kq, struct kevent change[25]);
+	void	acceptIncomingConnections(int &kq);
 	void	sendResponse(Client client);
 	void	sendResponse(int fd);
 	const ConfigFile		&getConfiguration() const;
 	const ConfigFile			&getConfiguration();
-	std::deque<Client> &getConnectedClients();
+	std::vector<Client *> &getConnectedClients();
 	ServerSocket		getSocket() const;
-	void				removeClient();
+	void				removeClient(Client &client);
+	const ServerConfig &getServerConfig() const;
 
   private:
 	char							_buffer[8192];
 	const ServerConfig				_config;
 	ConfigFile						_configFile;
 	ServerSocket					_serverSocket;
-	std::deque<Client>				_connectedClients;
+	std::vector<Client *>			_connectedClients;
 };

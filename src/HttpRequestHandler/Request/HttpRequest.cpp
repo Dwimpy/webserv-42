@@ -31,8 +31,9 @@ void	HttpRequest::feedData(const char *str, ssize_t bytes)
 	HttpRequestParser::parseRequest(*this, str, str + bytes);
 	_parserState = HttpRequestParser::getParserState();
 	_parserResult = HttpRequestParser::getParserResult();
-//	std::cout << _parserResult << " " << _parserState << std::endl;
 }
+
+
 
 void	HttpRequest::pushToRequestMethod(char c)
 {
@@ -208,3 +209,6 @@ std::string	HttpRequest::extractFileName(std::string &body) const
 	}
 	return "docs/uploads/" + filename;
 }
+
+int HttpRequest::getParserState() const { return this->_parserState; }
+int HttpRequest::getParserResult() const { return this->_parserResult; }

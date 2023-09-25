@@ -79,7 +79,7 @@ int ServerManager::findServerFromFd(std::vector<Server> &serverList, size_t &cli
 	{
 		for (ssize_t j = 0; j < serverList[k].getConnectedClients().size(); ++j)
 		{
-			if (serverList[k].getConnectedClients()[j].getClientSocket().getFd() == fd)
+			if (serverList[k].getConnectedClients()[j]->getClientSocket().getFd() == fd)
 			{
 				client = j;
 				return (k);

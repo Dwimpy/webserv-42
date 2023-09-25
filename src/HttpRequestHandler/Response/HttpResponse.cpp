@@ -27,7 +27,6 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 //		deleteCookie(request);
 
     std::string uri = request.getRequestUri();
-//	std::cout << uri << std::endl;
 	std::vector<std::string> result = splitStringByDot(uri);
     if (result.back() == "rs" || result.back() == "py")
     {
@@ -137,32 +136,47 @@ HttpResponse::~HttpResponse()
 
 void	HttpResponse::appendHttpProtocol(const HttpRequest &request)
 {
-	_response << "HTTP/" << request.getVersionMajor() << "." << request.getVersionMinor() << " ";
+	_response.append("HTTP/");
+	_response.append(std::to_string(request.getVersionMajor()));
+	_response.append(".");
+	_response.append(std::to_string(request.getVersionMajor()));
 }
 
 void	HttpResponse::appendCookie(const HttpRequest &request)
 {
-	_response << "Set-Cookie: " << Client::generateCookieId(6) << "=" << Client::generateCookieId(12) << "\r\n\r\n";
+	_response.append("Set-Cookie: ");
+	_response.append(Client::generateCookieId(6));
+	_response.append("=");
+	_response.append(Client::generateCookieId(12));
+	_response.append("\r\n\r\n");
 }
 void	HttpResponse::appendNewLine(const HttpRequest &request)
 {
-	_response << "\r\n";
+	_response.append("\r\n");
 }
 
 void	HttpResponse::deleteCookie(const HttpRequest &request)
 {
-	_response << "Set-Cookie: " << request.getValueByKey("Cookie") << "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;" << "\r\n\r\n";
+	_response.append("Set-Cookie: ");
+	_response.append(request.getValueByKey("Cookie"));
+	_response.append("=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;");
+	_response.append("\r\n\r\n");
 }
 
 
 void	HttpResponse::appendStatusCode(const HttpRequest &request)
 {
-	_response << _statusCode << " " << _statusError << "\r\n";
+	_response.append(std::to_string(_statusCode));
+	_response.append(" ");
+	_response.append(_statusError);
+	_response.append("\r\n");
 }
 
 void	HttpResponse::appendContentType(const HttpRequest &request)
 {
-	_response << "Content-Type: " << getContentType(request) << "\r\n";
+	_response.append("Content-Type: ");
+	_response.append(getContentType(request));
+	_response.append("\r\n");
 }
 
 void	HttpResponse::appendFileContents()
@@ -174,7 +188,7 @@ void	HttpResponse::appendFileContents()
 	infile.seekg(0, std::ios::beg);
 	infile.read(&data[0], data.size());
 	infile.close();
-	_response << data;
+	_response.append(data);
 
 }
 
@@ -198,7 +212,7 @@ void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &co
 
 ssize_t	HttpResponse::getResponseSize()
 {
-	return (static_cast<ssize_t>(this->_response.str().size()));
+	return (static_cast<ssize_t>(this->_response.size()));
 }
 
 std::string	HttpResponse::getContentType(const HttpRequest &request)
@@ -222,7 +236,7 @@ std::string	HttpResponse::getFileName(const HttpRequest &request)
 
 std::string HttpResponse::getResponse()
 {
-	return (this->_response.str());
+	return (this->_response);
 }
 
 
@@ -407,7 +421,7 @@ int HttpResponse::write_response()
             return EXIT_FAILURE;
         }
         else
-            _response << std::string(buffer, bytes);
+            _response.append(std::string(buffer, bytes));
     }
     close(_response_fd[0]);
     return	EXIT_SUCCESS;

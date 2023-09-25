@@ -263,11 +263,10 @@ void HttpRequestParser::parseStateHeaderValue(HttpRequest &request, char c)
 
 void HttpRequestParser::parseStateBodyStart(HttpRequest &request, char c)
 {
-//	if (c == '\r')
-//		HttpRequestParser::_state = StateNewLineLF;
-//	else
+	if (c == '\r')
+		HttpRequestParser::_result = ParserComplete;
+	else
 		request.pushToBody(c);
-//		std::cout << c;
 }
 
 

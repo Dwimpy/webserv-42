@@ -1,8 +1,9 @@
 #include "Client.hpp"
+#include "HttpRequestParser.hpp"
 
 #include <iostream>
 #include <sstream>
-Client::Client():_hasClosed(false), _clientSocket(ClientSocket()), _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
+Client::Client():_closeConnection(false), _clientSocket(ClientSocket()), _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
 {
 	generateSessionId(64);
 }
@@ -54,9 +55,9 @@ void Client::send(const char *str, ssize_t size)
 }
 
 
-void Client::setHasClosed()
+bool	Client::getHasClosed()
 {
-	this->_hasClosed = true;
+	return (this->_closeConnection);
 }
 
 std::string	Client::generateCookieId(int length)
@@ -79,19 +80,25 @@ void Client::recieve()
 	if (bytes_recv > 0)
 	{
 		_request.feedData(_clientSocket.getBuffer(), bytes_recv);
-//		std::cout << _clientSocket.getBuffer();
 		recieve();
 		return ;
 	}
 	else if (bytes_recv == 0)
 	{
 		std::cerr << "Client has disconnected" << std::endl;
-		close(this->_clientSocket.getFd());
+		_closeConnection = true;
 	}
-	else if (errno == EWOULDBLOCK)
+	else
 	{
-		return ;
+		if (errno != EWOULDBLOCK)
+			_closeConnection = true;
+		return;
 	}
+}
+
+int Client::getParserResult() const
+{
+	return (this->_request.getParserResult());
 }
 
 const std::string &Client::getClientSession() const

@@ -26,6 +26,8 @@ class Client{
 	void				recieve();
 	void				send(const char *str, ssize_t size);
 	int					&getAssignedServer();
+	int 				getParserResult() const;
+	bool				getHasClosed();
 
   private:
 	std::string					_sessionId;
@@ -34,6 +36,6 @@ class Client{
 	int							_assignedServer;
 	HttpRequest					_request;
 	std::chrono::time_point<std::chrono::system_clock> _timeSinceUpdate;
-	bool						_hasClosed;
+	bool						_closeConnection;
 	void	generateSessionId(int length);
 };

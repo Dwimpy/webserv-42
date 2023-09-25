@@ -13,6 +13,7 @@ ssize_t ClientSocket::receive()
 {
 	ssize_t	bytes_received;
 
+	memset(_buffer, 0, sizeof(_buffer));
 	bytes_received = recv(this->_fd, _buffer, sizeof(_buffer), 0);
 	this->_buffer[bytes_received] = '\0';
 	return (bytes_received);

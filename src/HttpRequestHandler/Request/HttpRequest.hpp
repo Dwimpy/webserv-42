@@ -36,6 +36,9 @@ class HttpRequest {
 	const unsigned int	&getVersionMajor();
 	const unsigned int	&getVersionMinor();
 	std::string			getFullBody() const;
+	int					getParserState() const;
+	int					getParserResult() const;
+
 
 	std::string			getFileName() const;
 	std::string			getContentType() const;

@@ -18,8 +18,8 @@ class ClientSocket: public ISocket{
 	void			addToBuffer(const char *str, size_t size);
   private:
 	int				_fd;
-	char			_buffer[8];
-	char			_sendBuffer[1024];
+	char			_buffer[64 * 1024];
+	char			_sendBuffer[64 * 1024];
 	t_sockaddr_in	_clientAddr;
 	socklen_t 		_clientAddrLen;
 };

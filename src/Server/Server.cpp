@@ -28,31 +28,35 @@ bool Server::startServer()
 }
 
 
-void Server::acceptIncomingConnections(int kq, struct kevent change[25])
+void Server::acceptIncomingConnections(int &kq)
 {
 	int		clientFd;
-	size_t	i;
 
-	i = 0;
-	clientFd = 0;
-	Client	newClient;
-	clientFd = _serverSocket.accept(newClient);
-	if (clientFd <= 0)
-		return ;
-	newClient.setServer(this->_serverSocket.getSocketFD() - 3);
-	this->_connectedClients.push_back(newClient);
-	i++;
+	while (true)
+	{
+		Client	*newClient = new Client();
+		clientFd = _serverSocket.accept(*newClient);
+		if (clientFd < 0)
+			break ;
+		newClient->setServer(this->_serverSocket.getSocketFD() - 3);
+		this->_connectedClients.push_back(newClient);
+		struct kevent	read_event;
+		EV_SET(&read_event, newClient->getClientSocket().getFd(), EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, newClient);
+		kevent(kq, &read_event, 1, nullptr, 0, nullptr);
+		std::cout << "Connection Accepted" << std::endl;
+	}
 }
 
-void	Server::removeClient()
+void	Server::removeClient(Client &client)
 {
-	for (std::deque<Client>::iterator it = _connectedClients.begin(); it != _connectedClients.end();)
-	{
-		if (it->getClientSocket().getFd() == -1)
-			it = _connectedClients.erase(it);
-		else
-			++it;
-	}
+    for (std::vector<Client *>::iterator it = _connectedClients.begin(); it != _connectedClients.end();) {
+        if ((*it)->getClientSocket().getFd() == client.getClientSocket().getFd()) {
+			delete *it;
+            it = _connectedClients.erase(it);
+        } else {
+            ++it;
+        }
+    }
 }
 
 void	Server::sendResponse(int fd)
@@ -163,11 +167,15 @@ const ConfigFile &Server::getConfiguration() const
 	return (this->_configFile);
 }
 
+const ServerConfig &Server::getServerConfig() const {
+	return (this->_config);
+}
+
 ServerSocket Server::getSocket() const
 {
 	return (this->_serverSocket);
 }
-std::deque<Client> &Server::getConnectedClients()
+std::vector<Client *> &Server::getConnectedClients()
 {
 	return (this->_connectedClients);
 }

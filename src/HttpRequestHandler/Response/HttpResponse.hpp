@@ -42,7 +42,7 @@ class HttpResponse{
 	std::string			_statusError;
 	std::string			_errorMessage;
 	std::string			_fileName;
-	std::stringstream	_response;
+	std::string			_response;
 //    int                 _response_fd;
 	int					_flag;
     int                 _response_fd[2];
