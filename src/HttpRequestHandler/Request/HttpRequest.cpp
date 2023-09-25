@@ -31,6 +31,7 @@ void	HttpRequest::feedData(const char *str, ssize_t bytes)
 	HttpRequestParser::parseRequest(*this, str, str + bytes);
 	_parserState = HttpRequestParser::getParserState();
 	_parserResult = HttpRequestParser::getParserResult();
+//	std::cout << _parserResult << " " << _parserState << std::endl;
 }
 
 void	HttpRequest::pushToRequestMethod(char c)
@@ -119,7 +120,6 @@ std::string HttpRequest::getFullBody() const
 	{
 		str.push_back(*it);
 	}
-
 	return (str);
 }
 

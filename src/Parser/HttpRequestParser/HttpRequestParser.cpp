@@ -10,7 +10,6 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 	while (start != end && HttpRequestParser::_result != ParserError)
 	{
 		char c = *start++;
-//		std::cout << c;
 		switch (HttpRequestParser::_state)
 		{
 			case StateRequestMethodStart: parseRequestMethodStart(request, c);
@@ -54,6 +53,7 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 			case StateBodyStart: parseStateBodyStart(request, c);
 				break ;
 			case StateCLRFCLRF: parseStateCRLFCRLF(request, *(start), c);
+				break ;
 			default:
 				break ;
 		}
@@ -251,7 +251,9 @@ void HttpRequestParser::parseStateSpaceAfterName(HttpRequest &request, char c)
 void HttpRequestParser::parseStateHeaderValue(HttpRequest &request, char c)
 {
 	if (c == '\r')
+	{
 		HttpRequestParser::_state = StateNewLineLF;
+	}
 	else if (isControlChar(c))
 		HttpRequestParser::_result = ParserError;
 	else
@@ -265,6 +267,7 @@ void HttpRequestParser::parseStateBodyStart(HttpRequest &request, char c)
 //		HttpRequestParser::_state = StateNewLineLF;
 //	else
 		request.pushToBody(c);
+//		std::cout << c;
 }
 
 
@@ -288,7 +291,7 @@ void HttpRequestParser::parseStateNewLineLF(HttpRequest &request, char next, cha
 
 void HttpRequestParser::parseStateCRLFCRLF(HttpRequest &request, char next, char c)
 {
-	if (c == '\r' && next == '\n') {}
+	if (c == '\r') {}
 	else if (c == '\n')
 	{
 		if (HttpRequestParser::_result == ParserDirectives && request.getRequestMethod() == "GET")
@@ -305,7 +308,9 @@ void HttpRequestParser::parseStateCRLFCRLF(HttpRequest &request, char next, char
 		}
 	}
 	else
+	{
 		HttpRequestParser::_result = ParserError;
+	}
 }
 
 void HttpRequestParser::resetParser()

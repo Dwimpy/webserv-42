@@ -31,7 +31,6 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 	std::vector<std::string> result = splitStringByDot(uri);
     if (result.back() == "rs" || result.back() == "py")
     {
-
       	if (result.back() == "py")
             _flag = 1;
 		else
@@ -39,6 +38,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 
         if(pipe(_response_fd) == -1)
             std::cerr << ("pipe creation failed!") << std::endl;
+
 
         switch (fork())
         {
@@ -281,7 +281,7 @@ int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
     if (pipe(fd) == -1)
         return EXIT_FAILURE;
     std::string query;
-    query.append(request.getFullBody());
+//    query.append(request.getFullBody());
     if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
     {
         close(fd[STDIN_FILENO]);
@@ -342,7 +342,6 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     for (size_t i = 0; i < env.size(); i++)
         environment[i] = const_cast<char *>(env[i].c_str());
     environment[env.size()] = nullptr;
-
     dup2(_response_fd[1], STDOUT_FILENO);
     close(_response_fd[1]);
     close(_response_fd[0]);
