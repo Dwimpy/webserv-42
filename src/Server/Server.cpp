@@ -35,22 +35,18 @@ void Server::acceptIncomingConnections(int kq, struct kevent change[25])
 
 	i = 0;
 	clientFd = 0;
-//	this->removeClient();
-//	while (true)
-//	{
-		Client	newClient;
-		clientFd = _serverSocket.accept(newClient);
-		if (clientFd <= 0)
-			return ;
-		newClient.setServer(this->_serverSocket.getSocketFD() - 3);
-		this->_connectedClients.__emplace_back(newClient);
-		i++;
-//	}
+	Client	newClient;
+	clientFd = _serverSocket.accept(newClient);
+	if (clientFd <= 0)
+		return ;
+	newClient.setServer(this->_serverSocket.getSocketFD() - 3);
+	this->_connectedClients.push_back(newClient);
+	i++;
 }
 
 void	Server::removeClient()
 {
-	for (std::vector<Client>::iterator it = _connectedClients.begin(); it != _connectedClients.end();)
+	for (std::deque<Client>::iterator it = _connectedClients.begin(); it != _connectedClients.end();)
 	{
 		if (it->getClientSocket().getFd() == -1)
 			it = _connectedClients.erase(it);
@@ -92,12 +88,22 @@ void	Server::sendResponse(Client client)
 	memset(_buffer, 0, sizeof(_buffer));
 	std::string	request_msg;
 
-	request_msg = client.recieve();
-	std::cout << request_msg << std::endl;
-	HttpRequest request(request_msg);
-	HttpResponse responseObj(request, _config);
+	client.recieve();
+	HttpResponse responseObj(client.getRequest(), _config);
+	request_msg = client.getRequest().getFullBody();
+	if (client.getRequest().getRequestMethod() == "POST")
+	{
+		int fd = open("compare.png", O_RDWR | O_CREAT | O_TRUNC, 0644);
+		std::vector<char> test(request_msg.begin() + 137, request_msg.end() - 44);
+		for (char c : test) {
+			std::cout << c << std::endl;
+			write(fd, &c, 1);
+		}
+		close(fd);
+	}
 	client.send(responseObj.getResponse().c_str(), responseObj.getResponseSize());
 	close(client.getClientSocket().getFd());
+
 }
 
 const ConfigFile &Server::getConfiguration() const
@@ -109,7 +115,7 @@ ServerSocket Server::getSocket() const
 {
 	return (this->_serverSocket);
 }
-std::vector<Client> &Server::getConnectedClients()
+std::deque<Client> &Server::getConnectedClients()
 {
 	return (this->_connectedClients);
 }

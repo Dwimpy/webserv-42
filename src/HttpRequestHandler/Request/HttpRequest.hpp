@@ -5,8 +5,6 @@
 #include <iostream>
 #include "Header.hpp"
 
-class HttpRequestParser;
-
 class HttpRequest {
 
 	typedef std::vector<Header> request_headers;
@@ -14,6 +12,7 @@ class HttpRequest {
 
   public:
 	HttpRequest(const std::string &request);
+	HttpRequest();
 	~HttpRequest();
 	void	pushToRequestMethod(char c);
 	void	pushToRequestUri(char c);
@@ -36,7 +35,7 @@ class HttpRequest {
 	std::string			getFileName();
 	const unsigned int	&getVersionMajor();
 	const unsigned int	&getVersionMinor();
-	const std::string 	getFullBody() const;
+	std::string			getFullBody() const;
 
 	std::string			getFileName() const;
 	std::string			getContentType() const;
@@ -47,6 +46,7 @@ class HttpRequest {
 	std::string			getRequestBody();
 	const unsigned int	&getVersionMajor() const;
 	const unsigned int	&getVersionMinor() const;
+	void				feedData(const char *str, ssize_t bytes);
 
 
   private:
@@ -56,4 +56,6 @@ class HttpRequest {
 	unsigned int		_versionMajor;
 	request_headers 	_headers;
 	request_body		_body;
+	int					_parserState;
+	int					_parserResult;
 };

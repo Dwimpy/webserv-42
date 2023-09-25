@@ -55,8 +55,8 @@ SRC_DIR			= ./src
 OBJ_DIR			= ./obj
 
 # Compiler
-CC			= g++
-CFLAGS		= -O3 -flto #-Wall -Werror -Wextra
+CC			= c++
+CFLAGS		= -g3 -fsanitize=address #-flto -O3#-Wall -Werror -Wextra
 
 ifdef FSANITIZE
 	CFLAGS += -g3 -fsanitize=address
@@ -87,7 +87,7 @@ OBJS	= $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.cpp=.o)))
 all:
 	@${MAKE} $(NAME) -j
 $(NAME): $(OBJ_DIR) $(OBJS) $(MAIN_FILE)
-	@$(CC) $(INCLUDE) $(FRAMEWORK) $(ASAN) $(OBJS) -o $@ -lm $(LDLFLAGS) $(LIBFLAGS)
+	@$(CC) $(CFLAGS) $(INCLUDE) $(FRAMEWORK) $(OBJS) -o $@ -lm $(LDLFLAGS) $(LIBFLAGS)
 	@echo "$(YELLOW)$(NAME)$(DEF_COLOR) $(CYAN)done.$(DEF_COLOR)"
 
 $(OBJ_DIR)/%.o: %.cpp

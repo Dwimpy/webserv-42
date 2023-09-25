@@ -8,7 +8,7 @@ class ClientSocket: public ISocket{
 	~ClientSocket();
 	void	close();
 	void	setFd(int fd);
-	bool			receive();
+	ssize_t			receive();
 	ssize_t			send(ssize_t bufferSize);
 
 	t_sockaddr_in	&getClientAddr();

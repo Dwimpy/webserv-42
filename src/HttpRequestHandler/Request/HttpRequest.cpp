@@ -13,9 +13,24 @@ HttpRequest::HttpRequest(const std::string &request): _versionMajor(1), _version
 //	getFullBody();
 }
 
+HttpRequest::HttpRequest(): _versionMajor(1), _versionMinor(1)
+{
+	_parserState = StateRequestMethodStart;
+	_parserResult = ParserDirectives;
+}
+
+
 HttpRequest::~HttpRequest()
 {
+}
 
+void	HttpRequest::feedData(const char *str, ssize_t bytes)
+{
+	HttpRequestParser::setParserState(static_cast<ParserState>(_parserState));
+	HttpRequestParser::setParserResult(static_cast<ParserResult>(_parserResult));
+	HttpRequestParser::parseRequest(*this, str, str + bytes);
+	_parserState = HttpRequestParser::getParserState();
+	_parserResult = HttpRequestParser::getParserResult();
 }
 
 void	HttpRequest::pushToRequestMethod(char c)
@@ -94,23 +109,18 @@ const unsigned int &HttpRequest::getVersionMinor()
 	return (this->_versionMinor);
 }
 
-const std::string HttpRequest::getFullBody() const
+std::string HttpRequest::getFullBody() const
 {
-	std::ostringstream str;
+	std::string str;
 	size_t	idx;
 
-//	idx = 0;
-//	for (std::vector<char>::const_iterator it = _body.begin(); it < _body.end(); it++)
-//	{
-//		idx++;
-//		str << it->getKey();
-//		str << "=";
-//		str << it->getValue();
-//		if (idx != _body.size())
-//			str << "&";
-//	}
-//	std::cout << str.str() << std::endl;
-	return (str.str());
+	idx = 0;
+	for (std::vector<char>::const_iterator it = _body.begin(); it < _body.end(); it++)
+	{
+		str.push_back(*it);
+	}
+
+	return (str);
 }
 
 const std::string HttpRequest::getValueByKey(const std::string &key)

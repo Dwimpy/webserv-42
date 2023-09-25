@@ -27,9 +27,8 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 //		deleteCookie(request);
 
     std::string uri = request.getRequestUri();
-
+	std::cout << uri << std::endl;
 	std::vector<std::string> result = splitStringByDot(uri);
-//	std::cout << result.back() << std::endl << std::endl;
     if (result.back() == "rs" || result.back() == "py")
     {
 

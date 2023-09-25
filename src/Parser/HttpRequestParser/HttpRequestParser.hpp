@@ -1,41 +1,50 @@
 #pragma once
 #include "HttpRequest.hpp"
 
+enum ParserResult{
+	ParserError,
+	ParserDirectives,
+	ParserBody,
+	ParserComplete
+};
+
+enum ParserState {
+	StateRequestMethodStart,
+	StateRequestMethod,
+	StateRequestURIStart,
+	StateRequestURI,
+	StateVersionH,
+	StateVersionHT,
+	StateVersionHTT,
+	StateVersionHTTP,
+	StateVersionHTTPSlash,
+	StateVersionHTTPVersionMajor,
+	StateVersionHTTPVersionDot,
+	StateVersionHTTPVersionMinor,
+	StateHeaderStart,
+	StateHeaderName,
+	StateHeaderSpaceAfterName,
+	StateHeaderValue,
+	StateNewLineCR,
+	StateNewLineLF,
+	StateCLRFCLRF,
+	StateEndRequest,
+	StateBodyStart,
+	StateBodyEnd,
+};
+
 class HttpRequestParser{
 
-	enum ParserResult{
-		ParserError,
-		ParserRunning,
-		ParserComplete
-	};
-
-	enum ParserState {
-		StateRequestMethodStart,
-		StateRequestMethod,
-		StateRequestURIStart,
-		StateRequestURI,
-		StateVersionH,
-		StateVersionHT,
-		StateVersionHTT,
-		StateVersionHTTP,
-		StateVersionHTTPSlash,
-		StateVersionHTTPVersionMajor,
-		StateVersionHTTPVersionDot,
-		StateVersionHTTPVersionMinor,
-		StateHeaderStart,
-		StateHeaderName,
-		StateHeaderSpaceAfterName,
-		StateHeaderValue,
-		StateNewLineCR,
-		StateNewLineLF,
-		StateEndRequest,
-		StateBodyStart,
-	};
 
   public:
 
 	static void	parseRequest(HttpRequest &request, const char *start, const char *end);
 	static void	consume(HttpRequest &request, const char *start, const char *end);
+	static int	getParserState();
+	static int	getParserResult();
+	static void	setParserState(ParserState state);
+	static void	setParserResult(ParserResult result);
+
 	static void resetParser();
   private:
 	static bool isChar(char c);
@@ -61,11 +70,11 @@ class HttpRequestParser{
 	static void parseStateSpaceAfterName(HttpRequest &request, char c);
 	static void parseStateHeaderValue(HttpRequest &request, char c);
 	static void parseStateNewLineCR(HttpRequest &request, char c);
-	static void parseStateNewLineLF(HttpRequest &request, char c);
+	static void parseStateNewLineLF(HttpRequest &request, char next, char c);
+	static void parseStateCRLFCRLF(HttpRequest &request, char next, char c);
 	static void	parseStateEndRequest(HttpRequest &request, char c);
 	static void parseStateBodyStart(HttpRequest &request, char c);
 	static ParserResult		_result;
 	static ParserState		_state;
-
 
 };

@@ -1,7 +1,8 @@
 #include "Client.hpp"
 
+#include <iostream>
 #include <sstream>
-Client::Client():_clientSocket(ClientSocket()), _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
+Client::Client():_hasClosed(false), _clientSocket(ClientSocket()), _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
 {
 	generateSessionId(64);
 }
@@ -49,8 +50,14 @@ void Client::send(const char *str, ssize_t size)
         offset += bytes_sent;
         size -= bytes_sent;
     }
+	close(this->_clientSocket.getFd());
 }
 
+
+void Client::setHasClosed()
+{
+	this->_hasClosed = true;
+}
 
 std::string	Client::generateCookieId(int length)
 {
@@ -65,13 +72,26 @@ std::string	Client::generateCookieId(int length)
 	return(sessionId);
 }
 
-std::string Client::recieve()
+void Client::recieve()
 {
-	std::ostringstream os;
-
-	while (_clientSocket.receive())
-		os << std::string(_clientSocket.getBuffer());
-	return (os.str());
+	ssize_t bytes_recv;
+	bytes_recv = _clientSocket.receive();
+	if (bytes_recv > 0)
+	{
+		_request.feedData(_clientSocket.getBuffer(), bytes_recv);
+		std::cout << _clientSocket.getBuffer();
+		recieve();
+		return ;
+	}
+	else if (bytes_recv == 0)
+	{
+		std::cerr << "Client has disconnected" << std::endl;
+		close(this->_clientSocket.getFd());
+	}
+	else if (errno == EWOULDBLOCK)
+	{
+		return ;
+	}
 }
 
 const std::string &Client::getClientSession() const
@@ -93,3 +113,4 @@ void Client::setClientFd(int fd)
 {
 	this->_clientSocket.setFd(fd);
 }
+const HttpRequest &Client::getRequest() { return this->_request; }

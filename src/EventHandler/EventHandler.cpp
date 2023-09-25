@@ -10,19 +10,6 @@ void EventHandler::initialize()
 	_kq = kqueue();
 }
 
-void	EventHandler::registerServers(std::vector<Server> &serverList)
-{
- 	_monitor_list = std::vector<t_kevent >(serverList.size());
-	for (ssize_t i = 0; i < serverList.size(); ++i)
-		EV_SET(&_monitor_list[i], serverList[i].getSocket().getSocketFD(), EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
-	if (::kevent(_kq, this->_monitor_list.data(), serverList.size(), nullptr, 0, nullptr) < 0)
-	{
-		perror("kevent");
-		exit(EXIT_FAILURE);
-	}
-}
-
-
 void	EventHandler::registerServers(std::deque<Server> &serverList)
 {
  	_monitor_list = std::vector<t_kevent >(serverList.size());
@@ -38,10 +25,10 @@ void	EventHandler::registerServers(std::deque<Server> &serverList)
 
 bool	EventHandler::registerClientEvent(Client &client) const
 {
-	t_kevent	add_client_event;
+	t_kevent	read_event;
 
-	EV_SET(&add_client_event, client.getClientSocket().getFd(), EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, &client);
-	if (kevent(_kq, &add_client_event, 1, nullptr, 0, nullptr) < 0)
+	EV_SET(&read_event, client.getClientSocket().getFd(), EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, &client);
+	if (kevent(_kq, &read_event, 1, nullptr, 0, nullptr) < 0)
 		return (false);
 	return (true);
 }
@@ -67,7 +54,6 @@ void	EventHandler::eventLoop(std::deque<Server > serverList)
 		{
 			event_fd = _event_list[i];
 			size = event_fd.ident - 3;
-
 			if (hasDisconnected(i))
 				continue ;
 			else if (doEventsServerSocket(serverList, size, i)){}
@@ -83,9 +69,10 @@ bool	EventHandler::hasDisconnected(ssize_t index)
 {
 	if (_event_list[index].flags & EV_EOF)
 	{
+		Client *client = (Client *)_event_list[index].udata;
 		std::cerr << "Client has disconnected from the server\n";
-		close(_event_list[index].ident);
-		_event_list[index].ident = -1;
+		close(client->getClientSocket().getFd());
+		client->setClientFd(-1);
 		return true;
 	}
 	return (false);
@@ -94,7 +81,7 @@ bool	EventHandler::hasDisconnected(ssize_t index)
 
 bool	EventHandler::doEventsServerSocket(std::deque<Server> &serverList, ssize_t &size, ssize_t &index)
 {
-	if (_event_list[index].flags & EVFILT_READ && (size >= 0 && size < serverList.size()) && \
+	if (_event_list[index].filter == EVFILT_READ && (size >= 0 && size < serverList.size()) && \
 		_event_list[index].ident == serverList[size].getSocket().getSocketFD())
 	{
 		serverList[size].acceptIncomingConnections(_kq, _monitor_list.data());
@@ -108,13 +95,13 @@ bool	EventHandler::doEventsServerSocket(std::deque<Server> &serverList, ssize_t 
 
 bool	EventHandler::doEventsClientSockets(std::deque<Server> &serverList, ssize_t index)
 {
-	if (_event_list[index].ident & EVFILT_READ)
+	if (_event_list[index].filter == EVFILT_READ)
 	{
 		Client *the_client = (Client *)_event_list[index].udata;
 		serverList[the_client->getAssignedServer()].sendResponse(*the_client);
+		the_client->setClientFd(-1);
 		if (registerClientRemove(*the_client) > 0)
 			perror("kevent [ EV_DELETE ]");
-		the_client->setClientFd(-1);
 		return (true);
 	}
 	return (false);
@@ -131,5 +118,7 @@ int	EventHandler::registerClientRemove(Client &client) const
 void	EventHandler::removeDisconnectedClients(std::deque<Server> &serverList)
 {
 	for (ssize_t i = 0; i < serverList.size(); ++i)
+	{
 		serverList[i].removeClient();
+	}
 }

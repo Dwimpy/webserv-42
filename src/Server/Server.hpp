@@ -24,7 +24,7 @@ class Server {
 	void	sendResponse(int fd);
 	const ConfigFile		&getConfiguration() const;
 	const ConfigFile			&getConfiguration();
-	std::vector<Client> &getConnectedClients();
+	std::deque<Client> &getConnectedClients();
 	ServerSocket		getSocket() const;
 	void				removeClient();
 
@@ -33,5 +33,5 @@ class Server {
 	const ServerConfig				_config;
 	ConfigFile						_configFile;
 	ServerSocket					_serverSocket;
-	std::vector<Client>				_connectedClients;
+	std::deque<Client>				_connectedClients;
 };

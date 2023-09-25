@@ -2,14 +2,15 @@
 #include "HttpRequest.hpp"
 #include <_ctype.h>
 
-HttpRequestParser::ParserState HttpRequestParser::_state = StateRequestMethodStart;
-HttpRequestParser::ParserResult HttpRequestParser::_result = ParserRunning;
+ParserState HttpRequestParser::_state = StateRequestMethodStart;
+ParserResult HttpRequestParser::_result = ParserDirectives;
 
 void HttpRequestParser::consume(HttpRequest &request, const char *start, const char *end)
 {
 	while (start != end && HttpRequestParser::_result != ParserError)
 	{
 		char c = *start++;
+//		std::cout << c;
 		switch (HttpRequestParser::_state)
 		{
 			case StateRequestMethodStart: parseRequestMethodStart(request, c);
@@ -38,7 +39,7 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 				break;
 			case StateNewLineCR: parseStateNewLineCR(request, c);
 				break;
-			case StateNewLineLF: parseStateNewLineLF(request, c);
+			case StateNewLineLF: parseStateNewLineLF(request, *(start), c);
 				break;
 			case StateHeaderStart: parseStateHeaderStart(request, c);
 				break;
@@ -51,6 +52,9 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 			case StateEndRequest: parseStateEndRequest(request, c);
 				break ;
 			case StateBodyStart: parseStateBodyStart(request, c);
+				break ;
+			case StateCLRFCLRF: parseStateCRLFCRLF(request, *(start), c);
+			default:
 				break ;
 		}
 	}
@@ -180,7 +184,7 @@ void HttpRequestParser::parseVersionHTTPVersionMajor(HttpRequest &request, char 
 		HttpRequestParser::_result = ParserError;
 	else
 	{
-		request.setVersionMajor(std::stoi(&c));
+		request.setVersionMajor(c - '0');
 		HttpRequestParser::_state = StateVersionHTTPVersionDot;
 	}
 }
@@ -199,7 +203,7 @@ void HttpRequestParser::parseVersionHTTPVersionMinor(HttpRequest &request, char 
 		HttpRequestParser::_result = ParserError;
 	else
 	{
-		request.setVersionMinor(std::stoi(&c));
+		request.setVersionMinor(c - '0');
 		HttpRequestParser::_state = StateNewLineCR;
 	}
 }
@@ -257,13 +261,10 @@ void HttpRequestParser::parseStateHeaderValue(HttpRequest &request, char c)
 
 void HttpRequestParser::parseStateBodyStart(HttpRequest &request, char c)
 {
-	if (isSpace(c)) {}
-	else if (c == '\0')
-		HttpRequestParser::_result = ParserComplete;
-	else
-	{
+//	if (c == '\r')
+//		HttpRequestParser::_state = StateNewLineLF;
+//	else
 		request.pushToBody(c);
-	}
 }
 
 
@@ -275,16 +276,51 @@ void HttpRequestParser::parseStateNewLineCR(HttpRequest &request, char c)
 		HttpRequestParser::_state = StateNewLineLF;
 }
 
-void HttpRequestParser::parseStateNewLineLF(HttpRequest &request, char c)
+void HttpRequestParser::parseStateNewLineLF(HttpRequest &request, char next, char c)
 {
 	if (c != '\n')
 		HttpRequestParser::_result = ParserError;
+	else if (next == '\r')
+		HttpRequestParser::_state = StateCLRFCLRF;
 	else
 		HttpRequestParser::_state = StateHeaderStart;
+}
+
+void HttpRequestParser::parseStateCRLFCRLF(HttpRequest &request, char next, char c)
+{
+	if (c == '\r' && next == '\n') {}
+	else if (c == '\n')
+	{
+		if (HttpRequestParser::_result == ParserDirectives && request.getRequestMethod() == "GET")
+			HttpRequestParser::_result = ParserComplete;
+		else if (HttpRequestParser::_result == ParserDirectives && request.getRequestMethod() == "POST")
+		{
+			HttpRequestParser::_result = ParserBody;
+			HttpRequestParser::_state = StateBodyStart;
+		}
+		else
+		{
+			HttpRequestParser::_result = ParserComplete;
+			HttpRequestParser::_state = StateBodyEnd;
+		}
+	}
+	else
+		HttpRequestParser::_result = ParserError;
 }
 
 void HttpRequestParser::resetParser()
 {
 	HttpRequestParser::_state = StateRequestMethodStart;
-	HttpRequestParser::_result = ParserRunning;
+	HttpRequestParser::_result = ParserDirectives;
+}
+int HttpRequestParser::getParserState() { return HttpRequestParser::_state; }
+int HttpRequestParser::getParserResult() { return HttpRequestParser::_result; }
+void HttpRequestParser::setParserState(ParserState state)
+{
+	HttpRequestParser::_state = state;
+}
+void HttpRequestParser::setParserResult(ParserResult result)
+{
+	HttpRequestParser::_result = result;
+
 }
