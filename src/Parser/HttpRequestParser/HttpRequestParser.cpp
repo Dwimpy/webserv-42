@@ -7,7 +7,7 @@ ParserResult HttpRequestParser::_result = ParserDirectives;
 
 void HttpRequestParser::consume(HttpRequest &request, const char *start, const char *end)
 {
-	while (start != end && HttpRequestParser::_result != ParserError)
+	while (start != end && (HttpRequestParser::_result != ParserError || HttpRequestParser::_result != ParserComplete))
 	{
 		char c = *start++;
 		switch (HttpRequestParser::_state)
@@ -58,8 +58,16 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 				break ;
 		}
 	}
-	if (*start == '\0')
-		_result = ParserComplete;
+	if (request.getRequestMethod() == "POST")
+	{
+		char *endptr;
+		long n = std::strtol(request.getValueByKey("Content-Length").c_str(), &endptr, 10);
+		std::cout << "len: " << n << " size: " << request.getFullBody().size() << std::endl;
+		if (*endptr == '\0' && n > 0 && n <= request.getFullBody().size())
+		{
+			_result = ParserComplete;
+		}
+	}
 }
 
 void HttpRequestParser::parseRequest(HttpRequest &request, const char *start, const char *end)
@@ -265,13 +273,7 @@ void HttpRequestParser::parseStateHeaderValue(HttpRequest &request, char c)
 
 void HttpRequestParser::parseStateBodyStart(HttpRequest &request, char c)
 {
-	if (c == '\r')
-	{
-		request.pushToBody(c);
-		HttpRequestParser::_result = ParserComplete;
-	}
-	else
-		request.pushToBody(c);
+	request.pushToBody(c);
 }
 
 

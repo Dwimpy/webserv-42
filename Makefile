@@ -56,7 +56,7 @@ OBJ_DIR			= ./obj
 
 # Compiler
 CC			= c++
-CFLAGS		= -g3# -fsanitize=address #-flto -O3#-Wall -Werror -Wextra
+CFLAGS		= #-g3 -fsanitize=address #-flto -O3#-Wall -Werror -Wextra
 
 ifdef FSANITIZE
 	CFLAGS += -g3 -fsanitize=address

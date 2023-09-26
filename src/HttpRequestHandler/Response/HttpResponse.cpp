@@ -300,8 +300,8 @@ int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
     std::string query;
     std::string body;
 	body = request.getFullBody();
-	std::string text(request.getValueByKey("Content-Type"));
-	size_t closingQuotePos = text.find("multipart/form-data");
+	std::string text(request.getRequestUri());
+	size_t closingQuotePos = text.find(".py");
 	if (closingQuotePos == std::string::npos)
     	query.append(body);
 	else

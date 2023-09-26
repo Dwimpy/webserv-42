@@ -53,8 +53,8 @@ void	EventHandler::eventLoop(std::deque<Server > serverList)
 			else if (handleIncomingConnections(serverList, size, i)) {}
 			else if (handleClientReadEvents(serverList, i)) {}
 			else if (handleClientWriteEvents(serverList, i)) {}
-//			else if (doEventsServerSocket(serverList, size, i)){}
-//			else if (doEventsClientSockets(serverList, i)){}
+			else
+				close(event_fd.ident);
 		}
 	}
 	close(_kq);
@@ -68,7 +68,7 @@ bool	EventHandler::hasDisconnected(std::deque<Server> &serverList, ssize_t index
 		std::cerr << "Client has disconnected from the server\n";
 		close(client->getClientSocket().getFd());
 		serverList[client->getAssignedServer()].removeClient(*client);
-		return true;
+		return (true);
 	}
 	return (false);
 }
@@ -79,9 +79,17 @@ bool	EventHandler::handleClientReadEvents(std::deque<Server > &serverList, ssize
 	{
 		Client *client = (Client *)_event_list[index].udata;
 		client->recieve();
-		std::cout << client->getParserResult() << std::endl;
-		if (client->getParserResult() == ParserComplete)
+
+		if (client->hasClosed())
 		{
+			registerEvent(*client, EVFILT_READ, EV_DELETE);
+			close(client->getClientSocket().getFd());
+			serverList[client->getAssignedServer()].removeClient(*client);
+			return (true);
+		}
+		else if (client->getParserResult() == ParserComplete)
+		{
+			std::cout << client->getRequest().getFullBody().size()<< " LENGTH: " << client->getRequest().getValueByKey("Content-Length") << std::endl;
 			if (registerEvent(*client, EVFILT_READ, EV_DELETE) < 0)
 				perror ("kevent [ EVREAD -> EV_DELETE ]");
 			if (registerEvent(*client, EVFILT_WRITE, EV_ADD | EV_CLEAR) < 0)
@@ -114,7 +122,7 @@ void	uploadFile(const HttpRequest &request)
 	std::string body;
 	std::string boundary = getBoundary(request);
 	body = request.getFullBody();
-	std::cout << "body " << body << std::endl;
+//	std::cout << "body " << body << std::endl;
 	std::string fileName = request.extractFileName(body);
 	std::ofstream tempFile(fileName.c_str(), std::ios::binary | std::ios::trunc);
 	if (!tempFile) {
@@ -163,47 +171,17 @@ bool	EventHandler::handleClientWriteEvents(std::deque<Server > &serverList, ssiz
 		if (client->getRequest().getRequestMethod() == "POST")
 			uploadFile(client->getRequest());
 		HttpResponse response(client->getRequest(), serverList[client->getAssignedServer()].getServerConfig());
-//		std::cout << response.getResponse();
 		client->send(response.getResponse().c_str(), response.getResponseSize());
-		if (client->isSendComplete()) {}
 		if (client->hasClosed())
 		{
 			registerEvent(*client, EVFILT_WRITE, EV_DELETE);
-			serverList[client->getAssignedServer()].removeClient(*client);
 			close(client->getClientSocket().getFd());
+			serverList[client->getAssignedServer()].removeClient(*client);
 		}
 		return (true);
 	}
 	return (false);
 }
-
-//bool	EventHandler::doEventsServerSocket(std::deque<Server> &serverList, ssize_t &size, ssize_t &index)
-//{
-//	if (_event_list[index].filter == EVFILT_READ && (size >= 0 && size < serverList.size()) && \
-//		_event_list[index].ident == serverList[size].getSocket().getSocketFD())
-//	{
-//		serverList[size].acceptIncomingConnections(_kq, _monitor_list.data());
-//		Client *client = &serverList[size].getConnectedClients().back();
-//		if (!registerClientEvent(*client))
-//			perror("kevent [ add_client ]");
-//		return (true);
-//	}
-//	return (false);
-//}
-
-//bool	EventHandler::doEventsClientSockets(std::deque<Server> &serverList, ssize_t index)
-//{
-//	if (_event_list[index].filter == EVFILT_READ)
-//	{
-//		Client *the_client = (Client *)_event_list[index].udata;
-//		serverList[the_client->getAssignedServer()].sendResponse(*the_client);
-//		the_client->setClientFd(-1);
-//		if (registerClientRemove(*the_client) > 0)
-//			perror("kevent [ EV_DELETE ]");
-//		return (true);
-//	}
-//	return (false);
-//}
 
 bool EventHandler::handleIncomingConnections(std::deque<Server> &serverList, ssize_t size, ssize_t i)
 {
@@ -223,19 +201,3 @@ int	EventHandler::registerEvent(Client &client, int16_t filter, uint16_t flags) 
 	EV_SET(&event, client.getClientSocket().getFd(), filter, flags, 0, 0, &client);
 	return (kevent(_kq, &event, 1, nullptr, 0, nullptr));
 }
-
-//int	EventHandler::unregisterReadEvent(Client &client) const
-//{
-//	t_kevent ev_remove_client = {};
-//	EV_SET(&ev_remove_client, client.getClientSocket().getFd(), EVFILT_READ, EV_DELETE, 0, 0, &client);
-//	return (kevent(_kq, &ev_remove_client, 1, nullptr, 0, nullptr));
-//
-//}
-
-//void	EventHandler::removeDisconnectedClients(std::deque<Server> &serverList)
-//{
-//	for (ssize_t i = 0; i < serverList.size(); ++i)
-//	{
-//		serverList[i].removeClient();
-//	}
-//}

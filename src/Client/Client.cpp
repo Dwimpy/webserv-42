@@ -40,15 +40,19 @@ void Client::send(const char *str, ssize_t size)
    if (bytes_sent > 0)
    {
 		this->_clientSocket.setOffset(bytes_sent);
-		if (bytes_sent != size)
+		if (bytes_sent < size)
 		{
 			send(str, size);
 			return ;
 		}
 		_closeConnection = true;
 		_sendComplete = true;
-   } else if (bytes_sent < 0 && errno == EAGAIN)
+   } else if (bytes_sent < 0)
+   {
+		if (errno != EAGAIN)
+			_closeConnection = true;
 		return ;
+   }
 }
 
 
@@ -73,23 +77,26 @@ std::string	Client::generateCookieId(int length)
 void Client::recieve()
 {
 	ssize_t bytes_recv;
-	bytes_recv = _clientSocket.receive();
-	if (bytes_recv > 0)
+
+	while (true)
 	{
-		_request.feedData(_clientSocket.getBuffer(), bytes_recv);
-		recieve();
-		return ;
-	}
-	else if (bytes_recv == 0)
-	{
-		std::cerr << "Client has disconnected" << std::endl;
-		_closeConnection = true;
-	}
-	else
-	{
-		if (errno != EWOULDBLOCK)
+		bytes_recv = _clientSocket.receive();
+		if (bytes_recv == 0)
+		{
+			std::cerr << "Client has disconnected" << std::endl;
 			_closeConnection = true;
-		return;
+			break ;
+		}
+		else if (bytes_recv > 0)
+		{
+			_request.feedData(_clientSocket.getBuffer(), bytes_recv);
+		}
+		else
+		{
+			if (errno != EWOULDBLOCK)
+				_closeConnection = true;
+			break ;
+		}
 	}
 }
 

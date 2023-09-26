@@ -21,7 +21,7 @@ class ClientSocket: public ISocket{
 
   private:
 	int				_fd;
-	char			_buffer[64 * 1024];
+	char			_buffer[1024000];
 	ssize_t			_data_offset;
 	t_sockaddr_in	_clientAddr;
 	socklen_t 		_clientAddrLen;
