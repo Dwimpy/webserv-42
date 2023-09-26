@@ -1,7 +1,7 @@
 #include "ClientSocket.hpp"
 #include <iostream>
 
-ClientSocket::ClientSocket(): _fd(-1), _clientAddrLen(sizeof(_clientAddr))
+ClientSocket::ClientSocket(): _data_offset(0), _fd(-1), _clientAddrLen(sizeof(_clientAddr))
 {}
 
 ClientSocket::~ClientSocket()
@@ -19,16 +19,26 @@ ssize_t ClientSocket::receive()
 	return (bytes_received);
 }
 
-ssize_t ClientSocket::send(ssize_t bufferSize)
+void	ClientSocket::setOffset(ssize_t n)
+{
+	this->_data_offset += n;
+}
+
+ssize_t	ClientSocket::getOffset()
+{
+	return (this->_data_offset);
+}
+
+ssize_t ClientSocket::send(const char *str, ssize_t size)
 {
 	ssize_t	bytes_sent;
-	bytes_sent = ::send(this->_fd, _sendBuffer, bufferSize, 0);
+	bytes_sent = ::send(this->_fd, str, size, 0);
 	return (bytes_sent);
 }
 
 void ClientSocket::addToBuffer(const char *str, size_t size)
 {
-	std::memcpy(_sendBuffer, str, size);
+	std::memcpy(_buffer, str, size);
 }
 
 char	*ClientSocket::getBuffer()

@@ -58,6 +58,8 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 				break ;
 		}
 	}
+	if (*start == '\0')
+		_result = ParserComplete;
 }
 
 void HttpRequestParser::parseRequest(HttpRequest &request, const char *start, const char *end)
@@ -264,7 +266,10 @@ void HttpRequestParser::parseStateHeaderValue(HttpRequest &request, char c)
 void HttpRequestParser::parseStateBodyStart(HttpRequest &request, char c)
 {
 	if (c == '\r')
+	{
+		request.pushToBody(c);
 		HttpRequestParser::_result = ParserComplete;
+	}
 	else
 		request.pushToBody(c);
 }
@@ -310,6 +315,7 @@ void HttpRequestParser::parseStateCRLFCRLF(HttpRequest &request, char next, char
 	{
 		HttpRequestParser::_result = ParserError;
 	}
+
 }
 
 void HttpRequestParser::resetParser()

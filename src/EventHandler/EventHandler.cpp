@@ -92,17 +92,86 @@ bool	EventHandler::handleClientReadEvents(std::deque<Server > &serverList, ssize
 	return (false);
 }
 
+
+std::string	getBoundary(const HttpRequest &request)
+{
+	std::string boundary;
+	std::string boundaryText = "boundary=";
+	std::string input = request.getValueByKey("Content-Type");
+	size_t boundaryPos = input.find(boundaryText);
+	if (boundaryPos != std::string::npos) {
+		// Extract everything after the boundary
+		boundary = input.substr(boundaryPos + boundaryText.length());
+//		std::cout << "Extracted data: " << boundary << " position: " << boundaryPos << std::endl;
+	} else {
+		std::cerr << "Boundary not found in the input string." << std::endl;
+	}
+	return boundary;
+}
+
+void	uploadFile(const HttpRequest &request)
+{
+	std::string body;
+	std::string boundary = getBoundary(request);
+	body = request.getFullBody();
+	std::cout << "body " << body << std::endl;
+	std::string fileName = request.extractFileName(body);
+	std::ofstream tempFile(fileName.c_str(), std::ios::binary | std::ios::trunc);
+	if (!tempFile) {
+		std::cerr << "Failed to create temporary file." << std::endl;
+		tempFile.close();
+		return ;
+	}
+
+	std::string pngDel = "\r\n\r\n";
+
+	std::string::size_type startPos = body.find(pngDel);
+	if (startPos == std::string::npos) {
+		std::cerr << "Boundary not found in input data." << std::endl;
+		tempFile.close();
+		return ;
+	}
+
+	startPos += pngDel.length();
+
+	std::string::size_type endPos = body.find("--" + boundary, startPos);
+	if (endPos == std::string::npos) {
+		std::cerr << "Ending boundary not found in input data." << std::endl;
+		tempFile.close();
+		return ;
+	}
+
+	std::string::size_type lastCRLF = body.rfind("\r\n", endPos);
+
+	if (lastCRLF == std::string::npos) {
+		std::cerr << "No '\\r\\n' found before the ending boundary." << std::endl;
+		tempFile.close();
+		return;
+	}
+
+	// Extract the binary data
+	std::string binaryData = body.substr(startPos, lastCRLF - startPos);
+	tempFile.write(binaryData.c_str(), lastCRLF - startPos);
+	tempFile.close();
+}
+
 bool	EventHandler::handleClientWriteEvents(std::deque<Server > &serverList, ssize_t index)
 {
 	if (_event_list[index].filter == EVFILT_WRITE)
 	{
 		Client *client = (Client *)_event_list[index].udata;
+		if (client->getRequest().getRequestMethod() == "POST")
+			uploadFile(client->getRequest());
 		HttpResponse response(client->getRequest(), serverList[client->getAssignedServer()].getServerConfig());
-		std::cout << client->getRequest().getFullBody();
+//		std::cout << response.getResponse();
 		client->send(response.getResponse().c_str(), response.getResponseSize());
-		registerEvent(*client, EVFILT_WRITE, EV_DELETE);
-		close(client->getClientSocket().getFd());
-		serverList[client->getAssignedServer()].removeClient(*client);
+		if (client->isSendComplete()) {}
+		if (client->hasClosed())
+		{
+			registerEvent(*client, EVFILT_WRITE, EV_DELETE);
+			serverList[client->getAssignedServer()].removeClient(*client);
+			close(client->getClientSocket().getFd());
+		}
 		return (true);
 	}
 	return (false);

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <sstream>
-Client::Client():_closeConnection(false), _clientSocket(ClientSocket()), _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
+Client::Client():_sendComplete(false), _closeConnection(false), _clientSocket(ClientSocket()), _hasCookie(false), _timeSinceUpdate(std::chrono::system_clock::now())
 {
 	generateSessionId(64);
 }
@@ -34,28 +34,25 @@ int &Client::getAssignedServer()
 
 void Client::send(const char *str, ssize_t size)
 {
-    ssize_t offset = 0;
-    ssize_t bufferSize = 1024; // Choose an appropriate buffer size
-    ssize_t bytes_sent = 0;
+   ssize_t	bytes_sent;
 
-    while (size > 0)
-    {
-        if (size < bufferSize)
-            bufferSize = size; // Send the remaining data if it's smaller than the buffer size
-        _clientSocket.addToBuffer(str + offset, bufferSize);
-       	bytes_sent = _clientSocket.send(bufferSize);
-
-        if (bytes_sent <= 0)
-            break ;
-
-        offset += bytes_sent;
-        size -= bytes_sent;
-    }
-	close(this->_clientSocket.getFd());
+   bytes_sent = this->_clientSocket.send(str + this->_clientSocket.getOffset(), size - this->_clientSocket.getOffset());
+   if (bytes_sent > 0)
+   {
+		this->_clientSocket.setOffset(bytes_sent);
+		if (bytes_sent != size)
+		{
+			send(str, size);
+			return ;
+		}
+		_closeConnection = true;
+		_sendComplete = true;
+   } else if (bytes_sent < 0 && errno == EAGAIN)
+		return ;
 }
 
 
-bool	Client::getHasClosed()
+bool	Client::hasClosed()
 {
 	return (this->_closeConnection);
 }
@@ -121,3 +118,4 @@ void Client::setClientFd(int fd)
 	this->_clientSocket.setFd(fd);
 }
 const HttpRequest &Client::getRequest() { return this->_request; }
+bool Client::isSendComplete() { return this->_sendComplete; }

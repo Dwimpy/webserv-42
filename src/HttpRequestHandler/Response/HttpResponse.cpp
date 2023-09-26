@@ -140,6 +140,7 @@ void	HttpResponse::appendHttpProtocol(const HttpRequest &request)
 	_response.append(std::to_string(request.getVersionMajor()));
 	_response.append(".");
 	_response.append(std::to_string(request.getVersionMajor()));
+	_response.append(" ");
 }
 
 void	HttpResponse::appendCookie(const HttpRequest &request)
@@ -197,6 +198,7 @@ void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &co
 	_fileName = config.getDocumentRoot() + getFileName(request);
 
 	std::ifstream	infile(_fileName);
+//	std::cout << _fileName << " " << request.getRequestUri() << std::endl;
 	if (infile.good())
 	{
 		infile.close();
@@ -204,8 +206,8 @@ void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &co
 	}
 	else
 	{
-		this->_statusCode = 404;
-		this->_statusError = "KO";
+		this->_statusCode = 200;
+		this->_statusError = "OK";
         this->_fileName = "./docs/error_pages/404.html";
 	}
 }

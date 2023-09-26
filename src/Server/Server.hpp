@@ -20,8 +20,6 @@ class Server {
 	bool	startServer();
 
 	void	acceptIncomingConnections(int &kq);
-	void	sendResponse(Client client);
-	void	sendResponse(int fd);
 	const ConfigFile		&getConfiguration() const;
 	const ConfigFile			&getConfiguration();
 	std::vector<Client *> &getConnectedClients();
@@ -30,7 +28,6 @@ class Server {
 	const ServerConfig &getServerConfig() const;
 
   private:
-	char							_buffer[8192];
 	const ServerConfig				_config;
 	ConfigFile						_configFile;
 	ServerSocket					_serverSocket;
