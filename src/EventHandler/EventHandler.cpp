@@ -79,7 +79,6 @@ bool	EventHandler::handleClientReadEvents(std::deque<Server > &serverList, ssize
 	{
 		Client *client = (Client *)_event_list[index].udata;
 		client->recieve();
-
 		if (client->hasClosed())
 		{
 			registerEvent(*client, EVFILT_READ, EV_DELETE);
@@ -89,7 +88,7 @@ bool	EventHandler::handleClientReadEvents(std::deque<Server > &serverList, ssize
 		}
 		else if (client->getParserResult() == ParserComplete)
 		{
-			std::cout << client->getRequest().getFullBody().size()<< " LENGTH: " << client->getRequest().getValueByKey("Content-Length") << std::endl;
+			std::cout << client->getRequest().getBodySize() << " LENGTH: " << client->getRequest().getValueByKey("Content-Length") << std::endl;
 			if (registerEvent(*client, EVFILT_READ, EV_DELETE) < 0)
 				perror ("kevent [ EVREAD -> EV_DELETE ]");
 			if (registerEvent(*client, EVFILT_WRITE, EV_ADD | EV_CLEAR) < 0)
@@ -158,8 +157,7 @@ void	uploadFile(const HttpRequest &request)
 	}
 
 	// Extract the binary data
-	std::string binaryData = body.substr(startPos, lastCRLF - startPos);
-	tempFile.write(binaryData.c_str(), lastCRLF - startPos);
+	tempFile.write(body.substr(startPos, lastCRLF - startPos).c_str(), lastCRLF - startPos);
 	tempFile.close();
 }
 

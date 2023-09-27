@@ -46,9 +46,9 @@ class HttpRequest {
 	const std::vector<Header>	&getBody(const std::string &key) const;
 	const std::string	&getRequestUri() const;
 	const std::string	&getRequestMethod() const;
-	std::string			getRequestBody();
 	const unsigned int	&getVersionMajor() const;
 	const unsigned int	&getVersionMinor() const;
+	ssize_t 			getBodySize() const;
 	void				feedData(const char *str, ssize_t bytes);
 
 	std::string			extractFileName(std::string &body) const;
@@ -59,7 +59,7 @@ class HttpRequest {
 	unsigned int		_versionMinor;
 	unsigned int		_versionMajor;
 	request_headers 	_headers;
-	request_body		_body;
+	std::string			_body;
 	int					_parserState;
 	int					_parserResult;
 };

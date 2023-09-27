@@ -62,8 +62,8 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 	{
 		char *endptr;
 		long n = std::strtol(request.getValueByKey("Content-Length").c_str(), &endptr, 10);
-		std::cout << "len: " << n << " size: " << request.getFullBody().size() << std::endl;
-		if (*endptr == '\0' && n > 0 && n <= request.getFullBody().size())
+		std::cout << "len: " << n << " size: " << request.getBodySize() << std::endl;
+		if (*endptr == '\0' && n > 0 && n <= request.getBodySize())
 		{
 			_result = ParserComplete;
 		}

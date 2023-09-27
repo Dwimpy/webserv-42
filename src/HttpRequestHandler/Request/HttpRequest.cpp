@@ -67,13 +67,7 @@ void	HttpRequest::pushToLastHeaderValue(char c)
 
 void	HttpRequest::pushToBody(char c)
 {
-	_body.__emplace_back(c);
-}
-
-std::string HttpRequest::getRequestBody()
-{
-	std::string s(_body.begin(), _body.end());
-	return (s);
+	_body.push_back(c);
 }
 
 void	HttpRequest::pushHeader(const Header& header)
@@ -111,17 +105,9 @@ const unsigned int &HttpRequest::getVersionMinor()
 	return (this->_versionMinor);
 }
 
-std::string HttpRequest::getFullBody() const
+ssize_t HttpRequest::getBodySize() const
 {
-	std::string str;
-	size_t	idx;
-
-	idx = 0;
-	for (std::vector<char>::const_iterator it = _body.begin(); it < _body.end(); it++)
-	{
-		str.push_back(*it);
-	}
-	return (str);
+	return (this->_body.size());
 }
 
 const std::string HttpRequest::getValueByKey(const std::string &key)
@@ -212,3 +198,4 @@ std::string	HttpRequest::extractFileName(std::string &body) const
 
 int HttpRequest::getParserState() const { return this->_parserState; }
 int HttpRequest::getParserResult() const { return this->_parserResult; }
+std::string HttpRequest::getFullBody() const { return this->_body; }
