@@ -196,8 +196,8 @@ void	HttpResponse::appendContentLength(const HttpRequest &request)
 
 	std::ostringstream oss;
 	oss << fileSize;
-	std::string myString = oss.str();
-	_response.append(myString);
+	std::string contentLength = oss.str();
+	_response.append(contentLength);
 	_response.append("\r\n");
 }
 
