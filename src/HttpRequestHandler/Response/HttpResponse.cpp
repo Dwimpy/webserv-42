@@ -126,7 +126,7 @@ void HttpResponse::appendResponseHeader(const HttpRequest &request)
 	appendHttpProtocol(request);
 	appendStatusCode(request);
 	appendContentType(request);
-	if (request.getRequestMethod() == "GET" && request.getRequestUri().find("uploads") != std::string::npos)
+	if (request.getRequestMethod() == "GET")
 		appendContentLength(request);
 }
 
@@ -186,16 +186,14 @@ void	HttpResponse::appendContentLength(const HttpRequest &request)
 {
 	long fileSize = 0;
 	_response.append("Content-Length: ");
-	std::string filePath = "docs" + request.getRequestUri();
 	struct stat fileInfo;
-	if (stat(filePath.c_str(), &fileInfo) == 0)
+	if (stat(_fileName.c_str(), &fileInfo) == 0)
 	{
 		// Get the file size from fileInfo.st_size
 		fileSize = static_cast<long>(fileInfo.st_size);
 //		std::cout << fileSize << " file size" << std::endl;
 	}
-//	else
-//		std::cout << " not found " << std::endl;
+
 	std::ostringstream oss;
 	oss << fileSize;
 	std::string myString = oss.str();
