@@ -126,7 +126,7 @@ void HttpResponse::appendResponseHeader(const HttpRequest &request)
 	appendHttpProtocol(request);
 	appendStatusCode(request);
 	appendContentType(request);
-	if (request.getRequestMethod() == "GET")
+	if (request.getRequestMethod() == "GET" && request.getRequestUri().find("uploads") != std::string::npos)
 		appendContentLength(request);
 }
 

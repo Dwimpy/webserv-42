@@ -119,6 +119,7 @@ std::string	getBoundary(const HttpRequest &request)
 void	uploadFile(const HttpRequest &request)
 {
 	std::string body;
+		std::cerr << "started upload." << std::endl;
 	std::string boundary = getBoundary(request);
 	body = request.getFullBody();
 //	std::cout << "body " << body << std::endl;
@@ -155,9 +156,11 @@ void	uploadFile(const HttpRequest &request)
 		tempFile.close();
 		return;
 	}
-
+	std::string bodyData = body.substr(startPos, lastCRLF - startPos);
 	// Extract the binary data
-	tempFile.write(body.substr(startPos, lastCRLF - startPos).c_str(), lastCRLF - startPos);
+		std::cerr << "started writing." << std::endl;
+	tempFile.write(bodyData.c_str(), lastCRLF - startPos);
+		std::cerr << "finished writing." << std::endl;
 	tempFile.close();
 }
 
