@@ -51,6 +51,7 @@ class HttpResponse{
 	void				appendHttpProtocol(const HttpRequest &request);
 	void				appendStatusCode(const HttpRequest &request);
 	void				appendContentType(const HttpRequest &request);
+	void				appendContentLength(const HttpRequest &request);
 };
 
 int    error(std::string error);

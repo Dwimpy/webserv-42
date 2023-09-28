@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-
+#include <sys/stat.h>
 std::vector<std::string> splitStringByDot(const std::string& input) {
 	std::vector<std::string> tokens;
 	std::istringstream iss(input);
@@ -126,6 +126,8 @@ void HttpResponse::appendResponseHeader(const HttpRequest &request)
 	appendHttpProtocol(request);
 	appendStatusCode(request);
 	appendContentType(request);
+	if (request.getRequestMethod() == "GET")
+		appendContentLength(request);
 }
 
 HttpResponse::HttpResponse()
@@ -180,6 +182,27 @@ void	HttpResponse::appendContentType(const HttpRequest &request)
 	_response.append("\r\n");
 }
 
+void	HttpResponse::appendContentLength(const HttpRequest &request)
+{
+	long fileSize = 0;
+	_response.append("Content-Length: ");
+	std::string filePath = "docs" + request.getRequestUri();
+	struct stat fileInfo;
+	if (stat(filePath.c_str(), &fileInfo) == 0)
+	{
+		// Get the file size from fileInfo.st_size
+		fileSize = static_cast<long>(fileInfo.st_size);
+//		std::cout << fileSize << " file size" << std::endl;
+	}
+//	else
+//		std::cout << " not found " << std::endl;
+	std::ostringstream oss;
+	oss << fileSize;
+	std::string myString = oss.str();
+	_response.append(myString);
+	_response.append("\r\n");
+}
+
 void	HttpResponse::appendFileContents()
 {
 	std::ifstream	infile(_fileName, std::ios::binary);
@@ -190,7 +213,6 @@ void	HttpResponse::appendFileContents()
 	infile.read(&data[0], data.size());
 	infile.close();
 	_response.append(data);
-
 }
 
 void	HttpResponse::fileExists(const HttpRequest &request, const ServerConfig &config)
