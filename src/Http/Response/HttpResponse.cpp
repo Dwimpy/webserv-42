@@ -280,8 +280,8 @@ void    HttpResponse::createEnv(std::vector<std::string> &env, const HttpRequest
     env.push_back("HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" );
     env.push_back("RESPONSE_HEADER=HTTP/1.1 200 OK" );
     env.push_back("CONTENT_TYPE=application/x-www-form-urlencoded" );
-//	std::string var = request.getValueByKey("Cookie");
-//	env.push_back("Cookie=" + var);
+	std::string var = request.getValueByKey("Cookie");
+	env.push_back("Cookie=" + var);
 //	env.push_back("USERNAME=" + var.substr(0, 6));
 //	env.push_back("PWD=" + var.substr(7, 12));
 	env.push_back("Error_code=" + std::to_string(this->_statusCode));

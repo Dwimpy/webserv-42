@@ -27,7 +27,9 @@ class BaseResponse {
 	void			getContent();
 	std::string		getStatusCodeError() const;
 
-	void	appendFileContents(const std::string &filename);
+	void			appendFileContents(const std::string &filename);
+	void			appendCookie(std::string &response);
+	std::string		generateCookieId(int length);
   private:
 	int		_flag;
 	int		_response_fd[2];

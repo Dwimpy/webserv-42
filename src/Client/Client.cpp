@@ -90,6 +90,7 @@ void Client::recieve()
 		else if (bytes_recv > 0)
 		{
 			_request.feedData(_clientSocket.getBuffer(), bytes_recv);
+//			std::cout << _clientSocket.getBuffer() << std::endl;
 		}
 		else
 		{

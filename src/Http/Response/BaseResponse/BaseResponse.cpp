@@ -3,7 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <unistd.h>
-
+#include <chrono>
+#include <random>
 BaseResponse::BaseResponse(const HttpRequest &request, const ConfigFile &config): _request(request), _config(config), _status_code(200)
 {
 	_content = "";
@@ -71,6 +72,28 @@ void	BaseResponse::setContentType()
 		_contentType = "*/*";
 }
 
+std::string	BaseResponse::generateCookieId(int length)
+{
+	const std::string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	std::random_device					rd;
+	std::mt19937						generator(rd());
+	std::uniform_int_distribution<int>	distribution(0, chars.length() - 1);
+	std::string                         sessionId;
+
+	for (int i =0; i < length; ++i)
+		sessionId += chars[distribution(generator)];
+	return(sessionId);
+}
+
+void	BaseResponse::appendCookie(std::string &response)
+{
+	response.append("Set-Cookie: ");
+	response.append(BaseResponse::generateCookieId(6));
+	response.append("=");
+	response.append(BaseResponse::generateCookieId(12));
+	response.append("\r\n");
+}
+
 std::string BaseResponse::build()
 {
 	std::string	response;
@@ -92,6 +115,11 @@ std::string BaseResponse::build()
 
 		response += "Content-type: " + _contentType + "\r\n";
 		response += "Content-length: " + std::to_string(_content.length()) + "\r\n";
+		if (_request.getValueByKey("Cookie") == "")
+		{
+			std::cout << "no cookies found" << std::endl;
+			appendCookie(response);
+		}
 		response += "\r\n";
 
 	if (_content.empty())
@@ -100,6 +128,8 @@ std::string BaseResponse::build()
 }
 void BaseResponse::createEnv(std::vector<std::string> &env)
 {
+	std::string var = _request.getValueByKey("Cookie");
+	env.push_back("Cookie=" + var);
 	env.push_back("Error_code=" + std::to_string(_status_code));
 	env.push_back("Error_msg=" + getStatusCodeError());
 }

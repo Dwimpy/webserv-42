@@ -166,7 +166,7 @@ bool	EventHandler::handleClientWriteEvents(std::deque<Server > &serverList, ssiz
 		Client *client = (Client *)_event_list[index].udata;
 		if (client->getRequest().getRequestMethod() == "POST")
 			uploadFile(client->getRequest());
-		HttpResponse response(client->getRequest(), serverList[client->getAssignedServer()].getServerConfig());
+//		HttpResponse response(client->getRequest(), serverList[client->getAssignedServer()].getServerConfig());
 		HttpResponse test(client->getRequest(), serverList[client->getAssignedServer()].getConfiguration());
 		client->send(test.getResponse().c_str(), test.getResponseSize());
 		if (client->hasClosed())
