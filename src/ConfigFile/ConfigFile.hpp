@@ -1,6 +1,8 @@
 #pragma once
 #include "ConfigFileParser.hpp"
 #include "Directive.hpp"
+#include "HttpRequest.hpp"
+
 #include <iostream>
 
 typedef std::map<std::string, std::string> serverDirectives;
@@ -18,12 +20,16 @@ class ConfigFile{
 	void	addLocationDirective(const std::string &path, const std::string &key, const std::string &value);
 	void	inspectConfig();
 	void	inspectConfig() const;
+	std::string getAllowedMethods() const;
+	std::string	getServerRoot() const;
 
 	int 				getPort();
 	int 				getPort() const;
 	const std::string	&getServerName() const;
-	bool 				isAllowedMethodServer(const std::string &method);
-	bool				isValidLocation(const std::string &location);
+	bool 				isAllowedMethodServer(const std::string &method) const;
+	bool				isValidLocation(const std::string &location) const;
+	std::string			getLocationPath(std::string location) const;
+	std::string	getFilePath(const HttpRequest &request) const;
 
   private:
 	serverDirectives	_serverDirectives;

@@ -1,4 +1,7 @@
 #include "ConfigFile.hpp"
+
+#include "HttpRequest.hpp"
+
 #include <exception>
 
 ConfigFile::ConfigFile()
@@ -116,18 +119,61 @@ void ConfigFile::inspectConfig() const
 	return (_serverDirectives.find("server_name")->second);
 }
 
-bool ConfigFile::isAllowedMethodServer(const std::string &method)
+bool ConfigFile::isAllowedMethodServer(const std::string &method) const
 {
 	if (_serverDirectives.find("allowed_methods") == _serverDirectives.end())
 		return (method == "GET" || method == "POST" || method == "DELETE");
 	else
 	{
-		if (_serverDirectives["allowed_methods"].find(method) != std::string::npos)
+		if (_serverDirectives.find("allowed_methods")->second.find(method) != std::string::npos)
 			return (true);
 		return (false);
 	}
 }
-bool ConfigFile::isValidLocation(const std::string &location)
+
+std::string	ConfigFile::getAllowedMethods() const {
+	if (_serverDirectives.find("allowed_methods") == _serverDirectives.end())
+		return ("GET POST DELETE");
+	return (this->_serverDirectives.find("allowed_methods")->second);
+}
+
+bool ConfigFile::isValidLocation(const std::string &location) const
 {
 	return (_locationDirectives.find(location) != _locationDirectives.end());
+}
+
+std::string ConfigFile::getServerRoot() const {
+
+	serverDirectives::const_iterator it;
+
+	it = _serverDirectives.find("root");
+	if (it != _serverDirectives.end()) {
+		return (it->second);
+	} else {
+		return ("./docs");
+	}
+}
+
+std::string ConfigFile::getLocationPath(std::string location) const {
+	locationDirectives::const_iterator it;
+	std::string	biggest = "";
+	for (it = _locationDirectives.cbegin(); it != _locationDirectives.cend(); ++it) {
+		std::string curr = it->first;
+		if (location.find(curr) != std::string::npos && curr.size() > biggest.size())
+			biggest = curr;
+	}
+	return (biggest);
+}
+
+std::string ConfigFile::getFilePath(const HttpRequest &request) const {
+	std::string location = getLocationPath(request.getRequestUri());
+
+	if (location == request.getRequestUri())
+	{
+		std::string index_page = _locationDirectives.find(location)->second.find("index")->second;
+		if (index_page.empty())
+			index_page = "index.html";
+		return (getServerRoot() + location + index_page);
+	}
+	return (getServerRoot() + request.getRequestUri());
 }

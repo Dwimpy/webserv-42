@@ -14,41 +14,48 @@
 NAME			= webserv
 
 # VPath
-VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/HttpRequestHandler \
-				  ./src/HttpRequestHandler/Request ./src/HttpRequestHandler/Response ./src/HttpRequestHandler/Header \
+VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/Http \
+				  ./src/Http/Request ./src/Http/Response ./src/Http/Header \
 				  ./src/ResourceManager ./src/Client ./src/ServerManager ./src/ConfigFile/ ./src/ConfigFile/Directive \
 				  ./src/ConfigFile/LocationBlock ./src/ConfigFile/ServerBlock ./src/ConfigFile/ServerConfigurator \
 				  ./src/Parser/HttpRequestParser ./src/Parser/ConfigFileParser ./src/Socket/ISocket ./src/Socket/ServerSocket \
-				  ./src/Socket/ClientSocket ./src/EventHandler
+				  ./src/Socket/ClientSocket ./src/EventHandler ./src/Http/Response/BaseResponse ./src/OrderedMap \
+				  ./src/Http/Response/GetResponse ./src/Http/Response/ErrorResponse \
+				  ./src/Http/Response/DeleteResponse ./src/Http/Response/PostResponse
+
 
 
 # Includes
-INCLUDE			= -I ./src/Server
-INCLUDE			+= -I ./src/ServerConfig
-INCLUDE			+= -I ./src/SocketHandler
-INCLUDE			+= -I ./src/HttpRequestHandler
-INCLUDE			+= -I ./src/HttpRequestHandler/Request
-INCLUDE			+= -I ./src/HttpRequestHandler/Response
-INCLUDE			+= -I ./src/HttpRequestHandler/Header
-INCLUDE			+= -I ./src/Page
-INCLUDE			+= -I ./src/ResourceManager
-INCLUDE			+= -I ./src/Client
-INCLUDE			+= -I ./src/ServerManager
-INCLUDE			+= -I ./src/ConfigFile
+INCLUDE		= -I ./src/Server
+INCLUDE		+= -I ./src/ServerConfig
+INCLUDE		+= -I ./src/SocketHandler
+INCLUDE		+= -I ./src/Http
+INCLUDE		+= -I ./src/Http/Request
+INCLUDE		+= -I ./src/Http/Response
+INCLUDE		+= -I ./src/Http/Header
+INCLUDE		+= -I ./src/Page
+INCLUDE		+= -I ./src/ResourceManager
+INCLUDE		+= -I ./src/Client
+INCLUDE		+= -I ./src/ServerManager
+INCLUDE		+= -I ./src/ConfigFile
 
-INCLUDE			+= -I ./src/ConfigFile/Directive
-INCLUDE			+= -I ./src/ConfigFile/LocationBlock
-INCLUDE			+= -I ./src/ConfigFile/ServerBlock
-INCLUDE			+= -I ./src/ConfigFile/ServerConfigurator
+INCLUDE		+= -I ./src/ConfigFile/Directive
+INCLUDE		+= -I ./src/ConfigFile/LocationBlock
+INCLUDE		+= -I ./src/ConfigFile/ServerBlock
+INCLUDE		+= -I ./src/ConfigFile/ServerConfigurator
 
-INCLUDE			+= -I ./src/Parser/HttpRequestParser
-INCLUDE			+= -I ./src/Parser/ConfigFileParser
-INCLUDE			+= -I ./src/Socket/ISocket
-INCLUDE			+= -I ./src/Socket/ServerSocket
-INCLUDE			+= -I ./src/Socket/ClientSocket
-INCLUDE			+= -I ./src/EventHandler
-
-
+INCLUDE		+= -I ./src/Parser/HttpRequestParser
+INCLUDE		+= -I ./src/Parser/ConfigFileParser
+INCLUDE		+= -I ./src/Socket/ISocket
+INCLUDE		+= -I ./src/Socket/ServerSocket
+INCLUDE		+= -I ./src/Socket/ClientSocket
+INCLUDE		+= -I ./src/EventHandler
+INCLUDE		+= -I ./src/Http/Response/BaseResponse
+INCLUDE		+= -I ./src/Http/Response/GetResponse
+INCLUDE		+= -I ./src/Http/Response/ErrorResponse
+INCLUDE		+= -I ./src/Http/Response/DeleteRespontse
+INCLUDE		+= -I ./src/Http/Response/PostResponse
+INCLUDE		+= -I ./src/OrderedMap
 
 # Diretories
 SRC_DIR			= ./src
@@ -56,7 +63,7 @@ OBJ_DIR			= ./obj
 
 # Compiler
 CC			= c++
-CFLAGS		= #-g3 -fsanitize=address #-flto -O3#-Wall -Werror -Wextra
+CFLAGS		= -g3 -fsanitize=address #-flto -O3#-Wall -Werror -Wextra
 
 ifdef FSANITIZE
 	CFLAGS += -g3 -fsanitize=address

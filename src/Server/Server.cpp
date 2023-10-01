@@ -37,7 +37,22 @@ void Server::acceptIncomingConnections(int &kq)
 		Client	*newClient = new Client();
 		clientFd = _serverSocket.accept(*newClient);
 		if (clientFd < 0)
-			break ;
+		{
+			if (errno != EWOULDBLOCK)
+			{
+				perror("Accept failed");
+				delete newClient;
+				exit(1);
+			}
+			delete newClient;
+			return ;
+		}
+		if (fcntl(clientFd, F_SETFL, O_NONBLOCK, FD_CLOEXEC) < 0)
+		{
+			close(clientFd);
+			delete newClient;
+			continue ;
+		}
 		newClient->setServer(this->_serverSocket.getSocketFD() - 3);
 		this->_connectedClients.push_back(newClient);
 		struct kevent	read_event;
@@ -50,12 +65,13 @@ void Server::acceptIncomingConnections(int &kq)
 void	Server::removeClient(Client &client)
 {
     for (std::vector<Client *>::iterator it = _connectedClients.begin(); it != _connectedClients.end();) {
+
         if ((*it)->getClientSocket().getFd() == client.getClientSocket().getFd()) {
 			delete *it;
-            it = _connectedClients.erase(it);
-        } else {
-            ++it;
+            _connectedClients.erase(it);
+			return ;
         }
+		++it;
     }
 }
 

@@ -1,27 +1,26 @@
 #pragma once
-#include <sstream>
-#include <fstream>
+#include "BaseResponse.hpp"
+#include "HttpRequest.hpp"
 #include "Server.hpp"
 #include "ServerConfig.hpp"
-#include "HttpRequest.hpp"
+
+#include <fstream>
+#include <sstream>
 
 class HttpResponse{
 
   public:
 	HttpResponse(const HttpRequest &request, const ServerConfig &config);
-	HttpResponse(const HttpRequest &request, ConfigFile &config);
+	HttpResponse(const HttpRequest &request, const ConfigFile &config);
 	HttpResponse();
 	~HttpResponse();
 
 	void    			createEnv(std::vector<std::string> &env, const HttpRequest &request);
 
-	void				processRequestHeader(const HttpRequest &request);
 	void				appendResponseHeader(const HttpRequest &request);
-	bool 				checkAllowedMethod(const HttpRequest &request, ConfigFile &config);
+	bool 				checkAllowedMethod(const HttpRequest &request, const ConfigFile &config);
 
-	void				processMethod(const HttpRequest &request);
 	void				processRequestUri(const HttpRequest &request, ConfigFile &config);
-	void 				processGetRequest(const HttpRequest & request);
     void	            appendCookie(const HttpRequest &request);
     void	            appendNewLine(const HttpRequest &request);
 	void				appendFileContents();
@@ -36,9 +35,10 @@ class HttpResponse{
     int                 parent_process();
     int                 dup_request_to_stdin(const HttpRequest &request);
 	ssize_t				getResponseSize();
+	bool 				checkFileExists(const HttpRequest &request, const ConfigFile &config);
 
   private:
-	unsigned int		_statusCode;
+	int16_t				_statusCode;
 	std::string			_statusError;
 	std::string			_errorMessage;
 	std::string			_fileName;
@@ -46,7 +46,7 @@ class HttpResponse{
 //    int                 _response_fd;
 	int					_flag;
     int                 _response_fd[2];
-
+	BaseResponse		*_re;
 
 	void				appendHttpProtocol(const HttpRequest &request);
 	void				appendStatusCode(const HttpRequest &request);
@@ -54,4 +54,4 @@ class HttpResponse{
 	void				appendContentLength(const HttpRequest &request);
 };
 
-int    error(std::string error);
+int errorr(std::string error);

@@ -1,9 +1,12 @@
 #include "HttpResponse.hpp"
+#include "ErrorResponse.hpp"
+#include "GetResponse.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <sys/stat.h>
-std::vector<std::string> splitStringByDot(const std::string& input) {
+
+std::vector<std::string> splitStringByDott(const std::string& input) {
 	std::vector<std::string> tokens;
 	std::istringstream iss(input);
 	std::string token;
@@ -27,7 +30,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 //		deleteCookie(request);
 
     std::string uri = request.getRequestUri();
-	std::vector<std::string> result = splitStringByDot(uri);
+	std::vector<std::string> result = splitStringByDott(uri);
     if (result.back() == "rs" || result.back() == "py")
     {
       	if (result.back() == "py")
@@ -49,31 +52,47 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
         }
 
         if (parent_process() != EXIT_SUCCESS){
-            error("EXITED PARENT");
+			errorr("EXITED PARENT");
         }
         if (write_response() != EXIT_SUCCESS)
         {
 //            std::cerr << ("interrupted by signal!") << std::endl;
-            error("interrupted by signal!");
+			errorr("interrupted by signal!");
         }
     }
     else
         appendFileContents();
 }
 
-HttpResponse::HttpResponse(const HttpRequest &request, ConfigFile &config): _statusCode(200), _statusError("OK")
+HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config): _statusCode(200), _statusError("OK")
 {
-//	processRequestUri(request, config);
-// TODO: Check location before actually checking the methods allowed
+//	config.inspectConfig();
+	checkFileExists(request, config);
 	if (!checkAllowedMethod(request, config))
 	{
-		_statusError = "KO";
-		_statusCode = 504;
-		_errorMessage = "Unauthorized method";
-// TODO: Append error page
-//		appendErrorPage(_statusCode);
+		_statusCode = 405;
+		_response = ErrorResponse(_statusCode, request, config).build();
 	}
-//	config.inspectConfig();
+	else
+		_response = GetResponse(request, config).build();
+}
+
+bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile &config)
+{
+	std::string		path;
+	std::ifstream	iss;
+	bool			is_good;
+
+	path = config.getFilePath(request);
+	is_good = false;
+	iss.open(path);
+	if (iss.good() || path.find("rs") != std::string::npos)
+	{
+		is_good = true;
+	}
+	iss.close();
+//	std::cout << "file is :" << is_good << " path : " << path << std::endl;
+	return (is_good);
 }
 
 void HttpResponse::processRequestUri(const HttpRequest &request, ConfigFile &config)
@@ -99,35 +118,19 @@ void HttpResponse::processRequestUri(const HttpRequest &request, ConfigFile &con
 	}
 }
 
-void HttpResponse::processMethod(const HttpRequest &request)
+bool HttpResponse::checkAllowedMethod(const HttpRequest &request, const ConfigFile &config)
 {
-	if (request.getRequestMethod() == "GET")
-		processGetRequest(request);
-}
-
-void HttpResponse::processGetRequest(const HttpRequest &request)
-{
-
-}
-
-bool HttpResponse::checkAllowedMethod(const HttpRequest &request, ConfigFile &config)
-{
-
 	return (config.isAllowedMethodServer(request.getRequestMethod()));
 }
 
-void HttpResponse::processRequestHeader(const HttpRequest &request)
-{
-
-}
 
 void HttpResponse::appendResponseHeader(const HttpRequest &request)
 {
 	appendHttpProtocol(request);
 	appendStatusCode(request);
 	appendContentType(request);
-	if (request.getRequestMethod() == "GET")
-		appendContentLength(request);
+//	if (request.getRequestMethod() == "GET")
+//		appendContentLength(request);
 }
 
 HttpResponse::HttpResponse()
@@ -204,6 +207,8 @@ void	HttpResponse::appendContentLength(const HttpRequest &request)
 void	HttpResponse::appendFileContents()
 {
 	std::ifstream	infile(_fileName, std::ios::binary);
+	if (!infile.good())
+		return;
 	infile.seekg(0, std::ios::end);
 	std::string data;
 	data.resize(infile.tellg());
@@ -275,10 +280,10 @@ void    HttpResponse::createEnv(std::vector<std::string> &env, const HttpRequest
     env.push_back("HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" );
     env.push_back("RESPONSE_HEADER=HTTP/1.1 200 OK" );
     env.push_back("CONTENT_TYPE=application/x-www-form-urlencoded" );
-	std::string var = request.getValueByKey("Cookie");
-	env.push_back("Cookie=" + var);
-	env.push_back("USERNAME=" + var.substr(0, 6));
-	env.push_back("PWD=" + var.substr(7, 12));
+//	std::string var = request.getValueByKey("Cookie");
+//	env.push_back("Cookie=" + var);
+//	env.push_back("USERNAME=" + var.substr(0, 6));
+//	env.push_back("PWD=" + var.substr(7, 12));
 	env.push_back("Error_code=" + std::to_string(this->_statusCode));
 	env.push_back("Error_msg=" + this->_errorMessage);
 
@@ -338,19 +343,19 @@ int HttpResponse::dup_request_to_stdin(const HttpRequest &request) {
     return EXIT_SUCCESS;
 }
 
-int    error(std::string error)
+int errorr(std::string error)
 {
     std::cerr << error << std::endl;
     return (EXIT_FAILURE);
 }
 
-const std::string getProjectDir() {
+const std::string getProjectDirr() {
     char buffer[PATH_MAX];
 
     if (getcwd(buffer, sizeof(buffer)) != nullptr)
         return std::string(buffer);
     else
-        error("getcwd fails");
+		errorr("getcwd fails");
     return "";
 }
 
@@ -359,21 +364,21 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     std::vector<std::string> env;
     std::string cgiScript;
 
-    std::string cgiPath = getProjectDir()  + "/src/cgi/target/release/";
+    std::string cgiPath = getProjectDirr()  + "/src/cgi/target/release/";
 
 	if (_flag == 1)
 	{
-		cgiPath = getProjectDir() + "/src/cgi/src/upload.py";
+		cgiPath = getProjectDirr() + "/src/cgi/src/upload.py";
 	}
 	else
 	{
     	if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
 		{
-    	    error("404 CGI path not found!"); /* set 404 page */
+			errorr("404 CGI path not found!"); /* set 404 page */
 		}
 	}
 
-	std::vector<std::string> result = splitStringByDot(request.getRequestUri());
+	std::vector<std::string> result = splitStringByDott(request.getRequestUri());
 
 	if (_flag != 1)
 	{
@@ -391,14 +396,14 @@ void    HttpResponse::childProcess(const HttpRequest &request)
     close(_response_fd[0]);
 
     if (dup_request_to_stdin(request))
-        exit(error("tmpfile creation failed!"));
+        exit(errorr("tmpfile creation failed!"));
 
 	char *args[2];
 	args[0] = (char *)cgiPath.c_str();
 	args[1] = nullptr;
 
     if (execve(cgiPath.c_str(), args,  environment) == -1)
-        exit(error("execve failed!"));
+        exit(errorr("execve failed!"));
 }
 
 int	HttpResponse::parent_process() {
@@ -425,7 +430,7 @@ int	HttpResponse::parent_process() {
 
 int HttpResponse::write_response()
 {
-    char			buffer[1000];
+    char			buffer[8192];
     long long 		bytes = 1;
 
 //    lseek(_response_fd, 0, SEEK_SET);

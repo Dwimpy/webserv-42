@@ -31,10 +31,8 @@ void	EventHandler::eventLoop(std::deque<Server > serverList)
 	ssize_t size;
 	int		new_events;
 	struct kevent event_fd;
-	int		test;
 
 	size = 0;
-	test = 1;
 	for (;;)
 	{
 		new_events = kevent(_kq, nullptr, 0, _event_list.data(), 1, nullptr);
@@ -53,8 +51,6 @@ void	EventHandler::eventLoop(std::deque<Server > serverList)
 			else if (handleIncomingConnections(serverList, size, i)) {}
 			else if (handleClientReadEvents(serverList, i)) {}
 			else if (handleClientWriteEvents(serverList, i)) {}
-			else
-				close(event_fd.ident);
 		}
 	}
 	close(_kq);
@@ -84,11 +80,10 @@ bool	EventHandler::handleClientReadEvents(std::deque<Server > &serverList, ssize
 			registerEvent(*client, EVFILT_READ, EV_DELETE);
 			close(client->getClientSocket().getFd());
 			serverList[client->getAssignedServer()].removeClient(*client);
-			return (true);
 		}
 		else if (client->getParserResult() == ParserComplete)
 		{
-			std::cout << client->getRequest().getBodySize() << " LENGTH: " << client->getRequest().getValueByKey("Content-Length") << std::endl;
+//			std::cout << client->getRequest().getBodySize() << " LENGTH: " << client->getRequest().getValueByKey("Content-Length") << std::endl;
 			if (registerEvent(*client, EVFILT_READ, EV_DELETE) < 0)
 				perror ("kevent [ EVREAD -> EV_DELETE ]");
 			if (registerEvent(*client, EVFILT_WRITE, EV_ADD | EV_CLEAR) < 0)
@@ -172,7 +167,8 @@ bool	EventHandler::handleClientWriteEvents(std::deque<Server > &serverList, ssiz
 		if (client->getRequest().getRequestMethod() == "POST")
 			uploadFile(client->getRequest());
 		HttpResponse response(client->getRequest(), serverList[client->getAssignedServer()].getServerConfig());
-		client->send(response.getResponse().c_str(), response.getResponseSize());
+		HttpResponse test(client->getRequest(), serverList[client->getAssignedServer()].getConfiguration());
+		client->send(test.getResponse().c_str(), test.getResponseSize());
 		if (client->hasClosed())
 		{
 			registerEvent(*client, EVFILT_WRITE, EV_DELETE);

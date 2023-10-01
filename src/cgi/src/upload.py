@@ -11,7 +11,6 @@ try:
     if filename:
         # Strip leading path from file name to avoid directory traversal attacks
         fn = os.path.basename(filename)
-        print(filename)
         if os.path.exists(filename):
             content = 'Success!'
         else:
