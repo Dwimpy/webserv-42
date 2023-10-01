@@ -65,6 +65,8 @@ void	BaseResponse::setContentType()
 		else
 			_contentType = accept.substr(0, idx + extension.length());
 	}
+	else if (extension == "rs" || extension == "py")
+		_contentType = "text/html";
 	else
 		_contentType = "*/*";
 }
@@ -98,20 +100,10 @@ std::string BaseResponse::build()
 }
 void BaseResponse::createEnv(std::vector<std::string> &env)
 {
-	env.push_back("REQUEST_METHOD=POST" );
-    env.push_back("QUERY_STRING=" );
-    env.push_back("SCRIPT_NAME=html/cgi/src/register_landing_page.rs" );
-    env.push_back("REQUEST_URI=html/cgi/src/register_landing_page.rs" );
-    env.push_back("PATH_INFO=html/cgi/src/register_landing_page.rs" );
-    env.push_back("SERVER_PROTOCOL=HTTP/1.1");
-    env.push_back("CONTENT_LENGTH=21");
-    env.push_back("REMOTE_ADDR=" );
-    env.push_back("HTTP_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" );
-    env.push_back("RESPONSE_HEADER=HTTP/1.1 200 OK" );
-    env.push_back("CONTENT_TYPE=application/x-www-form-urlencoded" );
 	env.push_back("Error_code=" + std::to_string(_status_code));
 	env.push_back("Error_msg=" + getStatusCodeError());
 }
+
 int BaseResponse::dup_request_to_stdin() {
 	    int fd[2];
     if (pipe(fd) == -1)
