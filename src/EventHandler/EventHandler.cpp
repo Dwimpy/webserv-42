@@ -164,7 +164,8 @@ bool	EventHandler::handleClientWriteEvents(std::deque<Server > &serverList, ssiz
 	if (_event_list[index].filter == EVFILT_WRITE)
 	{
 		Client *client = (Client *)_event_list[index].udata;
-		if (client->getRequest().getRequestMethod() == "POST")
+		if (client->getRequest().getRequestMethod() == "POST" &&
+			client->getRequest().getValueByKey("Content-Type").find("multipart/form-data") != std::string::npos)
 			uploadFile(client->getRequest());
 //		HttpResponse response(client->getRequest(), serverList[client->getAssignedServer()].getServerConfig());
 		HttpResponse test(client->getRequest(), serverList[client->getAssignedServer()].getConfiguration());
