@@ -2,15 +2,10 @@
 
 GetResponse::GetResponse(const HttpRequest &request, const ConfigFile &config): BaseResponse(request, config)
 {
-		getContent();
+
+	setContentType();
+	getContent(_request.getRequestUri());
 //		addHeader("Content-Length: ", _)
 }
 
 GetResponse::~GetResponse() {}
-
-
-
-void GetResponse::getContent()
-{
-//		addHeader("Cache-Control", "max-age=3600");
-}

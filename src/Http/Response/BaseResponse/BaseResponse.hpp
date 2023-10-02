@@ -24,21 +24,23 @@ class BaseResponse {
 	const HttpRequest						&_request;
 	const ConfigFile							&_config;
 
-	void			getContent();
+	void			getContent(const std::string &uri);
 	std::string		getStatusCodeError() const;
 
 	void			appendFileContents(const std::string &filename);
 	void			appendCookie(std::string &response);
 	std::string		generateCookieId(int length);
+	void			getContentErrorPage();
   private:
 	int		_flag;
 	int		_response_fd[2];
 	void	createEnv(std::vector<std::string> &env);
 	int		dup_request_to_stdin();
-	void    childProcess();
+	void    childProcess(std::string const &uri);
 	int		parent_process();
 	int		write_response();
 };
 
 int		error(std::string error);
 const	std::string getProjectDir();
+std::vector<std::string> splitStringByDot(const std::string& input, char delim);

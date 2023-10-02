@@ -7,5 +7,4 @@ class GetResponse: public BaseResponse {
 	GetResponse(const HttpRequest &request, const ConfigFile &config);
 	~GetResponse();
 
-	void	getContent();
 };

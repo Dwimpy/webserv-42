@@ -25,6 +25,7 @@ class ConfigFile{
 
 	int 				getPort();
 	int 				getPort() const;
+	std::string	getErrorPage(const HttpRequest &request) const;
 	const std::string	&getServerName() const;
 	bool 				isAllowedMethodServer(const std::string &method) const;
 	bool				isValidLocation(const std::string &location) const;

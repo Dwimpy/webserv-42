@@ -8,8 +8,7 @@
 BaseResponse::BaseResponse(const HttpRequest &request, const ConfigFile &config): _request(request), _config(config), _status_code(200)
 {
 	_content = "";
-	setContentType();
-	getContent();
+	_contentType = "*/*";
 }
 
 BaseResponse::~BaseResponse() {}
@@ -29,21 +28,20 @@ std::string BaseResponse::getStatusCodeError() const {
 	switch (_status_code)
 	{
 		case 200: return ("OK");
-		case 404: return ("Page not found");
+		case 404: return ("404 Not Found");
 		case 405: return ("Method not allowed");
 		default: return ("Unknown");
 	}
 }
 
-std::vector<std::string> splitStringByDot(const std::string& input) {
+std::vector<std::string> splitStringByDot(const std::string& input, char delim) {
 	std::vector<std::string> tokens;
 	std::istringstream iss(input);
 	std::string token;
 
-	while (std::getline(iss, token, '.')) {
+	while (std::getline(iss, token, delim)) {
 		tokens.push_back(token);
 	}
-
 	return tokens;
 }
 
@@ -53,7 +51,7 @@ void	BaseResponse::setContentType()
 	std::string	extension;
 	std::vector<std::string> result;
 	uri = _config.getFilePath(_request);
-	result = splitStringByDot(uri);
+	result = splitStringByDot(uri, '.');
 	extension = result.back();
 
 	std::string accept = _request.getValueByKey("Accept");
@@ -68,8 +66,6 @@ void	BaseResponse::setContentType()
 	}
 	else if (extension == "rs" || extension == "py")
 		_contentType = "text/html";
-	else
-		_contentType = "*/*";
 }
 
 std::string	BaseResponse::generateCookieId(int length)
@@ -158,12 +154,12 @@ int BaseResponse::dup_request_to_stdin() {
     close(fd[STDIN_FILENO]);
     return EXIT_SUCCESS;
 }
-void BaseResponse::childProcess() {
+void BaseResponse::childProcess(std::string const &uri) {
 	std::vector<std::string> env;
     std::string cgiScript;
 
     std::string cgiPath = getProjectDir()  + "/src/cgi/target/release/";
-
+//	std::cout << "GPD: " << getProjectDir() << std::endl;
 	if (_flag == 1)
 	{
 		cgiPath = getProjectDir() + "/src/cgi/src/upload.py";
@@ -176,7 +172,7 @@ void BaseResponse::childProcess() {
 		}
 	}
 
-	std::vector<std::string> result = splitStringByDot(_request.getRequestUri());
+	std::vector<std::string> result = splitStringByDot(uri, '.');
 
 	if (_flag != 1)
 	{
@@ -198,8 +194,9 @@ void BaseResponse::childProcess() {
 
 	char *args[2];
 	args[0] = (char *)cgiPath.c_str();
+	std::cout << "PATH: " << cgiPath << std::endl;
 	args[1] = nullptr;
-
+//	std::cout << "cgi path " << cgiPath << std::endl;
     if (execve(cgiPath.c_str(), args,  environment) == -1)
         exit(error("execve failed!"));
 }
@@ -221,9 +218,9 @@ void	BaseResponse::appendFileContents(const std::string &filename)
 	_content.append(data);
 }
 
-void BaseResponse::getContent() {
-	std::string uri = _request.getRequestUri();
-	std::vector<std::string> result = splitStringByDot(uri);
+void BaseResponse::getContent(const std::string &uri) {
+	std::vector<std::string> result = splitStringByDot(uri, '.');
+	std::cout << "URI: " << uri << std::endl;
     if (result.back() == "rs" || result.back() == "py")
     {
       	if (result.back() == "py")
@@ -241,7 +238,7 @@ void BaseResponse::getContent() {
                 std::cerr << ("fork creation failed!") << std::endl;
                 break;
             case 0:
-                childProcess();
+                childProcess(uri);
         }
 
         if (parent_process() != EXIT_SUCCESS){
@@ -256,6 +253,11 @@ void BaseResponse::getContent() {
     else
         appendFileContents(_config.getFilePath(_request));
 }
+
+void BaseResponse::getContentErrorPage() {
+
+}
+
 int BaseResponse::parent_process() {
     int status;
 
@@ -282,9 +284,9 @@ int BaseResponse::write_response() {
     long long 		bytes = 1;
 
 //    lseek(_response_fd, 0, SEEK_SET);
-	if (getStatusCodeError() == "Page not found")
+	if (getStatusCodeError() == "404 Not Found")
 	{
-		std::string _fileName = "./docs/error_pages/404.html";
+		std::string _fileName = _config.getErrorPage(_request);
 		appendFileContents(_fileName);
 		close(_response_fd[0]);
 		return EXIT_SUCCESS;

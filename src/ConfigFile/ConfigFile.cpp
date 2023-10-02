@@ -1,5 +1,5 @@
 #include "ConfigFile.hpp"
-
+#include "BaseResponse.hpp"
 #include "HttpRequest.hpp"
 
 #include <exception>
@@ -167,7 +167,8 @@ std::string ConfigFile::getLocationPath(std::string location) const {
 
 std::string ConfigFile::getFilePath(const HttpRequest &request) const {
 	std::string location = getLocationPath(request.getRequestUri());
-
+	std::string	location_root;
+	std::map<std::string, std::string> it;
 	if (location == request.getRequestUri())
 	{
 		std::string index_page = _locationDirectives.find(location)->second.find("index")->second;
@@ -175,5 +176,26 @@ std::string ConfigFile::getFilePath(const HttpRequest &request) const {
 			index_page = "index.html";
 		return (getServerRoot() + location + index_page);
 	}
-	return (getServerRoot() + request.getRequestUri());
+	it = _locationDirectives.find(location)->second;
+	if (!it.empty()) {
+		if (it.find("root") != it.end()) {
+			location = it.find("root")->second;
+			return (getServerRoot() + location + request.getRequestUri().substr(0, request.getRequestUri().size()));
+		}
+	}
+	return (getServerRoot() + location + request.getRequestUri().substr(location.size(), request.getRequestUri().size()));
+}
+
+std::string ConfigFile::getErrorPage(const HttpRequest &request) const {
+	std::string location = getLocationPath(request.getRequestUri());
+	std::vector<std::string> tokens;
+
+	std::string error_page = _locationDirectives.find(location)->second.find("error_page")->second;
+	tokens = splitStringByDot(error_page, ' ');
+	if (error_page.empty())
+		error_page = "error_pages/404.html";
+	else
+		error_page = tokens[1];
+	return (getServerRoot() + location + error_page);
+
 }

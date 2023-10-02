@@ -6,7 +6,5 @@ class ErrorResponse: public BaseResponse {
 	ErrorResponse(int16_t status_code, const HttpRequest &request, const ConfigFile &config);
 	~ErrorResponse();
 
-	void	getContent();
-
 	void pageMethodNotAllowed();
 };

@@ -67,12 +67,10 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ServerConfig &confi
 HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config): _statusCode(200), _statusError("OK")
 {
 //	config.inspectConfig();
-	checkFileExists(request, config);
-	if (!checkAllowedMethod(request, config))
-	{
-		_statusCode = 405;
+	if (checkFileExists(request, config))
+		checkAllowedMethod(request, config);
+	if (_statusCode >= 400)
 		_response = ErrorResponse(_statusCode, request, config).build();
-	}
 	else
 		_response = GetResponse(request, config).build();
 }
@@ -86,10 +84,10 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 	path = config.getFilePath(request);
 	is_good = false;
 	iss.open(path);
-	if (iss.good() || path.find("rs") != std::string::npos)
-	{
+	if (iss.good() || path.find("rs") != std::string::npos || path.find("py") != std::string::npos)
 		is_good = true;
-	}
+	else
+		_statusCode = 404;
 	iss.close();
 //	std::cout << "file is :" << is_good << " path : " << path << std::endl;
 	return (is_good);
@@ -118,9 +116,10 @@ void HttpResponse::processRequestUri(const HttpRequest &request, ConfigFile &con
 	}
 }
 
-bool HttpResponse::checkAllowedMethod(const HttpRequest &request, const ConfigFile &config)
+void HttpResponse::checkAllowedMethod(const HttpRequest &request, const ConfigFile &config)
 {
-	return (config.isAllowedMethodServer(request.getRequestMethod()));
+	if (!config.isAllowedMethodServer(request.getRequestMethod()))
+		_statusCode = 405;
 }
 
 

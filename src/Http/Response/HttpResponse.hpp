@@ -18,7 +18,7 @@ class HttpResponse{
 	void    			createEnv(std::vector<std::string> &env, const HttpRequest &request);
 
 	void				appendResponseHeader(const HttpRequest &request);
-	bool 				checkAllowedMethod(const HttpRequest &request, const ConfigFile &config);
+	void 				checkAllowedMethod(const HttpRequest &request, const ConfigFile &config);
 
 	void				processRequestUri(const HttpRequest &request, ConfigFile &config);
     void	            appendCookie(const HttpRequest &request);

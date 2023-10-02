@@ -1,19 +1,16 @@
 #include "ErrorResponse.hpp"
 ErrorResponse::ErrorResponse(int16_t statusCode, const HttpRequest &request, const ConfigFile &config): BaseResponse(request, config) {
-	  setStatusCode(statusCode);
-	  getContent();
+		setStatusCode(statusCode);
+		setContentType();
+		getContent("/error.rs");
+		addHeader("Content-type", "text/html");
+		addHeader("Content-length", std::to_string(_content.length()));
 }
 ErrorResponse::~ErrorResponse() {
 
 }
 
 
-void ErrorResponse::getContent() {
-	switch(_status_code) {
-		case 405: pageMethodNotAllowed();
-			break ;
-	}
-}
 
 void	ErrorResponse::pageMethodNotAllowed()
 {
