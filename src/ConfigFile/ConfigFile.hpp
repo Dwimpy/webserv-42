@@ -33,6 +33,8 @@ class ConfigFile{
 	std::string			getFilePath(const HttpRequest &request) const;
 	std::string 		getCgiPath(const HttpRequest &request) const;
 	bool				checkCgi(const HttpRequest &request) const;
+	std::string 		getCgiBin(const HttpRequest &request, std::string ext) const;
+
 
   private:
 	serverDirectives	_serverDirectives;

@@ -251,6 +251,41 @@ bool	ConfigFile::checkCgi(const HttpRequest &request) const
 	return (allowed);
 }
 
+std::string ConfigFile::getCgiBin(const HttpRequest &request, std::string ext) const
+{
+	std::string location = getLocationPath(request.getRequestUri());
+	std::vector<std::string> tokens;
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
+	std::map<std::string, std::string> entry;
+	std::map<std::string, std::string>::const_iterator map_it;
+	std::string	cgiBin = "src/cgi/target/release/";
+	bool	notFound = true;
+
+	it = _locationDirectives.find(location);
+	if (it != _locationDirectives.cend())
+	{
+		map_it = it->second.find("cgi_bin");
+		tokens = splitStringByDot(map_it->second, ' ');
+		std::vector<std::string>::iterator it;
+		it = std::find(tokens.begin(), tokens.end(), ext);
+		if (it != tokens.end()) {
+			cgiBin = tokens[std::distance(tokens.begin(), it) + 1];
+			notFound = false;
+		}
+	}
+	if (notFound)
+	{
+		map_it = _serverDirectives.find("cgi_bin");
+		tokens = splitStringByDot(map_it->second, ' ');
+		std::vector<std::string>::iterator it;
+		it = std::find(tokens.begin(), tokens.end(), ext);
+		if (it != tokens.end()) {
+			cgiBin = tokens[std::distance(tokens.begin(), it) + 1];
+		}
+	}
+	return (location + cgiBin);
+}
+
 std::string ConfigFile::getCgiPath(const HttpRequest &request) const
 {
 	std::string location = getLocationPath(request.getRequestUri());
@@ -259,9 +294,9 @@ std::string ConfigFile::getCgiPath(const HttpRequest &request) const
 	std::map<std::string, std::string> entry;
 	std::map<std::string, std::string>::const_iterator map_it;
 	std::string cgiPath = "src/cgi/src";
+	bool	notFound = true;
 
-	if (location.empty())
-		location = "/";
+
 	it = _locationDirectives.find(location);
 	if (it != _locationDirectives.cend())
 	{
@@ -269,8 +304,15 @@ std::string ConfigFile::getCgiPath(const HttpRequest &request) const
 		if (map_it != it->second.cend())
 		{
 			cgiPath = map_it->second;
+			notFound = false;
 		}
 	}
-	std::cout << "cgi PAth :" << location + cgiPath << std::endl;
-	return ("." + location + cgiPath);
+	if (notFound)
+	{
+		if(_serverDirectives.find("cgi_path") != _serverDirectives.cend())
+			cgiPath = _serverDirectives.find("cgi_path")->second;
+		std::cout << "PATH: " <<  cgiPath << std::endl;
+		return (cgiPath);
+	}
+	return (location + cgiPath);
 }

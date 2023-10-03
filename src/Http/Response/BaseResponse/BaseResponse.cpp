@@ -178,15 +178,22 @@ int BaseResponse::dup_request_to_stdin() {
 	    int fd[2];
     if (pipe(fd) == -1)
         return EXIT_FAILURE;
-    std::string query;
+
+	std::string query;
     std::string body;
 	body = _request.getFullBody();
-	std::string text(_config.getFilePath(_request));
-	size_t closingQuotePos = text.find(".py");
-	if (closingQuotePos == std::string::npos)
-    	query.append(body);
-	else
+//	std::string text(_config.getFilePath(_request));
+//	size_t closingQuotePos = text.find(".py");
+//	if (closingQuotePos == std::string::npos)
+
+	if (_request.getValueByKey("Content-Type").find("multipart/form-data") != std::string::npos)
+	{
+		std::cerr << "happened!" << std::endl;
 		query.append(_request.extractFileName(body));
+	}
+	else
+    	query.append(body);
+
     if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
     {
         close(fd[STDIN_FILENO]);
@@ -201,27 +208,26 @@ int BaseResponse::dup_request_to_stdin() {
 void BaseResponse::childProcess(std::string const &uri) {
 	std::vector<std::string> env;
     std::string cgiScript;
+	std::string ext;
+	ssize_t idx = _request.getRequestUri().rfind('.');
 
-    std::string cgiPath = getProjectDir()  + "/src/cgi/target/release/";
-//	std::cout << "GPD: " << getProjectDir() << std::endl;
-	if (_flag == 1)
-	{
-		cgiPath = getProjectDir() + "/src/cgi/src/upload.py";
-	}
-	else
-	{
-    	if (!cgiPath.empty() && chdir((cgiPath).c_str()) == -1)
+	if (idx != std::string::npos)
+		ext = _request.getRequestUri().substr(idx + 1, _request.getRequestUri().size() - idx);
+    std::string cgiPath = getProjectDir()  + _config.getCgiBin(_request,ext);
+
+//	&& chdir((cgiPath).c_str()) == -1
+
+    	if (!cgiPath.empty() )
 		{
 			error("404 CGI path not found!"); /* set 404 page */
 		}
-	}
 
 	std::vector<std::string> result = splitStringByDot(uri, '.');
 
-	if (_flag != 1)
-	{
+	if (result.back() == "rs")
         cgiPath += result.front();
-	}
+	else
+		cgiPath += uri;
 
     createEnv(env);
 
@@ -322,7 +328,7 @@ int BaseResponse::write_response() {
     long long 		bytes = 1;
 
 //    lseek(_response_fd, 0, SEEK_SET);
-	if (getStatusCodeMessage() == "404 Not Found")
+	if (_status_code > 400)
 	{
 		std::string _fileName = _config.getErrorPage(_request);
 		appendFileContents(_fileName);
