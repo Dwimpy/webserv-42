@@ -34,7 +34,7 @@ class ConfigFile{
 	std::string 		getCgiPath(const HttpRequest &request) const;
 	bool				checkCgi(const HttpRequest &request) const;
 	std::string 		getCgiBin(const HttpRequest &request, std::string ext) const;
-
+	long 				getMaxBodySize(const HttpRequest &request) const;
 
   private:
 	serverDirectives	_serverDirectives;

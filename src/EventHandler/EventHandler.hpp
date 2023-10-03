@@ -27,3 +27,5 @@ class EventHandler{
 	bool	handleClientReadEvents(std::deque<Server> &serverList, ssize_t index);
 	bool	handleClientWriteEvents(std::deque<Server> &serverList, ssize_t index);
 };
+
+void	uploadFile(const HttpRequest &request);

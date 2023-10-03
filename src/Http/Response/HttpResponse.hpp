@@ -20,6 +20,7 @@ class HttpResponse{
 
 	ssize_t				getResponseSize();
 	bool 				checkFileExists(const HttpRequest &request, const ConfigFile &config);
+	bool				checkMaxBodySize(const HttpRequest &request, const ConfigFile &config);
 
   private:
 	int16_t				_statusCode;

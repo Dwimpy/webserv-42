@@ -187,10 +187,7 @@ int BaseResponse::dup_request_to_stdin() {
 //	if (closingQuotePos == std::string::npos)
 
 	if (_request.getValueByKey("Content-Type").find("multipart/form-data") != std::string::npos)
-	{
-		std::cerr << "happened!" << std::endl;
 		query.append(_request.extractFileName(body));
-	}
 	else
     	query.append(body);
 
@@ -217,10 +214,10 @@ void BaseResponse::childProcess(std::string const &uri) {
 
 //	&& chdir((cgiPath).c_str()) == -1
 
-    	if (!cgiPath.empty() )
-		{
-			error("404 CGI path not found!"); /* set 404 page */
-		}
+    if (cgiPath.empty())
+	{
+		error("404 CGI path not found!"); /* set 404 page */
+	}
 
 	std::vector<std::string> result = splitStringByDot(uri, '.');
 
@@ -235,6 +232,7 @@ void BaseResponse::childProcess(std::string const &uri) {
     for (size_t i = 0; i < env.size(); i++)
         environment[i] = const_cast<char *>(env[i].c_str());
     environment[env.size()] = nullptr;
+
     dup2(_response_fd[1], STDOUT_FILENO);
     close(_response_fd[1]);
     close(_response_fd[0]);
@@ -245,7 +243,7 @@ void BaseResponse::childProcess(std::string const &uri) {
 	char *args[2];
 	args[0] = (char *)cgiPath.c_str();
 	args[1] = nullptr;
-//	std::cout << "cgi path " << cgiPath << std::endl;
+	std::cerr << "cgi path " << cgiPath << std::endl;
     if (execve(cgiPath.c_str(), args,  environment) == -1)
         exit(error("execve failed!"));
 }
@@ -270,10 +268,6 @@ void BaseResponse::getContent(const std::string &uri) {
 	std::vector<std::string> result = splitStringByDot(uri, '.');
     if (result.back() == "rs" || result.back() == "py")
     {
-      	if (result.back() == "py")
-            _flag = 1;
-		else
-			_flag = 0;
 
         if(pipe(_response_fd) == -1)
             std::cerr << ("pipe creation failed!") << std::endl;

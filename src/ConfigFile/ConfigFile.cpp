@@ -316,3 +316,36 @@ std::string ConfigFile::getCgiPath(const HttpRequest &request) const
 	}
 	return (location + cgiPath);
 }
+
+long ConfigFile::getMaxBodySize(const HttpRequest &request) const {
+	std::string location = getLocationPath(request.getRequestUri());
+	std::vector<std::string> tokens;
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
+	std::map<std::string, std::string> entry;
+	std::map<std::string, std::string>::const_iterator map_it;
+	long 	maxBodySize = 100000000;
+	bool	notFound = true;
+
+
+	it = _locationDirectives.find(location);
+	if (it != _locationDirectives.cend())
+	{
+		map_it = it->second.find("client_max_body_size");
+		if (map_it != it->second.cend())
+		{
+			std::cerr << "max body 1 " << map_it->second << std::endl;
+			maxBodySize = std::stol(map_it->second);
+			notFound = false;
+		}
+	}
+	if (notFound)
+	{
+		if(_serverDirectives.find("client_max_body_size") != _serverDirectives.cend())
+		{
+			std::cerr << "max body 2 " << _serverDirectives.find("client_max_body_size")->second << std::endl;
+			maxBodySize = std::stol(_serverDirectives.find("client_max_body_size")->second);
+		}
+
+	}
+	return (maxBodySize);
+}
