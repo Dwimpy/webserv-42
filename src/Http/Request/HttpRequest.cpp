@@ -165,6 +165,12 @@ const std::string &HttpRequest::getRequestUri() const
 {
 	return (this->_requestUri);
 }
+
+void	HttpRequest::setRequestUri(const std::string &uri)
+{
+	this->_requestUri = uri;
+}
+
 const std::string &HttpRequest::getRequestMethod() const
 {
 	return (this->_requestMethod);

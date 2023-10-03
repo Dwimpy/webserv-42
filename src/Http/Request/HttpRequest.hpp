@@ -52,6 +52,7 @@ class HttpRequest {
 	void				feedData(const char *str, ssize_t bytes);
 
 	std::string			extractFileName(std::string &body) const;
+	void				setRequestUri(const std::string &uri);
 
   private:
 	std::string			_requestMethod;

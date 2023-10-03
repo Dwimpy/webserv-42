@@ -23,13 +23,58 @@ void BaseResponse::addHeader(const std::string &key, const std::string &value)
 	_headers.insert(key, value);
 }
 
-std::string BaseResponse::getStatusCodeError() const {
+std::string BaseResponse::getStatusCodeMessage() const {
 
 	switch (_status_code)
 	{
+		case 100: return ("Continue");
+		case 101: return ("Switching Protocols");
 		case 200: return ("OK");
-		case 404: return ("404 Not Found");
-		case 405: return ("Method not allowed");
+		case 201: return ("Created");
+		case 202: return ("Accepted");
+		case 204: return ("No Content");
+		case 206: return ("Partial Content");
+		case 300: return ("Multiple Choices");
+		case 301: return ("Moved Permanently");
+		case 302: return ("Found");
+		case 303: return ("See Other");
+		case 304: return ("Not Modified");
+		case 307: return ("Temporary Redirect");
+		case 308: return ("Permanent Redirect");
+		case 400: return ("Bad Request");
+		case 401: return ("Unauthorized");
+		case 402: return ("Payment required");
+		case 403: return ("Forbidden");
+		case 404: return ("Not Found");
+		case 405: return ("Method Not allowed");
+		case 406: return ("Not Acceptable");
+		case 407: return ("Proxy Authentication Required");
+		case 408: return ("Request Timeout");
+		case 409: return ("Conflict");
+		case 410: return ("Gone");
+		case 411: return ("Length Required");
+		case 412: return ("Precondition Failed");
+		case 413: return ("Payload Too large");
+		case 414: return ("URI Too long");
+		case 415: return ("Unsupported Media Type");
+		case 416: return ("Range Not Satisfiable");
+		case 417: return ("Expectation Failed");
+		case 418: return ("I'm a teapot");
+		case 422: return ("Unprocessable Entity");
+		case 429: return ("Too Many Requests");
+		case 431: return ("Request Header Fields Too Large");
+		case 451: return ("Unavailable For Legal Reasons");
+		case 500: return ("Internal Server Error");
+		case 501: return ("Not Implemented");
+		case 502: return ("Bad Gateway");
+		case 503: return ("Service Unavailable");
+		case 504: return ("Gateway Timeout");
+		case 505: return ("HTTP Version Not Supported");
+		case 506: return ("Variant Also Negotiates");
+		case 507: return ("Insufficient Storage");
+		case 508: return ("Loop Detected");
+		case 510: return ("Not Extended");
+		case 511: return ("Network Authentication required");
 		default: return ("Unknown");
 	}
 }
@@ -100,8 +145,7 @@ std::string BaseResponse::build()
 				std::to_string(_request.getVersionMinor()) +
 				" " +
 				std::to_string(_status_code) +
-				" " +
-				getStatusCodeError() + "\r\n";
+				" " + getStatusCodeMessage() + "\r\n";
 
 	OrderedMap<std::string, std::string>::iterator it;
 
@@ -127,7 +171,7 @@ void BaseResponse::createEnv(std::vector<std::string> &env)
 	std::string var = _request.getValueByKey("Cookie");
 	env.push_back("Cookie=" + var);
 	env.push_back("Error_code=" + std::to_string(_status_code));
-	env.push_back("Error_msg=" + getStatusCodeError());
+	env.push_back("Error_msg=" + getStatusCodeMessage());
 }
 
 int BaseResponse::dup_request_to_stdin() {
@@ -194,7 +238,6 @@ void BaseResponse::childProcess(std::string const &uri) {
 
 	char *args[2];
 	args[0] = (char *)cgiPath.c_str();
-	std::cout << "PATH: " << cgiPath << std::endl;
 	args[1] = nullptr;
 //	std::cout << "cgi path " << cgiPath << std::endl;
     if (execve(cgiPath.c_str(), args,  environment) == -1)
@@ -206,7 +249,6 @@ void	BaseResponse::appendFileContents(const std::string &filename)
 	std::ifstream	infile(filename, std::ios::binary);
 	if (!infile.good())
 	{
-		std::cerr << "file not found" << std::endl;
 		return;
 	}
 	infile.seekg(0, std::ios::end);
@@ -220,7 +262,6 @@ void	BaseResponse::appendFileContents(const std::string &filename)
 
 void BaseResponse::getContent(const std::string &uri) {
 	std::vector<std::string> result = splitStringByDot(uri, '.');
-	std::cout << "URI: " << uri << std::endl;
     if (result.back() == "rs" || result.back() == "py")
     {
       	if (result.back() == "py")
@@ -254,9 +295,6 @@ void BaseResponse::getContent(const std::string &uri) {
         appendFileContents(_config.getFilePath(_request));
 }
 
-void BaseResponse::getContentErrorPage() {
-
-}
 
 int BaseResponse::parent_process() {
     int status;
@@ -284,7 +322,7 @@ int BaseResponse::write_response() {
     long long 		bytes = 1;
 
 //    lseek(_response_fd, 0, SEEK_SET);
-	if (getStatusCodeError() == "404 Not Found")
+	if (getStatusCodeMessage() == "404 Not Found")
 	{
 		std::string _fileName = _config.getErrorPage(_request);
 		appendFileContents(_fileName);

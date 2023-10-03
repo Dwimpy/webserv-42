@@ -6,10 +6,10 @@ ErrorResponse::ErrorResponse(int16_t statusCode, const HttpRequest &request, con
 		addHeader("Content-type", "text/html");
 		addHeader("Content-length", std::to_string(_content.length()));
 }
+
 ErrorResponse::~ErrorResponse() {
 
 }
-
 
 
 void	ErrorResponse::pageMethodNotAllowed()

@@ -30,7 +30,9 @@ class ConfigFile{
 	bool 				isAllowedMethodServer(const std::string &method) const;
 	bool				isValidLocation(const std::string &location) const;
 	std::string			getLocationPath(std::string location) const;
-	std::string	getFilePath(const HttpRequest &request) const;
+	std::string			getFilePath(const HttpRequest &request) const;
+	std::string 		getCgiPath(const HttpRequest &request) const;
+	bool				checkCgi(const HttpRequest &request) const;
 
   private:
 	serverDirectives	_serverDirectives;

@@ -25,12 +25,12 @@ class BaseResponse {
 	const ConfigFile							&_config;
 
 	void			getContent(const std::string &uri);
-	std::string		getStatusCodeError() const;
+	std::string		getStatusCodeMessage() const;
 
 	void			appendFileContents(const std::string &filename);
 	void			appendCookie(std::string &response);
 	std::string		generateCookieId(int length);
-	void			getContentErrorPage();
+
   private:
 	int		_flag;
 	int		_response_fd[2];

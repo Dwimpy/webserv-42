@@ -66,6 +66,7 @@ const bool Directive::isValidDirective() const
 		{"index", pageValidKey},
 		{"autoindex", autoIndexValidKey},
 		{"cgi", cgiValidKey},
+		{"cgi_path", cgiValidKey},
 		{"client_max_body_size", numericalValidKey},
 		{"upload", pageValidKey}
 
