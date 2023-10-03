@@ -209,8 +209,8 @@ void BaseResponse::childProcess(std::string const &uri) {
 	ssize_t idx = _request.getRequestUri().rfind('.');
 
 	if (idx != std::string::npos)
-		ext = _request.getRequestUri().substr(idx + 1, _request.getRequestUri().size() - idx);
-    std::string cgiPath = getProjectDir()  + _config.getCgiBin(_request,ext);
+		ext = uri.substr(idx + 1, uri.size() - idx);
+    std::string cgiPath = getProjectDir()  + _config.getCgiBin(_request, ext);
 
 //	&& chdir((cgiPath).c_str()) == -1
 
@@ -243,7 +243,7 @@ void BaseResponse::childProcess(std::string const &uri) {
 	char *args[2];
 	args[0] = (char *)cgiPath.c_str();
 	args[1] = nullptr;
-	std::cerr << "cgi path " << cgiPath << std::endl;
+//	std::cerr << "cgi path " << cgiPath << std::endl;
     if (execve(cgiPath.c_str(), args,  environment) == -1)
         exit(error("execve failed!"));
 }

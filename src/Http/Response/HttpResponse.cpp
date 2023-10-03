@@ -45,7 +45,7 @@ bool	HttpResponse::checkMaxBodySize(const HttpRequest &request, const ConfigFile
 	{
 		if (std::stol(request.getValueByKey("Content-Length")) >= config.getMaxBodySize(request))
 		{
-			std::cerr << "_status code change " << std::endl;
+//			std::cerr << "_status code change " << std::endl;
 			_statusCode = 413;
 			return false;
 		}
@@ -71,7 +71,7 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 		iss.close();
 		ssize_t idx = path.rfind("/");
 		path = config.getCgiPath(request) + path.substr(idx, path.size() - idx);
-		std::cout << "ful path: " << path << std::endl;
+//		std::cout << "ful path: " << path << std::endl;
 		iss.open(path);
 		if (iss.good())
 			is_good = true;

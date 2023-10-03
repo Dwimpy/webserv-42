@@ -311,7 +311,7 @@ std::string ConfigFile::getCgiPath(const HttpRequest &request) const
 	{
 		if(_serverDirectives.find("cgi_path") != _serverDirectives.cend())
 			cgiPath = _serverDirectives.find("cgi_path")->second;
-		std::cout << "PATH: " <<  cgiPath << std::endl;
+//		std::cout << "PATH: " <<  cgiPath << std::endl;
 		return (cgiPath);
 	}
 	return (location + cgiPath);
@@ -333,7 +333,7 @@ long ConfigFile::getMaxBodySize(const HttpRequest &request) const {
 		map_it = it->second.find("client_max_body_size");
 		if (map_it != it->second.cend())
 		{
-			std::cerr << "max body 1 " << map_it->second << std::endl;
+//			std::cerr << "max body 1 " << map_it->second << std::endl;
 			maxBodySize = std::stol(map_it->second);
 			notFound = false;
 		}
@@ -342,7 +342,7 @@ long ConfigFile::getMaxBodySize(const HttpRequest &request) const {
 	{
 		if(_serverDirectives.find("client_max_body_size") != _serverDirectives.cend())
 		{
-			std::cerr << "max body 2 " << _serverDirectives.find("client_max_body_size")->second << std::endl;
+//			std::cerr << "max body 2 " << _serverDirectives.find("client_max_body_size")->second << std::endl;
 			maxBodySize = std::stol(_serverDirectives.find("client_max_body_size")->second);
 		}
 
