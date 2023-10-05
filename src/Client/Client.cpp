@@ -45,8 +45,8 @@ void Client::send(const char *str, ssize_t size)
 			send(str, size);
 			return ;
 		}
-		_closeConnection = true;
-		_sendComplete = true;
+	_closeConnection = true;
+	_sendComplete = true;
    } else if (bytes_sent < 0)
    {
 		if (errno != EAGAIN)
@@ -90,7 +90,6 @@ void Client::recieve()
 		else if (bytes_recv > 0)
 		{
 			_request.feedData(_clientSocket.getBuffer(), bytes_recv);
-//			std::cout << _clientSocket.getBuffer() << std::endl;
 		}
 		else
 		{

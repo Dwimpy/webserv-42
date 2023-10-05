@@ -4,10 +4,12 @@
 
 ParserState HttpRequestParser::_state = StateRequestMethodStart;
 ParserResult HttpRequestParser::_result = ParserDirectives;
+std::string HttpRequestParser::_chunkSize;
+ssize_t	HttpRequestParser::_chunkSizeDecimal = -1;
 
 void HttpRequestParser::consume(HttpRequest &request, const char *start, const char *end)
 {
-	while (start != end && (HttpRequestParser::_result != ParserError || HttpRequestParser::_result != ParserComplete))
+	while (start != end && (HttpRequestParser::_result != ParserError && HttpRequestParser::_result != ParserComplete))
 	{
 		char c = *start++;
 		switch (HttpRequestParser::_state)
@@ -52,6 +54,14 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 				break ;
 			case StateBodyStart: parseStateBodyStart(request, c);
 				break ;
+			case StateBodyChunkSize: parseStateBodyChunkSize(request, c);
+				break;
+			case StateBodyChunkSizeCR: parseStateBodyChunkSizeCR(request, c);
+				break;
+			case StateBodyChunkData: parseStateBodyChunkData(request, c);
+				break;
+			case StateBodyChunkDataCR: parseStateBodyChunkDataCR(request, c);
+				break;
 			case StateCLRFCLRF: parseStateCRLFCRLF(request, *(start), c);
 				break ;
 			default:
@@ -60,15 +70,12 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 	}
 	if (request.getRequestMethod() == "POST")
 	{
-		char *endptr;
-
+		char	*endptr;
 		long n = std::strtol(request.getValueByKey("Content-Length").c_str(), &endptr, 10);
-		std::cout << "len: " << n << " size: " << request.getBodySize() << std::endl;
 		if (n > 0 && n <= request.getBodySize())
 		{
 			_result = ParserComplete;
 		}
-
 	}
 }
 
@@ -275,9 +282,67 @@ void HttpRequestParser::parseStateHeaderValue(HttpRequest &request, char c)
 
 void HttpRequestParser::parseStateBodyStart(HttpRequest &request, char c)
 {
-	request.pushToBody(c);
+	if (request.getValueByKey("Transfer-Encoding") == "chunked") {
+		_chunkSize.clear();
+		_state = StateBodyChunkSize;
+		_chunkSize.push_back(c);
+	}
+	else
+		request.pushToBody(c);
 }
 
+void HttpRequestParser::parseStateBodyChunkSize(HttpRequest &request, char c)
+{
+	if (c == '\r')
+	{
+		char	*endptr;
+
+		_chunkSizeDecimal = strtol(_chunkSize.c_str(), &endptr, 16);
+		std::cout << _chunkSizeDecimal << std::endl;
+		if (_chunkSizeDecimal == 0)
+		{
+			_result = ParserComplete;
+			_state = StateBodyEnd;
+		}
+		else if (_chunkSizeDecimal > 0)
+			_state = StateBodyChunkSizeCR;
+	}
+	else
+		_chunkSize.push_back(c);
+}
+
+void HttpRequestParser::parseStateBodyChunkSizeCR(HttpRequest &request, char c)
+{
+	if (c != '\n')
+		_result = ParserError;
+	else
+		_state = StateBodyChunkData;
+}
+
+void HttpRequestParser::parseStateBodyChunkData(HttpRequest &request, char c)
+{
+
+	if (_chunkSizeDecimal > 0)
+	{
+		request.pushToBody(c);
+		_chunkSizeDecimal--;
+	}
+	else if (c == '\r')
+		_state = StateBodyChunkDataCR;
+
+}
+
+void HttpRequestParser::parseStateBodyChunkDataCR(HttpRequest &request, char c)
+{
+	if (c != '\n')
+	{
+		_result = ParserError;
+	}
+	else
+	{
+		_state = StateBodyStart;
+	}
+}
 
 void HttpRequestParser::parseStateNewLineCR(HttpRequest &request, char c)
 {
@@ -309,7 +374,7 @@ void HttpRequestParser::parseStateCRLFCRLF(HttpRequest &request, char next, char
 			HttpRequestParser::_result = ParserBody;
 			HttpRequestParser::_state = StateBodyStart;
 		}
-		else
+		else if (HttpRequestParser::_result == ParserBody && request.getRequestMethod() == "POST" && request.getValueByKey("Transfer-Encoding") == "chunked")
 		{
 			HttpRequestParser::_result = ParserComplete;
 			HttpRequestParser::_state = StateBodyEnd;
@@ -319,7 +384,6 @@ void HttpRequestParser::parseStateCRLFCRLF(HttpRequest &request, char next, char
 	{
 		HttpRequestParser::_result = ParserError;
 	}
-
 }
 
 void HttpRequestParser::resetParser()
@@ -336,5 +400,4 @@ void HttpRequestParser::setParserState(ParserState state)
 void HttpRequestParser::setParserResult(ParserResult result)
 {
 	HttpRequestParser::_result = result;
-
 }

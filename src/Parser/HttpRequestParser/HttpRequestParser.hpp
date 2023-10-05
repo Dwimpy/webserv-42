@@ -30,6 +30,10 @@ enum ParserState {
 	StateCLRFCLRF,
 	StateEndRequest,
 	StateBodyStart,
+	StateBodyChunkSize,
+	StateBodyChunkSizeCR,
+	StateBodyChunkData,
+	StateBodyChunkDataCR,
 	StateBodyEnd,
 };
 
@@ -74,7 +78,14 @@ class HttpRequestParser{
 	static void parseStateCRLFCRLF(HttpRequest &request, char next, char c);
 	static void	parseStateEndRequest(HttpRequest &request, char c);
 	static void parseStateBodyStart(HttpRequest &request, char c);
+	static void parseStateBodyChunkSize(HttpRequest &request, char c);
+	static void parseStateBodyChunkSizeCR(HttpRequest &request, char c);
+	static void parseStateBodyChunkData(HttpRequest &request, char c);
+	static void parseStateBodyChunkDataCR(HttpRequest &request, char c);
 	static ParserResult		_result;
 	static ParserState		_state;
+	static std::string		_chunkSize;
+	static ssize_t			_chunkSizeDecimal;
+
 
 };

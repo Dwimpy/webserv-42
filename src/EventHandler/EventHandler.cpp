@@ -83,7 +83,6 @@ bool	EventHandler::handleClientReadEvents(std::deque<Server > &serverList, ssize
 		}
 		else if (client->getParserResult() == ParserComplete)
 		{
-//			std::cout << client->getRequest().getBodySize() << " LENGTH: " << client->getRequest().getValueByKey("Content-Length") << std::endl;
 			if (registerEvent(*client, EVFILT_READ, EV_DELETE) < 0)
 				perror ("kevent [ EVREAD -> EV_DELETE ]");
 			if (registerEvent(*client, EVFILT_WRITE, EV_ADD | EV_CLEAR) < 0)

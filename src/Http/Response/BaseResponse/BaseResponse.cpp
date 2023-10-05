@@ -162,6 +162,7 @@ std::string BaseResponse::build()
 		}
 		response += "\r\n";
 
+	std::cout << response << std::endl;
 	if (_content.empty())
 		return (response);
 	return (response + _content + "\r\n");
