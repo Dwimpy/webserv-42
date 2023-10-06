@@ -33,6 +33,7 @@ class ConfigFile{
 	std::string			getFilePath(const HttpRequest &request) const;
 	std::string 		getCgiPath(const HttpRequest &request) const;
 	bool				checkCgi(const HttpRequest &request) const;
+	bool				checkCgiString(const std::string &uri) const;
 	std::string 		getCgiBin(const HttpRequest &request, std::string ext) const;
 	long 				getMaxBodySize(const HttpRequest &request) const;
 

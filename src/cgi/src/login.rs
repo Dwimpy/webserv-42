@@ -5,14 +5,11 @@ extern crate rusqlite;
 
 use rusqlite::Error;
 use askama::Template;
-use std::time::Duration;
-use std::thread::sleep;
 use std::env;
 
 use std::io;
 mod utils;
-use utils::utils::{add_cookie_to_database, check_cookie_in_database, check_user_credentials, create_db, fetch_users_from_db, get_user_by_cookie};
-use utils::utils::User;
+use utils::utils::{add_cookie_to_database, check_user_credentials, get_user_by_cookie};
 
 
 #[derive(Template)]

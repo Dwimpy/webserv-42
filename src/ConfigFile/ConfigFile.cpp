@@ -250,6 +250,35 @@ bool	ConfigFile::checkCgi(const HttpRequest &request) const
 	return (allowed);
 }
 
+bool	ConfigFile::checkCgiString(const std::string &uri) const
+{
+	std::string location = getLocationPath(uri);
+	std::vector<std::string> tokens;
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
+	std::map<std::string, std::string> entry;
+	std::map<std::string, std::string>::const_iterator map_it;
+	bool		allowed = false;
+
+	if (location.empty())
+		location = "/";
+	it = _locationDirectives.find(location);
+	if (it != _locationDirectives.cend())
+	{
+		map_it = it->second.find("cgi");
+		if (map_it != it->second.cend())
+		{
+			ssize_t idx = uri.rfind('.');
+			if (idx != std::string::npos)
+			{
+				std::string ext = uri.substr(idx + 1, uri.size() - idx);
+				if(map_it->second.find(ext) != std::string::npos)
+					allowed = true;
+			}
+		}
+	}
+	return (allowed);
+}
+
 std::string ConfigFile::getCgiBin(const HttpRequest &request, std::string ext) const
 {
 	std::string location = getLocationPath(request.getRequestUri());

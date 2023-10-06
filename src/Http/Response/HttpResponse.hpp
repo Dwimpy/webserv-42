@@ -14,11 +14,11 @@ class HttpResponse{
 	HttpResponse();
 	~HttpResponse();
 
-	void 				checkAllowedMethod(const HttpRequest &request, const ConfigFile &config);
 	std::string			getResponse();
 
 
 	ssize_t				getResponseSize();
+	bool 				checkAllowedMethod(const HttpRequest &request, const ConfigFile &config);
 	bool 				checkFileExists(const HttpRequest &request, const ConfigFile &config);
 	bool				checkMaxBodySize(const HttpRequest &request, const ConfigFile &config);
 

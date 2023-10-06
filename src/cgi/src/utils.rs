@@ -1,7 +1,7 @@
+#[allow(unused)]
 pub mod utils {
     use rusqlite::Connection;
     use rusqlite::Error;
-
 
     pub struct User {
         pub username: String,
@@ -9,7 +9,6 @@ pub mod utils {
         pub email: String,
         pub birthdate: String,
     }
-
 
     pub fn create_db() -> Result<(), Error> {
         let db_path = "mydb.sqlite";
@@ -27,19 +26,6 @@ pub mod utils {
         )",
             [],
         )?;
-        // conn.execute(
-        //     "INSERT INTO users (username, password, cookie) VALUES (?, ?, ?)",
-        //     [&"azer", &"azer123", &"azer=azer123"],
-        // ).expect("Failed to insert data");
-        // conn.execute(
-        //     "INSERT INTO users (username, password, cookie) VALUES (?, ?, ?)",
-        //     [&"danila", &"danila123", &"danila=danila123"],
-        // ).expect("Failed to insert data");
-        // conn.execute(
-        //     "INSERT INTO users (username, password, cookie) VALUES (?, ?, ?)",
-        //     [&"andrew", &"andrew123", &"andrew=andrew123"],
-        // ).expect("Failed to insert data");
-
         Ok(())
     }
 

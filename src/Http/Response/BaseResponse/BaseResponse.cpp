@@ -266,9 +266,7 @@ void	BaseResponse::appendFileContents(const std::string &filename)
 }
 
 void BaseResponse::getContent(const std::string &uri) {
-	std::vector<std::string> result = splitStringByDot(uri, '.');
-
-    if (_config.checkCgi(_request))
+    if (_config.checkCgiString(uri))
     {
 
         if(pipe(_response_fd) == -1)
@@ -295,7 +293,6 @@ void BaseResponse::getContent(const std::string &uri) {
     }
     else
         appendFileContents(_config.getFilePath(_request));
-
 }
 
 
@@ -310,6 +307,7 @@ int BaseResponse::parent_process() {
         {
             std::cerr << ("execve failed!") << std::endl;
 			_status_code = 404;
+			_success = false;
             return (EXIT_FAILURE);
         }
     }
@@ -318,14 +316,14 @@ int BaseResponse::parent_process() {
         std::cerr << ("interrupted by signal!") << std::endl;
         return (EXIT_FAILURE);
     }
+	_success = true;
     return EXIT_SUCCESS;
 }
 int BaseResponse::write_response() {
     char			buffer[8192];
     long long 		bytes = 1;
 
-//    lseek(_response_fd, 0, SEEK_SET);
-	if (_status_code > 400)
+	if (!_success)
 	{
 		std::string _fileName = _config.getErrorPage(_request);
 		appendFileContents(_fileName);

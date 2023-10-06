@@ -9,9 +9,9 @@
 HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config): _statusCode(200), _statusError("OK")
 {
 //	config.inspectConfig();
-	if (checkFileExists(request, config))
+
+	if (checkFileExists(request, config) && !checkAllowedMethod(request, config))
 	{
-		checkAllowedMethod(request, config);
 		if(checkMaxBodySize(request, config))
 		{
 			if (request.getRequestMethod() == "POST" &&
@@ -25,6 +25,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config)
 		_response = DeleteResponse(request, config).build();
 	else
 		_response = GetResponse(request, config).build();
+
 }
 
 bool	HttpResponse::checkMaxBodySize(const HttpRequest &request, const ConfigFile &config)
@@ -50,7 +51,7 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 	path = config.getFilePath(request);
 	is_good = false;
 	iss.open(path);
-		std::cerr << "ful path: " << path << std::endl;
+//	std::cerr << "ful path: " << path << std::endl;
 
 	if (iss.good())
 	{
@@ -72,15 +73,19 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 		_statusCode = 404;
 	}
 	iss.close();
-	std::cout << "file is :" << is_good << " path : " << path << std::endl;
+//	std::cout << "file is :" << is_good << " path : " << path << std::endl;
 	return (is_good);
 }
 
 
-void HttpResponse::checkAllowedMethod(const HttpRequest &request, const ConfigFile &config)
+bool HttpResponse::checkAllowedMethod(const HttpRequest &request, const ConfigFile &config)
 {
 	if (!config.isAllowedMethodServer(request.getRequestMethod()))
+	{
 		_statusCode = 405;
+		return (false);
+	}
+	return (true);
 }
 
 HttpResponse::HttpResponse()

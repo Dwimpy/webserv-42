@@ -366,9 +366,9 @@ void HttpRequestParser::parseStateCRLFCRLF(HttpRequest &request, char next, char
 	if (c == '\r') {}
 	else if (c == '\n')
 	{
-		if (HttpRequestParser::_result == ParserDirectives && (request.getRequestMethod() == "GET" || request.getRequestMethod() == "DELETE"))
-			HttpRequestParser::_result = ParserComplete;
-		else if (HttpRequestParser::_result == ParserDirectives && request.getRequestMethod() == "POST")
+//		if (HttpRequestParser::_result == ParserDirectives && (request.getRequestMethod() == "GET" || request.getRequestMethod() == "DELETE"))
+
+		if (HttpRequestParser::_result == ParserDirectives && request.getRequestMethod() == "POST")
 		{
 			HttpRequestParser::_result = ParserBody;
 			HttpRequestParser::_state = StateBodyStart;
@@ -378,6 +378,8 @@ void HttpRequestParser::parseStateCRLFCRLF(HttpRequest &request, char next, char
 			HttpRequestParser::_result = ParserComplete;
 			HttpRequestParser::_state = StateBodyEnd;
 		}
+		else
+		  HttpRequestParser::_result = ParserComplete;
 	}
 	else
 	{

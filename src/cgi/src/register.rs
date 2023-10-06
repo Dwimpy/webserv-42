@@ -3,14 +3,13 @@ extern crate r2d2;
 extern crate r2d2_sqlite;
 extern crate rusqlite;
 
-use rusqlite::Connection;
-use std::io::{self, Read};
+use std::io::{self};
 use rusqlite::Error;
 use std::env;
 use askama::Template;
 
 mod utils;
-use utils::utils::{add_cookie_to_database, check_cookie_in_database, check_user_credentials, create_db, fetch_users_from_db, add_user_to_db, user_exists};
+use utils::utils::{add_cookie_to_database, add_user_to_db};
 
 
 #[derive(Template)]

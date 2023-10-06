@@ -32,7 +32,7 @@ class BaseResponse {
 	std::string		generateCookieId(int length);
 
   private:
-	int		_flag;
+	bool	_success;
 	int		_response_fd[2];
 	void	createEnv(std::vector<std::string> &env);
 	int		dup_request_to_stdin();

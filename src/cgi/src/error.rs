@@ -7,9 +7,6 @@ use rusqlite::Error;
 use std::env;
 use askama::Template;
 
-mod utils;
-use utils::utils::{add_cookie_to_database, check_cookie_in_database, check_user_credentials, create_db, fetch_users_from_db, get_user_by_cookie};
-use utils::utils::User;
 
 #[derive(Template)]
 #[template(path = "tError.html")]
