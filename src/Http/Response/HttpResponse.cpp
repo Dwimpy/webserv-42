@@ -10,10 +10,8 @@
 HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config): _statusCode(200), _statusError("OK")
 {
 //	config.inspectConfig();
-
 	if (checkFileExists(request, config) && checkAllowedMethod(request, config))
 	{
-//		std::cerr << "inside " << std::endl;
 		if(checkMaxBodySize(request, config))
 		{
 			if (request.getRequestMethod() == "POST" &&
@@ -21,7 +19,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config)
 				uploadFile(request);
 		}
 	}
-	if (_statusCode >= 400)
+	 if (_statusCode >= 400)
 		_response = ErrorResponse(_statusCode, request, config).build();
 	else if (request.getRequestMethod() == "DELETE")
 		_response = DeleteResponse(request, config).build();
@@ -29,6 +27,7 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config)
 		_response = GetResponse(request, config).build();
 
 }
+
 
 bool	HttpResponse::checkMaxBodySize(const HttpRequest &request, const ConfigFile &config)
 {
@@ -59,9 +58,14 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 	bool			is_good = false;
 
 	path = config.getFilePath(request);
+	std::cout << "path " << path << std::endl;
 	if (isDirectory(path.c_str()))
 	{
-		_statusCode = 404;
+		if (!config.checkAutoIndex(request))
+			_statusCode = 404;
+		else
+			_statusCode = 469;
+		std::cerr << "status code "<< _statusCode << std::endl;
 		return (is_good);
 	}
 	iss.open(path);

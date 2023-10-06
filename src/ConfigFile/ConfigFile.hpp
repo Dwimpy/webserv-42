@@ -36,6 +36,7 @@ class ConfigFile{
 	bool				checkCgiString(const std::string &uri) const;
 	std::string 		getCgiBin(const HttpRequest &request, std::string ext) const;
 	long 				getMaxBodySize(const HttpRequest &request) const;
+	bool				checkAutoIndex(const HttpRequest &request) const;
 
   private:
 	serverDirectives	_serverDirectives;

@@ -309,22 +309,28 @@ std::string ConfigFile::getCgiBin(const HttpRequest &request, std::string ext) c
 	if (it != _locationDirectives.cend())
 	{
 		map_it = it->second.find("cgi_bin");
-		tokens = splitStringByDot(map_it->second, ' ');
-		std::vector<std::string>::iterator it;
-		it = std::find(tokens.begin(), tokens.end(), ext);
-		if (it != tokens.end()) {
-			cgiBin = tokens[std::distance(tokens.begin(), it) + 1];
-			notFound = false;
+		if(map_it != it->second.cend())
+		{
+			tokens = splitStringByDot(map_it->second, ' ');
+			std::vector<std::string>::iterator it;
+			it = std::find(tokens.begin(), tokens.end(), ext);
+			if (it != tokens.end()) {
+				cgiBin = tokens[std::distance(tokens.begin(), it) + 1];
+				notFound = false;
+			}
 		}
 	}
 	if (notFound)
 	{
 		map_it = _serverDirectives.find("cgi_bin");
-		tokens = splitStringByDot(map_it->second, ' ');
-		std::vector<std::string>::iterator it;
-		it = std::find(tokens.begin(), tokens.end(), ext);
-		if (it != tokens.end()) {
-			cgiBin = tokens[std::distance(tokens.begin(), it) + 1];
+		if(map_it != _serverDirectives.cend())
+		{
+			tokens = splitStringByDot(map_it->second, ' ');
+			std::vector<std::string>::iterator it;
+			it = std::find(tokens.begin(), tokens.end(), ext);
+			if (it != tokens.end()) {
+				cgiBin = tokens[std::distance(tokens.begin(), it) + 1];
+			}
 		}
 	}
 	return (location + cgiBin);
@@ -392,4 +398,40 @@ long ConfigFile::getMaxBodySize(const HttpRequest &request) const {
 
 	}
 	return (maxBodySize);
+}
+bool ConfigFile::checkAutoIndex(const HttpRequest &request) const
+{
+	std::string location = getLocationPath(request.getRequestUri());
+	std::vector<std::string> tokens;
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
+	std::map<std::string, std::string> entry;
+	std::map<std::string, std::string>::const_iterator map_it;
+	bool		allowed = false;
+	bool		notFound = true;
+
+	if (location.empty())
+		location = "/";
+	it = _locationDirectives.find(location);
+	if (it != _locationDirectives.cend())
+	{
+		map_it = it->second.find("autoindex");
+		if (map_it != it->second.cend())
+		{
+			if (map_it->second == "on")
+			{
+				notFound = false;
+				allowed = true;
+			}
+		}
+	}
+	if (notFound)
+	{
+		map_it = _serverDirectives.find("autoindex");
+		if (map_it != _serverDirectives.cend())
+		{
+			if (map_it->second == "on")
+				allowed = true;
+		}
+	}
+	return (allowed);
 }

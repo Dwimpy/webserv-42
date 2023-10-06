@@ -84,8 +84,11 @@ std::vector<std::string> splitStringByDot(const std::string& input, char delim) 
 	std::istringstream iss(input);
 	std::string token;
 
-	while (std::getline(iss, token, delim)) {
-		tokens.push_back(token);
+	if (iss.good())
+	{
+		while (std::getline(iss, token, delim)) {
+			tokens.push_back(token);
+		}
 	}
 	return tokens;
 }
@@ -97,7 +100,8 @@ void	BaseResponse::setContentType()
 	std::vector<std::string> result;
 	uri = _config.getFilePath(_request);
 	result = splitStringByDot(uri, '.');
-	extension = result.back();
+	if(!result.empty())
+		extension = result.back();
 
 	std::string accept = _request.getValueByKey("Accept");
 	ssize_t idx = accept.find(extension);
@@ -109,7 +113,7 @@ void	BaseResponse::setContentType()
 		else
 			_contentType = accept.substr(0, idx + extension.length());
 	}
-	else if (extension == "rs" || extension == "py")
+	else if (_config.checkCgi(_request))
 		_contentType = "text/html";
 }
 
@@ -183,9 +187,6 @@ int BaseResponse::dup_request_to_stdin() {
 	std::string query;
     std::string body;
 	body = _request.getFullBody();
-//	std::string text(_config.getFilePath(_request));
-//	size_t closingQuotePos = text.find(".py");
-//	if (closingQuotePos == std::string::npos)
 
 	if (_request.getValueByKey("Content-Type").find("multipart/form-data") != std::string::npos)
 		query.append(_request.extractFileName(body));
@@ -222,8 +223,13 @@ void BaseResponse::childProcess(std::string const &uri) {
 
 	std::vector<std::string> result = splitStringByDot(uri, '.');
 
-	if (result.back() == "rs")
-        cgiPath += result.front();
+	if (!result.empty())
+	{
+		if (result.back() == "rs")
+        	cgiPath += result.front();
+		else
+			cgiPath += uri;
+	}
 	else
 		cgiPath += uri;
 
@@ -288,7 +294,7 @@ void BaseResponse::getContent(const std::string &uri) {
         if (write_response() != EXIT_SUCCESS)
         {
             std::cerr << ("write failed !") << std::endl;
-            error("interrupted by signal!");
+            error("interrupted by signal2!");
         }
     }
     else
@@ -313,7 +319,9 @@ int BaseResponse::parent_process() {
     }
     else if (WIFSIGNALED(status))
     {
-        std::cerr << ("interrupted by signal!") << std::endl;
+        std::cerr << ("interrupted by signal! : ") << status << std::endl;
+		_status_code = 404;
+		_success = false;
         return (EXIT_FAILURE);
     }
 	_success = true;
