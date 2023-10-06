@@ -189,7 +189,7 @@ int BaseResponse::dup_request_to_stdin() {
 
 	if (_request.getValueByKey("Content-Type").find("multipart/form-data") != std::string::npos)
 		query.append(_request.extractFileName(body));
-	else
+	else if (_request.getBodySize() <= 1000)
     	query.append(body);
 
     if (write(fd[STDOUT_FILENO], query.c_str(), query.length()) < 0)
@@ -207,7 +207,7 @@ void BaseResponse::childProcess(std::string const &uri) {
 	std::vector<std::string> env;
     std::string cgiScript;
 	std::string ext;
-	ssize_t idx = _request.getRequestUri().rfind('.');
+	ssize_t idx = uri.rfind('.');
 
 	if (idx != std::string::npos)
 		ext = uri.substr(idx + 1, uri.size() - idx);
@@ -267,7 +267,8 @@ void	BaseResponse::appendFileContents(const std::string &filename)
 
 void BaseResponse::getContent(const std::string &uri) {
 	std::vector<std::string> result = splitStringByDot(uri, '.');
-    if (result.back() == "rs" || result.back() == "py")
+
+    if (_config.checkCgi(_request))
     {
 
         if(pipe(_response_fd) == -1)
@@ -294,6 +295,7 @@ void BaseResponse::getContent(const std::string &uri) {
     }
     else
         appendFileContents(_config.getFilePath(_request));
+
 }
 
 
@@ -302,6 +304,7 @@ int BaseResponse::parent_process() {
 
     waitpid(-1, &status, 0);
     close(_response_fd[1]);
+
     if (WIFEXITED(status)) {
         if (WEXITSTATUS(status))
         {
@@ -315,7 +318,6 @@ int BaseResponse::parent_process() {
         std::cerr << ("interrupted by signal!") << std::endl;
         return (EXIT_FAILURE);
     }
-	_status_code = 200;
     return EXIT_SUCCESS;
 }
 int BaseResponse::write_response() {

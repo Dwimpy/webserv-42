@@ -298,7 +298,6 @@ void HttpRequestParser::parseStateBodyChunkSize(HttpRequest &request, char c)
 		char	*endptr;
 
 		_chunkSizeDecimal = strtol(_chunkSize.c_str(), &endptr, 16);
-		std::cout << _chunkSizeDecimal << std::endl;
 		if (_chunkSizeDecimal == 0)
 		{
 			_result = ParserComplete;
@@ -367,7 +366,7 @@ void HttpRequestParser::parseStateCRLFCRLF(HttpRequest &request, char next, char
 	if (c == '\r') {}
 	else if (c == '\n')
 	{
-		if (HttpRequestParser::_result == ParserDirectives && request.getRequestMethod() == "GET")
+		if (HttpRequestParser::_result == ParserDirectives && (request.getRequestMethod() == "GET" || request.getRequestMethod() == "DELETE"))
 			HttpRequestParser::_result = ParserComplete;
 		else if (HttpRequestParser::_result == ParserDirectives && request.getRequestMethod() == "POST")
 		{

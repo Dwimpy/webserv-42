@@ -1,23 +1,10 @@
 #include "HttpResponse.hpp"
 #include "ErrorResponse.hpp"
 #include "GetResponse.hpp"
+#include "DeleteResponse.hpp"
 #include <fstream>
-#include <iostream>
 #include <string>
-#include <sys/stat.h>
 #include "EventHandler.hpp"
-
-std::vector<std::string> splitStringByDott(const std::string& input) {
-	std::vector<std::string> tokens;
-	std::istringstream iss(input);
-	std::string token;
-
-	while (std::getline(iss, token, '.')) {
-		tokens.push_back(token);
-	}
-
-	return tokens;
-}
 
 HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config): _statusCode(200), _statusError("OK")
 {
@@ -30,11 +17,12 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config)
 			if (request.getRequestMethod() == "POST" &&
 			request.getValueByKey("Content-Type").find("multipart/form-data") != std::string::npos)
 				uploadFile(request);
-
 		}
 	}
 	if (_statusCode >= 400)
 		_response = ErrorResponse(_statusCode, request, config).build();
+	else if (request.getRequestMethod() == "DELETE")
+		_response = DeleteResponse(request, config).build();
 	else
 		_response = GetResponse(request, config).build();
 }
@@ -62,6 +50,8 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 	path = config.getFilePath(request);
 	is_good = false;
 	iss.open(path);
+		std::cerr << "ful path: " << path << std::endl;
+
 	if (iss.good())
 	{
 		is_good = true;
@@ -69,9 +59,8 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 	else if (config.checkCgi(request))
 	{
 		iss.close();
-		ssize_t idx = path.rfind("/");
+		ssize_t idx = path.rfind('/');
 		path = config.getCgiPath(request) + path.substr(idx, path.size() - idx);
-//		std::cout << "ful path: " << path << std::endl;
 		iss.open(path);
 		if (iss.good())
 			is_good = true;
@@ -83,7 +72,7 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 		_statusCode = 404;
 	}
 	iss.close();
-//	std::cout << "file is :" << is_good << " path : " << path << std::endl;
+	std::cout << "file is :" << is_good << " path : " << path << std::endl;
 	return (is_good);
 }
 

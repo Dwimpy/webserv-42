@@ -1,6 +1,7 @@
 #include "EventHandler.hpp"
 #include "ServerManager.hpp"
 #include "HttpRequestParser.hpp"
+#include "DeleteResponse.hpp"
 
 EventHandler::EventHandler(): _event_list(std::vector<t_kevent>(1)){}
 
@@ -116,6 +117,7 @@ void	uploadFile(const HttpRequest &request)
 		std::cerr << "started upload." << std::endl;
 	std::string boundary = getBoundary(request);
 	body = request.getFullBody();
+//	std::cout << request.getBodySize() << std::endl;
 //	std::cout << "body " << body << std::endl;
 	std::string fileName = request.extractFileName(body);
 	std::ofstream tempFile(fileName.c_str(), std::ios::binary | std::ios::trunc);

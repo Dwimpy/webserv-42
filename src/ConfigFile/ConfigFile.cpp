@@ -186,7 +186,6 @@ std::string ConfigFile::getFilePath(const HttpRequest &request) const {
 		}
 		return (getServerRoot() + location + index_page);
 	}
-
 	it = _locationDirectives.find(location);
 	if (it != _locationDirectives.cend()) {
 		entry = it->second;
@@ -197,7 +196,7 @@ std::string ConfigFile::getFilePath(const HttpRequest &request) const {
 			}
 		}
 	}
-	return (getServerRoot() + location + request.getRequestUri().substr(location.size(), request.getRequestUri().size()));
+	return (getServerRoot() + location + request.getRequestUri().substr(location.size(), request.getRequestUri().size() - location.size()));
 }
 
 std::string ConfigFile::getErrorPage(const HttpRequest &request) const {
