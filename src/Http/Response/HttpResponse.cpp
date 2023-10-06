@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include "EventHandler.hpp"
+#include <sys/stat.h>
 
 HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config): _statusCode(200), _statusError("OK")
 {
@@ -43,6 +44,14 @@ bool	HttpResponse::checkMaxBodySize(const HttpRequest &request, const ConfigFile
 	return true;
 }
 
+bool isDirectory(const char* path) {
+	struct stat fileStat;
+	if (stat(path, &fileStat) == 0) {
+		return S_ISDIR(fileStat.st_mode);
+	}
+	return false;  // Error or file doesn't exist
+}
+
 bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile &config)
 {
 	std::string		path;
@@ -51,8 +60,12 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 
 	path = config.getFilePath(request);
 	is_good = false;
+	if (isDirectory(path.c_str()))
+	{
+		_statusCode = 404;
+		return (is_good);
+	}
 	iss.open(path);
-//	std::cerr << "ful path: " << path << std::endl;
 
 	if (iss.good())
 	{

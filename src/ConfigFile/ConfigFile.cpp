@@ -226,6 +226,7 @@ std::string ConfigFile::getErrorPage(const HttpRequest &request, int error_code)
 	{
 		location = "/";
 		map_it = _serverDirectives.find("error_page");
+		tokens = splitStringByDot(map_it->second, ' ');
 		std::vector<std::string>::iterator it;
 		it = std::find(tokens.begin(), tokens.end(), std::to_string(error_code));
 		if (it != tokens.end()) {
