@@ -56,10 +56,9 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 {
 	std::string		path;
 	std::ifstream	iss;
-	bool			is_good;
+	bool			is_good = false;
 
 	path = config.getFilePath(request);
-	is_good = false;
 	if (isDirectory(path.c_str()))
 	{
 		_statusCode = 404;
@@ -68,9 +67,7 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 	iss.open(path);
 
 	if (iss.good())
-	{
 		is_good = true;
-	}
 	else if (config.checkCgi(request))
 	{
 		iss.close();
@@ -83,9 +80,7 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 			_statusCode = 404;
 	}
 	else
-	{
 		_statusCode = 404;
-	}
 	iss.close();
 //	std::cout << "file is :" << is_good << " path : " << path << std::endl;
 	return (is_good);
