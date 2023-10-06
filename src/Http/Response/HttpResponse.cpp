@@ -10,8 +10,9 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config)
 {
 //	config.inspectConfig();
 
-	if (checkFileExists(request, config) && !checkAllowedMethod(request, config))
+	if (checkFileExists(request, config) && checkAllowedMethod(request, config))
 	{
+//		std::cerr << "inside " << std::endl;
 		if(checkMaxBodySize(request, config))
 		{
 			if (request.getRequestMethod() == "POST" &&
@@ -73,7 +74,7 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 		_statusCode = 404;
 	}
 	iss.close();
-//	std::cout << "file is :" << is_good << " path : " << path << std::endl;
+	std::cout << "file is :" << is_good << " path : " << path << std::endl;
 	return (is_good);
 }
 
