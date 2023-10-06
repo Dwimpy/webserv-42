@@ -74,7 +74,7 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 		_statusCode = 404;
 	}
 	iss.close();
-	std::cout << "file is :" << is_good << " path : " << path << std::endl;
+//	std::cout << "file is :" << is_good << " path : " << path << std::endl;
 	return (is_good);
 }
 

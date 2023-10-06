@@ -49,7 +49,7 @@ void Client::send(const char *str, ssize_t size)
 	_sendComplete = true;
    } else if (bytes_sent < 0)
    {
-		if (errno != EAGAIN)
+//		if (errno != EAGAIN)
 			_closeConnection = true;
 		return ;
    }
@@ -93,8 +93,8 @@ void Client::recieve()
 		}
 		else
 		{
-			if (errno != EWOULDBLOCK)
-				_closeConnection = true;
+//			if (errno != EWOULDBLOCK)
+//				_closeConnection = true;
 			break ;
 		}
 	}

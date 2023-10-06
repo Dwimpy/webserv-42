@@ -38,12 +38,12 @@ void Server::acceptIncomingConnections(int &kq)
 		clientFd = _serverSocket.accept(*newClient);
 		if (clientFd < 0)
 		{
-			if (errno != EWOULDBLOCK)
-			{
-				perror("Accept failed");
-				delete newClient;
-				exit(1);
-			}
+//			if (errno != EWOULDBLOCK)
+//			{
+//				perror("Accept failed");
+//				delete newClient;
+//				exit(1);
+//			}
 			delete newClient;
 			return ;
 		}

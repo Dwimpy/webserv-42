@@ -325,7 +325,7 @@ int BaseResponse::write_response() {
 
 	if (!_success)
 	{
-		std::string _fileName = _config.getErrorPage(_request);
+		std::string _fileName = _config.getErrorPage(_request, _status_code);
 		appendFileContents(_fileName);
 		close(_response_fd[0]);
 		return EXIT_SUCCESS;

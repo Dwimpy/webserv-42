@@ -199,13 +199,14 @@ std::string ConfigFile::getFilePath(const HttpRequest &request) const {
 	return (getServerRoot() + location + request.getRequestUri().substr(location.size(), request.getRequestUri().size() - location.size()));
 }
 
-std::string ConfigFile::getErrorPage(const HttpRequest &request) const {
+std::string ConfigFile::getErrorPage(const HttpRequest &request, int error_code) const {
 	std::string location = getLocationPath(request.getRequestUri());
 	std::vector<std::string> tokens;
 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
 	std::map<std::string, std::string> entry;
 	std::map<std::string, std::string>::const_iterator map_it;
 	std::string error_page = "error_pages/404.html";
+	bool	notFound = true;
 
 	it = _locationDirectives.find(location);
 	if (it != _locationDirectives.cend())
@@ -215,9 +216,23 @@ std::string ConfigFile::getErrorPage(const HttpRequest &request) const {
 		{
 			tokens = splitStringByDot(error_page, ' ');
 			if (!error_page.empty())
+			{
 				error_page = tokens[1];
+				notFound = false;
+			}
 		}
 	}
+	if (notFound)
+	{
+		location = "/";
+		map_it = _serverDirectives.find("error_page");
+		std::vector<std::string>::iterator it;
+		it = std::find(tokens.begin(), tokens.end(), std::to_string(error_code));
+		if (it != tokens.end()) {
+			error_page = tokens[std::distance(tokens.begin(), it) + 1];
+		}
+	}
+	std::cerr << "error path "<< getServerRoot() + location + error_page<< std::endl;
 	return (getServerRoot() + location + error_page);
 }
 
