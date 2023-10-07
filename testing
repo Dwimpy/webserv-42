@@ -4,7 +4,7 @@
     - It means that the server is not reading the request body 
     or
     - Not responding appropriately to the POST request
-
+    ( This happens because you didn't specify content length maybe we should fix this)
 
 - As indicated in the PDF: 
     1. We will consider that NGINX is HTTP 1.1 compliant and may be used to compare

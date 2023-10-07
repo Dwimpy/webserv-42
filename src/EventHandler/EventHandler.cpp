@@ -166,6 +166,7 @@ bool	EventHandler::handleClientWriteEvents(std::deque<Server > &serverList, ssiz
 	{
 		Client *client = (Client *)_event_list[index].udata;
 		HttpResponse test(client->getRequest(), serverList[client->getAssignedServer()].getConfiguration());
+//		std::cout << test.getResponse() << std::endl;
 		client->send(test.getResponse().c_str(), test.getResponseSize());
 		if (client->hasClosed())
 		{

@@ -73,9 +73,9 @@ void HttpRequestParser::consume(HttpRequest &request, const char *start, const c
 		char	*endptr;
 		long n = std::strtol(request.getValueByKey("Content-Length").c_str(), &endptr, 10);
 		if (n > 0 && n <= request.getBodySize())
-		{
 			_result = ParserComplete;
-		}
+		else if (request.getValueByKey("Content-Length").empty() && _result == ParserBody)
+			_result = ParserComplete;
 	}
 }
 
@@ -366,8 +366,6 @@ void HttpRequestParser::parseStateCRLFCRLF(HttpRequest &request, char next, char
 	if (c == '\r') {}
 	else if (c == '\n')
 	{
-//		if (HttpRequestParser::_result == ParserDirectives && (request.getRequestMethod() == "GET" || request.getRequestMethod() == "DELETE"))
-
 		if (HttpRequestParser::_result == ParserDirectives && request.getRequestMethod() == "POST")
 		{
 			HttpRequestParser::_result = ParserBody;

@@ -48,11 +48,7 @@ void Client::send(const char *str, ssize_t size)
 	_closeConnection = true;
 	_sendComplete = true;
    } else if (bytes_sent < 0)
-   {
-//		if (errno != EAGAIN)
-			_closeConnection = true;
 		return ;
-   }
 }
 
 
