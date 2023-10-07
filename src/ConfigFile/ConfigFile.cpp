@@ -142,19 +142,38 @@ bool ConfigFile::isValidLocation(const std::string &location) const
 	return (_locationDirectives.find(location) != _locationDirectives.end());
 }
 
-std::string ConfigFile::getServerRoot() const {
+std::string ConfigFile::getServerRoot(const HttpRequest &request) const
+{
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
+	std::map<std::string, std::string> entry;
+	std::map<std::string, std::string>::const_iterator map_it;
+	serverDirectives::const_iterator server_it;
+	std::string location = getLocationPath(request.getRequestUri());
+	std::string	root = "./docs";
+	bool	notFound = true;
 
-	serverDirectives::const_iterator it;
-
-	it = _serverDirectives.find("root");
-	if (it != _serverDirectives.end()) {
-		return (it->second);
-	} else {
-		return ("./docs");
+	if (location.empty())
+		location = "/";
+	it = _locationDirectives.find(location);
+	if (it != _locationDirectives.cend())
+	{
+		map_it = it->second.find("root");
+		if (map_it != it->second.cend())
+		{
+			root = map_it->second;
+			notFound = false;
+		}
 	}
+	if (notFound)
+	{
+		server_it = _serverDirectives.find("root");
+		if (server_it != _serverDirectives.cend())
+			root = server_it->second;
+	}
+	return (root);
 }
 
-std::string ConfigFile::getLocationPath(std::string location) const {
+std::string ConfigFile::getLocationPath(const std::string &location) const {
 	locationDirectives::const_iterator it;
 	std::string	biggest = "";
 	for (it = _locationDirectives.cbegin(); it != _locationDirectives.cend(); ++it) {
@@ -163,6 +182,76 @@ std::string ConfigFile::getLocationPath(std::string location) const {
 			biggest = curr;
 	}
 	return (biggest);
+}
+
+
+std::string ConfigFile::getServerRootString(const std::string &uri) const
+{
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
+	std::map<std::string, std::string> entry;
+	std::map<std::string, std::string>::const_iterator map_it;
+	serverDirectives::const_iterator server_it;
+	std::string location = getLocationPath(uri);
+	std::string	root = "./docs";
+	bool	notFound = true;
+
+	if (location.empty())
+		location = "/";
+	if (location == uri)
+	{
+		it = _locationDirectives.find(location);
+		if (it != _locationDirectives.cend())
+		{
+			map_it = it->second.find("root");
+			if (map_it != it->second.cend())
+			{
+				root = map_it->second;
+				notFound = false;
+			}
+		}
+	}
+	if (notFound)
+	{
+		server_it = _serverDirectives.find("root");
+		if (server_it != _serverDirectives.cend())
+			root = server_it->second;
+	}
+	return (root);
+}
+
+
+std::string ConfigFile::getFilePathString(const std::string &uri) const {
+	std::string location = getLocationPath(uri);
+	std::string	location_root;
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
+	std::map<std::string, std::string> entry;
+	std::map<std::string, std::string>::const_iterator map_it;
+	std::string index_page = "index.html";
+
+	if (location.empty())
+		location = "/";
+	if (location == uri)
+	{
+		it = _locationDirectives.find(location);
+		if (it != _locationDirectives.cend())
+		{
+			map_it = it->second.find("index");
+			if (map_it != it->second.cend())
+				index_page = map_it->second;
+		}
+		return (getServerRootString(uri) + location + index_page);
+	}
+	it = _locationDirectives.find(location);
+	if (it != _locationDirectives.cend()) {
+		entry = it->second;
+		if (!entry.empty()) {
+			if (entry.find("root") != entry.end()) {
+				location = entry.find("root")->second;
+				return (location + uri);
+			}
+		}
+	}
+	return (getServerRootString(uri) + location + uri.substr(location.size(), uri.size() - location.size()));
 }
 
 std::string ConfigFile::getFilePath(const HttpRequest &request) const {
@@ -184,7 +273,8 @@ std::string ConfigFile::getFilePath(const HttpRequest &request) const {
 			if (map_it != it->second.cend())
 				index_page = map_it->second;
 		}
-		return (getServerRoot() + location + index_page);
+		std::cout << "HErE1 " << std::endl;
+		return (getServerRoot(request) + location + index_page);
 	}
 	it = _locationDirectives.find(location);
 	if (it != _locationDirectives.cend()) {
@@ -192,11 +282,11 @@ std::string ConfigFile::getFilePath(const HttpRequest &request) const {
 		if (!entry.empty()) {
 			if (entry.find("root") != entry.end()) {
 				location = entry.find("root")->second;
-				return (getServerRoot() + location + request.getRequestUri().substr(0, request.getRequestUri().size()));
+				return (location + request.getRequestUri().substr(0, request.getRequestUri().size()));
 			}
 		}
 	}
-	return (getServerRoot() + location + request.getRequestUri().substr(location.size(), request.getRequestUri().size() - location.size()));
+	return (getServerRoot(request) + location + request.getRequestUri().substr(location.size(), request.getRequestUri().size() - location.size()));
 }
 
 std::string ConfigFile::getErrorPage(const HttpRequest &request, int error_code) const {
@@ -233,13 +323,13 @@ std::string ConfigFile::getErrorPage(const HttpRequest &request, int error_code)
 			error_page = tokens[std::distance(tokens.begin(), it) + 1];
 		}
 	}
-	std::cerr << "error path "<< getServerRoot() + location + error_page<< std::endl;
-	return (getServerRoot() + location + error_page);
+	std::cerr << "error path "<< getServerRoot(request) + location + error_page<< std::endl;
+	return (getServerRoot(request) + location + error_page);
 }
 
-bool	ConfigFile::checkCgi(const HttpRequest &request) const
+bool	ConfigFile::checkCgi(const std::string &uri) const
 {
-	std::string location = getLocationPath(request.getRequestUri());
+	std::string location = getLocationPath(uri);
 	std::vector<std::string> tokens;
 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
 	std::map<std::string, std::string> entry;
@@ -254,10 +344,10 @@ bool	ConfigFile::checkCgi(const HttpRequest &request) const
 		map_it = it->second.find("cgi");
 		if (map_it != it->second.cend())
 		{
-			ssize_t idx = request.getRequestUri().rfind('.');
+			ssize_t idx = uri.rfind('.');
 			if (idx != std::string::npos)
 			{
-				std::string ext = request.getRequestUri().substr(idx + 1, request.getRequestUri().size() - idx);
+				std::string ext = uri.substr(idx + 1, uri.size() - idx);
 				if(map_it->second.find(ext) != std::string::npos)
 					allowed = true;
 			}

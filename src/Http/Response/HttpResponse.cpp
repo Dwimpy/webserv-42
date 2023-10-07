@@ -72,7 +72,7 @@ bool HttpResponse::checkFileExists(const HttpRequest &request, const ConfigFile 
 
 	if (iss.good())
 		is_good = true;
-	else if (config.checkCgi(request))
+	else if (config.checkCgi(request.getRequestUri()))
 	{
 		iss.close();
 		ssize_t idx = path.rfind('/');
