@@ -18,28 +18,25 @@ class ConfigFile{
 	~ConfigFile();
 	void	addServerDirective(const std::string &key, const std::string &value);
 	void	addLocationDirective(const std::string &path, const std::string &key, const std::string &value);
-	void	inspectConfig();
-	void	inspectConfig() const;
-	std::string getAllowedMethods() const;
-	std::string	getServerRoot(const HttpRequest &request) const;
+//	void	inspectConfig();
+//	void	inspectConfig() const;
+//	std::string getAllowedMethods() const;
 
-	std::string getServerRootString(const std::string &uri) const;
-	std::string getFilePathString(const std::string &uri) const;
+	std::string getServerRoot(const std::string &uri) const;
 
 	int 				getPort();
 	int 				getPort() const;
-	std::string			getErrorPage(const HttpRequest &request, int error_code) const;
+//	std::string			getErrorPage(const std::string &uri, int error_code) const;
 	const std::string	&getServerName() const;
 	bool 				isAllowedMethodServer(const std::string &method) const;
-	bool				isValidLocation(const std::string &location) const;
+//	bool				isValidLocation(const std::string &location) const;
 	std::string			getLocationPath(const std::string &location) const;
-	std::string			getFilePath(const HttpRequest &request) const;
-	std::string 		getCgiPath(const HttpRequest &request) const;
-	bool				checkCgi(const std::string &request) const;
-	bool				checkCgiString(const std::string &uri) const;
-	std::string 		getCgiBin(const HttpRequest &request, std::string ext) const;
-	long 				getMaxBodySize(const HttpRequest &request) const;
-	bool				checkAutoIndex(const HttpRequest &request) const;
+	std::string			getFilePath(const std::string &uri) const;
+	std::string 		getCgiPath(const std::string &uri) const;
+	bool				checkCgi(const std::string &uri) const;
+	std::string 		getCgiBin(const std::string &uri, const std::string &ext) const;
+	long 				getMaxBodySize(const std::string &uri) const;
+	bool				checkAutoIndex(const std::string &uri) const;
 
 
 

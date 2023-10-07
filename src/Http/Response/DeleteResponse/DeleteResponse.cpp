@@ -14,7 +14,7 @@ void DeleteResponse::deleteResource(const HttpRequest &request, const ConfigFile
 {
 	std::string	path;
 
-	path = config.getFilePath(request);
+	path = config.getFilePath(request.getRequestUri());
 	if (std::remove(path.c_str()) == 0)
 		_status_code = 204;
 }

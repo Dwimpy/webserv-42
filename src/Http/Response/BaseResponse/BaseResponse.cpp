@@ -98,7 +98,7 @@ void	BaseResponse::setContentType()
 	std::string uri;
 	std::string	extension;
 	std::vector<std::string> result;
-	uri = _config.getFilePath(_request);
+	uri = _config.getFilePath(_request.getRequestUri());
 	result = splitStringByDot(uri, '.');
 	if(!result.empty())
 		extension = result.back();
@@ -188,7 +188,7 @@ int BaseResponse::dup_request_to_stdin() {
     std::string body;
 	body = _request.getFullBody();
 
-	if (_request.getValueByKey("Content-Type").find("multipart/form-data") != std::string::npos)
+	if (_request.getValueByKey("Content-Type").find("boundary=") != std::string::npos)
 		query.append(_request.extractFileName(body));
 	else if (_request.getBodySize() <= 1000)
     	query.append(body);
@@ -212,7 +212,7 @@ void BaseResponse::childProcess(std::string const &uri) {
 
 	if (idx != std::string::npos)
 		ext = uri.substr(idx + 1, uri.size() - idx);
-    std::string cgiPath = getProjectDir()  + _config.getCgiBin(_request, ext);
+    std::string cgiPath = getProjectDir()  + _config.getCgiBin(uri, ext);
 
 //	&& chdir((cgiPath).c_str()) == -1
 
@@ -272,7 +272,7 @@ void	BaseResponse::appendFileContents(const std::string &filename)
 }
 
 void BaseResponse::getContent(const std::string &uri) {
-    if (_config.checkCgiString(uri))
+    if (_config.checkCgi(uri))
     {
         if(pipe(_response_fd) == -1)
             std::cerr << ("pipe creation failed!") << std::endl;
@@ -297,7 +297,7 @@ void BaseResponse::getContent(const std::string &uri) {
         }
     }
     else
-        appendFileContents(_config.getFilePathString(uri));
+        appendFileContents(_config.getFilePath(uri));
 }
 
 
@@ -332,8 +332,7 @@ int BaseResponse::write_response() {
 
 	if (!_success)
 	{
-		std::string _fileName = _config.getErrorPage(_request, _status_code);
-		appendFileContents(_fileName);
+		stupidErrorPage();
 		close(_response_fd[0]);
 		return EXIT_SUCCESS;
 	}
@@ -364,4 +363,23 @@ const std::string getProjectDir() {
     else
 		error("getcwd fails");
     return "";
+}
+
+
+void	BaseResponse::stupidErrorPage()
+{
+	_content = "<html lang=\"en\">\n"
+				   "<link rel=\"stylesheet\" href=\"/css/error.css\">\n"
+				   "<script src=\"/js/stars.js\"></script>\n"
+				   "<div class=\"text\">\n"
+				   "    <div>ERROR</div>\n"
+				   "    <h1>469</h1>\n"
+				   "    <hr>\n"
+				   "    <div>CGI not built</div>\n"
+				   "</div>\n"
+				   "<a href=\"../index.html\" class=\"button\">Go home</a>\n"
+				   "<div class=\"astronaut\">\n"
+				   "    <img src=\"../assets/astronaut.png\" alt=\"\" class=\"src\">\n"
+				   "</div>\n"
+				   "</html>";
 }

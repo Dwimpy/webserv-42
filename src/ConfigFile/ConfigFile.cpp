@@ -77,43 +77,6 @@ int ConfigFile::getPort() const
 		}
 }
 
-
-void ConfigFile::inspectConfig()
-{
-	std::cout << "Server Directives: " << "\n";
-
-	for (serverDirectives::const_iterator it = _serverDirectives.begin(); it != _serverDirectives.end(); ++it)
-	{
-		std::cout << "Key: " << it->first << "\tValue: " << it->second << std::endl;
-	}
-	std::cout << "\nLocation Path and Directives: " << "\n";
-
-	for (locationDirectives::const_iterator outerIt = _locationDirectives.begin(); outerIt != _locationDirectives.end(); ++outerIt)
-	{
-		std::cout << "Path: " << outerIt->first << "\n";
-		for (serverDirectives::const_iterator innerIt = outerIt->second.begin(); innerIt != outerIt->second.end(); ++innerIt)
-			 std::cout << "\tKey: " << innerIt->first << "\tValue: " << innerIt->second << std::endl;
-	}
-}
-
-void ConfigFile::inspectConfig() const
-{
-	std::cout << "Server Directives: " << "\n";
-
-	for (serverDirectives::const_iterator it = _serverDirectives.begin(); it != _serverDirectives.end(); ++it)
-	{
-		std::cout << "Key: " << it->first << "\tValue: " << it->second << std::endl;
-	}
-	std::cout << "\nLocation Path and Directives: " << "\n";
-
-	for (locationDirectives::const_iterator outerIt = _locationDirectives.begin(); outerIt != _locationDirectives.end(); ++outerIt)
-	{
-		std::cout << "Path: " << outerIt->first << "\n";
-		for (serverDirectives::const_iterator innerIt = outerIt->second.begin(); innerIt != outerIt->second.end(); ++innerIt)
-			 std::cout << "\tKey: " << innerIt->first << "\tValue: " << innerIt->second << std::endl;
-	}
-}
-
  const std::string &ConfigFile::getServerName() const
 {
 	return (_serverDirectives.find("server_name")->second);
@@ -131,48 +94,6 @@ bool ConfigFile::isAllowedMethodServer(const std::string &method) const
 	}
 }
 
-std::string	ConfigFile::getAllowedMethods() const {
-	if (_serverDirectives.find("allowed_methods") == _serverDirectives.end())
-		return ("GET POST DELETE");
-	return (this->_serverDirectives.find("allowed_methods")->second);
-}
-
-bool ConfigFile::isValidLocation(const std::string &location) const
-{
-	return (_locationDirectives.find(location) != _locationDirectives.end());
-}
-
-std::string ConfigFile::getServerRoot(const HttpRequest &request) const
-{
-	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
-	std::map<std::string, std::string> entry;
-	std::map<std::string, std::string>::const_iterator map_it;
-	serverDirectives::const_iterator server_it;
-	std::string location = getLocationPath(request.getRequestUri());
-	std::string	root = "./docs";
-	bool	notFound = true;
-
-	if (location.empty())
-		location = "/";
-	it = _locationDirectives.find(location);
-	if (it != _locationDirectives.cend())
-	{
-		map_it = it->second.find("root");
-		if (map_it != it->second.cend())
-		{
-			root = map_it->second;
-			notFound = false;
-		}
-	}
-	if (notFound)
-	{
-		server_it = _serverDirectives.find("root");
-		if (server_it != _serverDirectives.cend())
-			root = server_it->second;
-	}
-	return (root);
-}
-
 std::string ConfigFile::getLocationPath(const std::string &location) const {
 	locationDirectives::const_iterator it;
 	std::string	biggest = "";
@@ -185,7 +106,7 @@ std::string ConfigFile::getLocationPath(const std::string &location) const {
 }
 
 
-std::string ConfigFile::getServerRootString(const std::string &uri) const
+std::string ConfigFile::getServerRoot(const std::string &uri) const
 {
 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
 	std::map<std::string, std::string> entry;
@@ -220,7 +141,7 @@ std::string ConfigFile::getServerRootString(const std::string &uri) const
 }
 
 
-std::string ConfigFile::getFilePathString(const std::string &uri) const {
+std::string ConfigFile::getFilePath(const std::string &uri) const {
 	std::string location = getLocationPath(uri);
 	std::string	location_root;
 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
@@ -239,7 +160,7 @@ std::string ConfigFile::getFilePathString(const std::string &uri) const {
 			if (map_it != it->second.cend())
 				index_page = map_it->second;
 		}
-		return (getServerRootString(uri) + location + index_page);
+		return (getServerRoot(uri) + location + index_page);
 	}
 	it = _locationDirectives.find(location);
 	if (it != _locationDirectives.cend()) {
@@ -251,81 +172,46 @@ std::string ConfigFile::getFilePathString(const std::string &uri) const {
 			}
 		}
 	}
-	return (getServerRootString(uri) + location + uri.substr(location.size(), uri.size() - location.size()));
+	return (getServerRoot(uri) + location + uri.substr(location.size(), uri.size() - location.size()));
 }
 
-std::string ConfigFile::getFilePath(const HttpRequest &request) const {
-	std::string location = getLocationPath(request.getRequestUri());
-	std::string	location_root;
-	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
-	std::map<std::string, std::string> entry;
-	std::map<std::string, std::string>::const_iterator map_it;
-	std::string index_page = "index.html";
-
-	if (location.empty())
-		location = "/";
-	if (location == request.getRequestUri())
-	{
-		it = _locationDirectives.find(location);
-		if (it != _locationDirectives.cend())
-		{
-			map_it = it->second.find("index");
-			if (map_it != it->second.cend())
-				index_page = map_it->second;
-		}
-		std::cout << "HErE1 " << std::endl;
-		return (getServerRoot(request) + location + index_page);
-	}
-	it = _locationDirectives.find(location);
-	if (it != _locationDirectives.cend()) {
-		entry = it->second;
-		if (!entry.empty()) {
-			if (entry.find("root") != entry.end()) {
-				location = entry.find("root")->second;
-				return (location + request.getRequestUri().substr(0, request.getRequestUri().size()));
-			}
-		}
-	}
-	return (getServerRoot(request) + location + request.getRequestUri().substr(location.size(), request.getRequestUri().size() - location.size()));
-}
-
-std::string ConfigFile::getErrorPage(const HttpRequest &request, int error_code) const {
-	std::string location = getLocationPath(request.getRequestUri());
-	std::vector<std::string> tokens;
-	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
-	std::map<std::string, std::string> entry;
-	std::map<std::string, std::string>::const_iterator map_it;
-	std::string error_page = "error_pages/404.html";
-	bool	notFound = true;
-
-	it = _locationDirectives.find(location);
-	if (it != _locationDirectives.cend())
-	{
-		map_it = it->second.find("error_page");
-		if (map_it != it->second.cend())
-		{
-			tokens = splitStringByDot(error_page, ' ');
-			if (!error_page.empty())
-			{
-				error_page = tokens[1];
-				notFound = false;
-			}
-		}
-	}
-	if (notFound)
-	{
-		location = "/";
-		map_it = _serverDirectives.find("error_page");
-		tokens = splitStringByDot(map_it->second, ' ');
-		std::vector<std::string>::iterator it;
-		it = std::find(tokens.begin(), tokens.end(), std::to_string(error_code));
-		if (it != tokens.end()) {
-			error_page = tokens[std::distance(tokens.begin(), it) + 1];
-		}
-	}
-	std::cerr << "error path "<< getServerRoot(request) + location + error_page<< std::endl;
-	return (getServerRoot(request) + location + error_page);
-}
+//std::string ConfigFile::getErrorPage(const std::string &uri, int error_code) const {
+//	std::string location = getLocationPath(uri);
+//	std::vector<std::string> tokens;
+//	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
+//	std::map<std::string, std::string> entry;
+//	std::map<std::string, std::string>::const_iterator map_it;
+//	std::string error_page = "error_pages/404.html";
+//	bool	notFound = true;
+//
+//	it = _locationDirectives.find(location);
+//	if (it != _locationDirectives.cend())
+//	{
+//		map_it = it->second.find("error_page");
+//		if (map_it != it->second.cend())
+//		{
+//			tokens = splitStringByDot(error_page, ' ');
+//			if (!error_page.empty())
+//			{
+//				error_page = tokens[1];
+//				notFound = false;
+//			}
+//		}
+//	}
+//	if (notFound)
+//	{
+//		location = "/";
+//		map_it = _serverDirectives.find("error_page");
+//		tokens = splitStringByDot(map_it->second, ' ');
+//		std::vector<std::string>::iterator it;
+//		it = std::find(tokens.begin(), tokens.end(), std::to_string(error_code));
+//		if (it != tokens.end()) {
+//			error_page = tokens[std::distance(tokens.begin(), it) + 1];
+//		}
+//	}
+//	std::cerr << "error path "<< getServerRoot(uri) + location + error_page<< std::endl;
+//	return (getServerRoot(uri) + location + error_page);
+//}
 
 bool	ConfigFile::checkCgi(const std::string &uri) const
 {
@@ -356,38 +242,9 @@ bool	ConfigFile::checkCgi(const std::string &uri) const
 	return (allowed);
 }
 
-bool	ConfigFile::checkCgiString(const std::string &uri) const
+std::string ConfigFile::getCgiBin(const std::string &uri, const std::string &ext) const
 {
 	std::string location = getLocationPath(uri);
-	std::vector<std::string> tokens;
-	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
-	std::map<std::string, std::string> entry;
-	std::map<std::string, std::string>::const_iterator map_it;
-	bool		allowed = false;
-
-	if (location.empty())
-		location = "/";
-	it = _locationDirectives.find(location);
-	if (it != _locationDirectives.cend())
-	{
-		map_it = it->second.find("cgi");
-		if (map_it != it->second.cend())
-		{
-			ssize_t idx = uri.rfind('.');
-			if (idx != std::string::npos)
-			{
-				std::string ext = uri.substr(idx + 1, uri.size() - idx);
-				if(map_it->second.find(ext) != std::string::npos)
-					allowed = true;
-			}
-		}
-	}
-	return (allowed);
-}
-
-std::string ConfigFile::getCgiBin(const HttpRequest &request, std::string ext) const
-{
-	std::string location = getLocationPath(request.getRequestUri());
 	std::vector<std::string> tokens;
 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
 	std::map<std::string, std::string> entry;
@@ -426,9 +283,9 @@ std::string ConfigFile::getCgiBin(const HttpRequest &request, std::string ext) c
 	return (location + cgiBin);
 }
 
-std::string ConfigFile::getCgiPath(const HttpRequest &request) const
+std::string ConfigFile::getCgiPath(const std::string &uri) const
 {
-	std::string location = getLocationPath(request.getRequestUri());
+	std::string location = getLocationPath(uri);
 	std::vector<std::string> tokens;
 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
 	std::map<std::string, std::string> entry;
@@ -457,8 +314,8 @@ std::string ConfigFile::getCgiPath(const HttpRequest &request) const
 	return (location + cgiPath);
 }
 
-long ConfigFile::getMaxBodySize(const HttpRequest &request) const {
-	std::string location = getLocationPath(request.getRequestUri());
+long ConfigFile::getMaxBodySize(const std::string &uri) const {
+	std::string location = getLocationPath(uri);
 	std::vector<std::string> tokens;
 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
 	std::map<std::string, std::string> entry;
@@ -473,7 +330,6 @@ long ConfigFile::getMaxBodySize(const HttpRequest &request) const {
 		map_it = it->second.find("client_max_body_size");
 		if (map_it != it->second.cend())
 		{
-//			std::cerr << "max body 1 " << map_it->second << std::endl;
 			maxBodySize = std::stol(map_it->second);
 			notFound = false;
 		}
@@ -481,17 +337,13 @@ long ConfigFile::getMaxBodySize(const HttpRequest &request) const {
 	if (notFound)
 	{
 		if(_serverDirectives.find("client_max_body_size") != _serverDirectives.cend())
-		{
-//			std::cerr << "max body 2 " << _serverDirectives.find("client_max_body_size")->second << std::endl;
 			maxBodySize = std::stol(_serverDirectives.find("client_max_body_size")->second);
-		}
-
 	}
 	return (maxBodySize);
 }
-bool ConfigFile::checkAutoIndex(const HttpRequest &request) const
+bool ConfigFile::checkAutoIndex(const std::string &uri) const
 {
-	std::string location = getLocationPath(request.getRequestUri());
+	std::string location = getLocationPath(uri);
 	std::vector<std::string> tokens;
 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
 	std::map<std::string, std::string> entry;

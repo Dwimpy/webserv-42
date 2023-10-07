@@ -22,23 +22,6 @@ ErrorResponse::ErrorResponse(int16_t statusCode, const HttpRequest &request, con
 		_contentType = "text/html";
 }
 
-void	ErrorResponse::stupidErrorPage()
-{
-	_content = "<html lang=\"en\">\n"
-				   "<link rel=\"stylesheet\" href=\"/css/error.css\">\n"
-				   "<script src=\"/js/stars.js\"></script>\n"
-				   "<div class=\"text\">\n"
-				   "    <div>ERROR</div>\n"
-				   "    <h1>469</h1>\n"
-				   "    <hr>\n"
-				   "    <div>CGI not built</div>\n"
-				   "</div>\n"
-				   "<a href=\"../index.html\" class=\"button\">Go home</a>\n"
-				   "<div class=\"astronaut\">\n"
-				   "    <img src=\"../assets/astronaut.png\" alt=\"\" class=\"src\">\n"
-				   "</div>\n"
-				   "</html>";
-}
 
 void ErrorResponse::listDirectory(const char* path) {
 		std::stack<std::string> dirStack;
@@ -67,7 +50,7 @@ void ErrorResponse::listDirectory(const char* path) {
 
 void	ErrorResponse::generateDirectoryListingPage()
 {
-		listDirectory(_config.getFilePath(_request).c_str());
+		listDirectory(_config.getFilePath(_request.getRequestUri()).c_str());
 }
 
 ErrorResponse::~ErrorResponse() {

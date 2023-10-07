@@ -30,7 +30,7 @@ class BaseResponse {
 	void			appendFileContents(const std::string &filename);
 	void			appendCookie(std::string &response);
 	std::string		generateCookieId(int length);
-
+	void			stupidErrorPage();
   private:
 	bool	_success;
 	int		_response_fd[2];
