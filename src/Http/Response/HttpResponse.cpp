@@ -14,12 +14,11 @@ HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config)
 	{
 		if(checkMaxBodySize(request, config))
 		{
-//			if (request.getRequestMethod() == "POST" &&
-//			request.getValueByKey("Content-Type").find("multipart/form-data") != std::string::npos)
+			if (request.getRequestMethod() == "POST" &&
+			request.getValueByKey("Content-Type").find("boundary=") != std::string::npos)
 				uploadFile(request);
 		}
 	}
-
 
 	 if (_statusCode >= 400)
 		_response = ErrorResponse(_statusCode, request, config).build();
