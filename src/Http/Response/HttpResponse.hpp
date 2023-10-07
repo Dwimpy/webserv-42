@@ -18,7 +18,7 @@ class HttpResponse{
 
 
 	ssize_t				getResponseSize();
-	bool 				checkAllowedMethod(const std::string &method, const ConfigFile &config);
+	bool 				checkAllowedMethod(const HttpRequest &request, const ConfigFile &config);
 	bool 				checkFileExists(const std::string &uri, const ConfigFile &config);
 	bool				checkMaxBodySize(const HttpRequest &request, const ConfigFile &config);
 

@@ -15,7 +15,7 @@ ErrorResponse::ErrorResponse(int16_t statusCode, const HttpRequest &request, con
 			generateDirectoryListingPage();
 			setStatusCode(200);
 		}
-		else if (config.checkCgi("/error.rs"))
+		else if (config.checkCgi("/error.rs", "rs"))
 			getContent("/error.rs");
 		else
 			stupidErrorPage();

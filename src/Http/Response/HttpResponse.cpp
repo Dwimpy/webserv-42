@@ -10,7 +10,7 @@
 HttpResponse::HttpResponse(const HttpRequest &request, const ConfigFile &config): _statusCode(200), _statusError("OK")
 {
 //	config.inspectConfig();
-	if (checkFileExists(request.getRequestUri(), config) && checkAllowedMethod(request.getRequestMethod(), config))
+	if (checkFileExists(request.getRequestUri(), config) && checkAllowedMethod(request, config))
 	{
 		if(checkMaxBodySize(request, config))
 		{
@@ -74,9 +74,15 @@ bool HttpResponse::checkFileExists(const std::string &uri, const ConfigFile &con
 	}
 	iss.open(path);
 
+	std::string	extension;
+	std::vector<std::string> result;
+	result = splitStringByDot(uri, '.');
+	if(!result.empty())
+		extension = result.back();
+
 	if (iss.good())
 		is_good = true;
-	else if (config.checkCgi(uri))
+	else if (config.checkCgi(uri,extension))
 	{
 		iss.close();
 		ssize_t idx = path.rfind('/');
@@ -95,9 +101,9 @@ bool HttpResponse::checkFileExists(const std::string &uri, const ConfigFile &con
 }
 
 
-bool HttpResponse::checkAllowedMethod(const std::string &method, const ConfigFile &config)
+bool HttpResponse::checkAllowedMethod(const HttpRequest &request, const ConfigFile &config)
 {
-	if (!config.isAllowedMethodServer(method))
+	if (!config.isAllowedMethodServer(request))
 	{
 		_statusCode = 405;
 		return (false);

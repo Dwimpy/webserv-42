@@ -113,7 +113,7 @@ void	BaseResponse::setContentType()
 		else
 			_contentType = accept.substr(0, idx + extension.length());
 	}
-	else if (_config.checkCgi(_request.getRequestUri()))
+	else if (_config.checkCgi(_request.getRequestUri(), extension))
 		_contentType = "text/html";
 }
 
@@ -272,7 +272,12 @@ void	BaseResponse::appendFileContents(const std::string &filename)
 }
 
 void BaseResponse::getContent(const std::string &uri) {
-    if (_config.checkCgi(uri))
+    std::string	extension;
+	std::vector<std::string> result;
+	result = splitStringByDot(uri, '.');
+	if(!result.empty())
+		extension = result.back();
+	if (_config.checkCgi(uri,extension))
     {
         if(pipe(_response_fd) == -1)
             std::cerr << ("pipe creation failed!") << std::endl;

@@ -82,16 +82,51 @@ int ConfigFile::getPort() const
 	return (_serverDirectives.find("server_name")->second);
 }
 
-bool ConfigFile::isAllowedMethodServer(const std::string &method) const
+bool ConfigFile::isAllowedMethodServer(const HttpRequest &request) const
 {
-	if (_serverDirectives.find("allowed_methods") == _serverDirectives.end())
-		return (method == "GET" || method == "POST" || method == "DELETE");
-	else
+	std::string location = getLocationPath(request.getRequestUri());
+	std::vector<std::string> tokens;
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it;
+	std::map<std::string, std::string> entry;
+	std::map<std::string, std::string>::const_iterator map_it;
+	std::string method = request.getRequestMethod();
+	bool		allowed = false;
+	bool		notFound = true;
+
+	if (location.empty())
+		location = "/";
+	it = _locationDirectives.find(location);
+	if (it != _locationDirectives.cend())
 	{
-		if (_serverDirectives.find("allowed_methods")->second.find(method) != std::string::npos)
-			return (true);
-		return (false);
+		map_it = it->second.find("allowed_methods");
+		if (map_it != it->second.cend())
+		{
+			notFound = false;
+			if(map_it->second.find(method) != std::string::npos)
+				allowed = true;
+		}
 	}
+	if (notFound)
+	{
+		map_it = _serverDirectives.find("allowed_methods");
+		if(map_it != _serverDirectives.cend())
+		{
+			notFound = false;
+			if(map_it->second.find(method) != std::string::npos)
+				allowed = true;
+		}
+	}
+	if (notFound)
+		return (method == "GET" || method == "POST" || method == "DELETE");
+	return (allowed);
+//	if (_serverDirectives.find("allowed_methods") == _serverDirectives.end())
+//		return (method == "GET" || method == "POST" || method == "DELETE");
+//	else
+//	{
+//		if (_serverDirectives.find("allowed_methods")->second.find(method) != std::string::npos)
+//			return (true);
+//		return (false);
+//	}
 }
 
 std::string ConfigFile::getLocationPath(const std::string &location) const {
@@ -213,7 +248,7 @@ std::string ConfigFile::getFilePath(const std::string &uri) const {
 //	return (getServerRoot(uri) + location + error_page);
 //}
 
-bool	ConfigFile::checkCgi(const std::string &uri) const
+bool	ConfigFile::checkCgi(const std::string &uri, const std::string &ext) const
 {
 	std::string location = getLocationPath(uri);
 	std::vector<std::string> tokens;
@@ -221,6 +256,7 @@ bool	ConfigFile::checkCgi(const std::string &uri) const
 	std::map<std::string, std::string> entry;
 	std::map<std::string, std::string>::const_iterator map_it;
 	bool		allowed = false;
+	bool		notFound = true;
 
 	if (location.empty())
 		location = "/";
@@ -235,7 +271,23 @@ bool	ConfigFile::checkCgi(const std::string &uri) const
 			{
 				std::string ext = uri.substr(idx + 1, uri.size() - idx);
 				if(map_it->second.find(ext) != std::string::npos)
+				{
 					allowed = true;
+					notFound = false;
+				}
+			}
+		}
+	}
+	if (notFound)
+	{
+		map_it = _serverDirectives.find("cgi");
+		if(map_it != _serverDirectives.cend())
+		{
+			tokens = splitStringByDot(map_it->second, ' ');
+			std::vector<std::string>::iterator it;
+			it = std::find(tokens.begin(), tokens.end(), ext);
+			if (it != tokens.end()) {
+				allowed = true;
 			}
 		}
 	}

@@ -28,12 +28,12 @@ class ConfigFile{
 	int 				getPort() const;
 //	std::string			getErrorPage(const std::string &uri, int error_code) const;
 	const std::string	&getServerName() const;
-	bool 				isAllowedMethodServer(const std::string &method) const;
+	bool 				isAllowedMethodServer(const HttpRequest &request) const;
 //	bool				isValidLocation(const std::string &location) const;
 	std::string			getLocationPath(const std::string &location) const;
 	std::string			getFilePath(const std::string &uri) const;
 	std::string 		getCgiPath(const std::string &uri) const;
-	bool				checkCgi(const std::string &uri) const;
+	bool				checkCgi(const std::string &uri, const std::string &ext) const;
 	std::string 		getCgiBin(const std::string &uri, const std::string &ext) const;
 	long 				getMaxBodySize(const std::string &uri) const;
 	bool				checkAutoIndex(const std::string &uri) const;
