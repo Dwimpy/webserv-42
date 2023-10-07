@@ -15,7 +15,7 @@ ssize_t ClientSocket::receive()
 
 	memset(_buffer, 0, sizeof(_buffer));
 	bytes_received = recv(this->_fd, _buffer, sizeof(_buffer), 0);
-	this->_buffer[bytes_received] = '\0';
+	this->_buffer[bytes_received] = '\0'; /* testing: recv can return -1, in that case this line will crash*/
 	return (bytes_received);
 }
 
@@ -32,7 +32,7 @@ ssize_t	ClientSocket::getOffset()
 ssize_t ClientSocket::send(const char *str, ssize_t size)
 {
 	ssize_t	bytes_sent;
-	bytes_sent = ::send(this->_fd, str, size, 0);
+	bytes_sent = ::send(this->_fd, str, size, 0);  /* testing: According to eval sheet every you should check for -1 and 0 output's of every read/recv/write/send. */
 	return (bytes_sent);
 }
 

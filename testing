@@ -1,0 +1,26 @@
+- Connection doesn't close after making a post request
+    for example the command `curl -X POST 127.0.0.1:8080` hangs, it stops only with ctrl+c,
+    gpt says:
+    - It means that the server is not reading the request body 
+    or
+    - Not responding appropriately to the POST request
+
+
+- As indicated in the PDF: 
+    1. We will consider that NGINX is HTTP 1.1 compliant and may be used to compare
+    headers and answer behaviors.
+    2. Your HTTP response status codes must be accurate.
+    When making a head request with the `-I` flag in curl e.g: `curl -I -w "%{http_code}" 127.0.0.1:8080`
+    the status code is `405` when it should be `200`
+    not sure if we should handle this head request but at least the status code should be same I guess
+
+
+- trying an invalid method works as expected on the main server (port 8080) but with the other servers on 8081 and 8082, doesn't.
+    `curl -X INVALIDMETHOD 127.0.0.1:8080`
+    `curl -X INVALIDMETHOD 127.0.0.1:8081`
+
+
+- To be continued 
+
+
+reminder for me: `curl -X POST -H "Content-Type: plain/text" --data "BODY IS HERE write something shorter or longer than body limit"`

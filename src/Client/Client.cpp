@@ -42,7 +42,7 @@ void Client::send(const char *str, ssize_t size)
 		this->_clientSocket.setOffset(bytes_sent);
 		if (bytes_sent < size)
 		{
-			send(str, size);
+			send(str, size); 
 			return ;
 		}
 	_closeConnection = true;
@@ -81,7 +81,7 @@ void Client::recieve()
 	while (true)
 	{
 		bytes_recv = _clientSocket.receive();
-		if (bytes_recv == 0)
+		if (bytes_recv == 0) /* testing: -1 should be checked also as we don't use errno anymore, also mentioned in eval sheet */
 		{
 			std::cerr << "Client has disconnected" << std::endl;
 			_closeConnection = true;

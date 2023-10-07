@@ -266,7 +266,7 @@ void	BaseResponse::appendFileContents(const std::string &filename)
 	std::string data;
 	data.resize(infile.tellg());
 	infile.seekg(0, std::ios::beg);
-	infile.read(&data[0], data.size());
+	infile.read(&data[0], data.size()); /* testing: According to eval sheet every you should check for -1 and 0 output's of every read/recv/write/send. */
 	infile.close();
 	_content.append(data);
 }
