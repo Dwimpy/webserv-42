@@ -2,7 +2,7 @@
 #include "ConfigFile.hpp"
 #include "HttpRequest.hpp"
 #include "OrderedMap.hpp"
-
+#include "TypeMap.hpp"
 #include <cstdint>
 #include <string>
 
@@ -21,6 +21,7 @@ class BaseResponse {
 	OrderedMap<std::string, std::string>	_headers;
 	std::string								_content;
 	std::string								_contentType;
+	TypeMap									_typeMap;
 	const HttpRequest						&_request;
 	const ConfigFile							&_config;
 

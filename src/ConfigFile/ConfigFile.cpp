@@ -59,19 +59,23 @@ void ConfigFile::addLocationDirective(const std::string &path, const std::string
 
 int ConfigFile::getPort()
 {
-	try {
-		return (std::stoi(_serverDirectives["listen"]));
-	}catch (const std::exception &e) {
-		throw ;
-	}
+	serverDirectives::iterator it = _serverDirectives.find("listen");
+	char	*ptr;
+
+		try {
+			return (std::strtol(it->second.c_str(), &ptr, 10));
+		}catch (const std::exception &e) {
+			throw ;
+		}
 }
 
 int ConfigFile::getPort() const
 {
 	serverDirectives::const_iterator it = _serverDirectives.find("listen");
+	char	*ptr;
 
 		try {
-			return (std::stoi(it->second));
+			return (std::strtol(it->second.c_str(), &ptr, 10));
 		}catch (const std::exception &e) {
 			throw ;
 		}
@@ -81,6 +85,8 @@ int ConfigFile::getPort() const
 {
 	return (_serverDirectives.find("server_name")->second);
 }
+
+
 
 bool ConfigFile::isAllowedMethodServer(const HttpRequest &request) const
 {
@@ -131,7 +137,7 @@ bool ConfigFile::isAllowedMethodServer(const HttpRequest &request) const
 
 std::string ConfigFile::getLocationPath(const std::string &location) const {
 	locationDirectives::const_iterator it;
-	std::string	biggest = "";
+	std::string	biggest;
 	for (it = _locationDirectives.cbegin(); it != _locationDirectives.cend(); ++it) {
 		std::string curr = it->first;
 		if (location.find(curr) != std::string::npos && curr.size() > biggest.size())

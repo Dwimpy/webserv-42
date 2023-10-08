@@ -2,7 +2,6 @@
 #include "BaseResponse.hpp"
 #include "HttpRequest.hpp"
 #include "Server.hpp"
-#include "ServerConfig.hpp"
 
 #include <fstream>
 #include <sstream>

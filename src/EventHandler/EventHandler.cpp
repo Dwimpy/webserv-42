@@ -16,7 +16,7 @@ void	EventHandler::registerServers(std::deque<Server> &serverList)
 {
  	_monitor_list = std::vector<t_kevent >(serverList.size());
 	for (ssize_t i = 0; i < serverList.size(); ++i)
-		EV_SET(&_monitor_list[i], serverList[i].getSocket().getSocketFD(), EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
+		EV_SET(&_monitor_list[i], serverList[i].getSocket().getSocketFD(), EVFILT_READ, EV_ADD | EV_CLEAR | EV_ENABLE, 0, 0, 0);
 	if (::kevent(_kq, this->_monitor_list.data(), serverList.size(), nullptr, 0, nullptr) < 0)
 	{
 		perror("kevent");
@@ -29,9 +29,9 @@ void	EventHandler::registerServers(std::deque<Server> &serverList)
 
 void	EventHandler::eventLoop(std::deque<Server > serverList)
 {
-	ssize_t size;
-	int		new_events;
-	struct kevent event_fd;
+	ssize_t			size;
+	int				new_events;
+	struct kevent	event_fd;
 
 	size = 0;
 	for (;;)
@@ -54,7 +54,19 @@ void	EventHandler::eventLoop(std::deque<Server > serverList)
 			else if (handleClientWriteEvents(serverList, i)) {}
 		}
 	}
+	closeRemainingConnections(serverList);
 	close(_kq);
+}
+
+void	EventHandler::closeRemainingConnections(std::deque<Server > serverList)
+{
+	for (int i = 0; i < serverList.size(); i++) {
+		for (int j = 0; j < serverList[i].getConnectedClients().size(); j++) {
+			close(serverList[i].getConnectedClients()[j]->getClientSocket().getFd());
+			delete serverList[i].getConnectedClients()[j];
+		}
+		close(serverList[i].getSocket().getSocketFD());
+	}
 }
 
 bool	EventHandler::hasDisconnected(std::deque<Server> &serverList, ssize_t index)
@@ -64,7 +76,6 @@ bool	EventHandler::hasDisconnected(std::deque<Server> &serverList, ssize_t index
 		Client *client = (Client *)_event_list[index].udata;
 		std::cerr << "Client has disconnected from the server\n";
 		close(client->getClientSocket().getFd());
-		serverList[client->getAssignedServer()].removeClient(*client);
 		return (true);
 	}
 	return (false);
@@ -78,8 +89,8 @@ bool	EventHandler::handleClientReadEvents(std::deque<Server > &serverList, ssize
 		client->recieve();
 		if (client->hasClosed())
 		{
-			registerEvent(*client, EVFILT_READ, EV_DELETE);
 			close(client->getClientSocket().getFd());
+			registerEvent(*client, EVFILT_READ, EV_DELETE);
 			serverList[client->getAssignedServer()].removeClient(*client);
 		}
 		else if (client->getParserResult() == ParserComplete)
@@ -170,8 +181,8 @@ bool	EventHandler::handleClientWriteEvents(std::deque<Server > &serverList, ssiz
 		client->send(test.getResponse().c_str(), test.getResponseSize());
 		if (client->hasClosed())
 		{
-			registerEvent(*client, EVFILT_WRITE, EV_DELETE);
 			close(client->getClientSocket().getFd());
+			registerEvent(*client, EVFILT_WRITE, EV_DELETE);
 			serverList[client->getAssignedServer()].removeClient(*client);
 		}
 		return (true);

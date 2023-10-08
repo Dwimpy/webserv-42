@@ -101,20 +101,26 @@ void	BaseResponse::setContentType()
 	uri = _config.getFilePath(_request.getRequestUri());
 	result = splitStringByDot(uri, '.');
 	if(!result.empty())
-		extension = result.back();
-
-	std::string accept = _request.getValueByKey("Accept");
-	ssize_t idx = accept.find(extension);
-	if (idx != std::string::npos)
 	{
-		ssize_t startIdxl = accept.rfind(",", idx);
-		if (startIdxl != std::string::npos)
-			_contentType = accept.substr(startIdxl + 1, idx + extension.length() - startIdxl - 1);
-		else
-			_contentType = accept.substr(0, idx + extension.length());
+		extension = result.back();
+		_contentType = _typeMap.getContentType(extension);
 	}
-	else if (_config.checkCgi(_request.getRequestUri(), extension))
-		_contentType = "text/html";
+	else
+		_contentType = "*/*";
+
+//	std::string accept = _request.getValueByKey("Accept");
+//	ssize_t idx = accept.find(extension);
+//	std::cout << "idx: " << " extension: " << extension << std::endl;
+//	if (idx != std::string::npos)
+//	{
+//		ssize_t startIdxl = accept.rfind(",", idx);
+//		if (startIdxl != std::string::npos)
+//			_contentType = accept.substr(startIdxl + 1, idx + extension.length() - startIdxl - 1);
+//		else
+//			_contentType = accept.substr(0, idx + extension.length());
+//	}
+//	else if (_config.checkCgi(_request.getRequestUri(), extension))
+//		_contentType = "text/html";
 }
 
 std::string	BaseResponse::generateCookieId(int length)
@@ -156,9 +162,9 @@ std::string BaseResponse::build()
 	for (it = _headers.begin(); it != _headers.end(); ++it) {
 		response += it->first + ": " + it->second + "\r\n";
 	}
-
 		response += "Content-type: " + _contentType + "\r\n";
 		response += "Content-length: " + std::to_string(_content.length()) + "\r\n";
+		response += "Cache-Control: max-age=3600\r\n";
 		if (_request.getValueByKey("Cookie") == "")
 		{
 			std::cout << "no cookies found" << std::endl;

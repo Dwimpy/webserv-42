@@ -4,14 +4,8 @@
 #include <unistd.h>
 #include <algorithm>
 
-Server::Server() : _config(ServerConfig())
-{}
+Server::Server(const ConfigFile &config): _configFile(config) {}
 
-Server::Server(const ServerConfig &config) : _config(config)
-{}
-
-Server::Server(const ConfigFile &config): _configFile(config), _config(ServerConfig())
-{}
 
 Server::~Server()
 {
@@ -38,20 +32,8 @@ void Server::acceptIncomingConnections(int &kq)
 		clientFd = _serverSocket.accept(*newClient);
 		if (clientFd < 0)
 		{
-//			if (errno != EWOULDBLOCK)
-//			{
-//				perror("Accept failed");
-//				delete newClient;
-//				exit(1);
-//			}
 			delete newClient;
-			return ;
-		}
-		if (fcntl(clientFd, F_SETFL, O_NONBLOCK, FD_CLOEXEC) < 0)
-		{
-			close(clientFd);
-			delete newClient;
-			continue ;
+			break ;
 		}
 		newClient->setServer(this->_serverSocket.getSocketFD() - 3);
 		this->_connectedClients.push_back(newClient);
@@ -78,10 +60,6 @@ void	Server::removeClient(Client &client)
 const ConfigFile &Server::getConfiguration() const
 {
 	return (this->_configFile);
-}
-
-const ServerConfig &Server::getServerConfig() const {
-	return (this->_config);
 }
 
 ServerSocket Server::getSocket() const

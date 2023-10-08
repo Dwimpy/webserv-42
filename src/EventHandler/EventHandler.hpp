@@ -26,6 +26,7 @@ class EventHandler{
 	bool	handleIncomingConnections(std::deque<Server> &deque1, ssize_t size, ssize_t i);
 	bool	handleClientReadEvents(std::deque<Server> &serverList, ssize_t index);
 	bool	handleClientWriteEvents(std::deque<Server> &serverList, ssize_t index);
+	void	closeRemainingConnections(std::deque<Server> serverList);
 };
 
 void	uploadFile(const HttpRequest &request);

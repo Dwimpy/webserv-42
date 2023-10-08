@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ServerConfig.hpp"
 #include "ServerSocket.hpp"
 #include "ConfigFile.hpp"
 #include "HttpRequest.hpp"
@@ -14,7 +13,6 @@ class Server {
 
   public:
 	Server();
-	Server(const ServerConfig &config);
 	Server(const ConfigFile &config);
 	~Server();
 	bool	startServer();
@@ -25,10 +23,8 @@ class Server {
 	std::vector<Client *> &getConnectedClients();
 	ServerSocket		getSocket() const;
 	void				removeClient(Client &client);
-	const ServerConfig &getServerConfig() const;
 
   private:
-	const ServerConfig				_config;
 	ConfigFile						_configFile;
 	ServerSocket					_serverSocket;
 	std::vector<Client *>			_connectedClients;

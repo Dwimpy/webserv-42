@@ -21,7 +21,7 @@ VPATH			= ./src ./src/Server ./src/ServerConfig ./src/SocketHandler ./src/Http \
 				  ./src/Parser/HttpRequestParser ./src/Parser/ConfigFileParser ./src/Socket/ISocket ./src/Socket/ServerSocket \
 				  ./src/Socket/ClientSocket ./src/EventHandler ./src/Http/Response/BaseResponse ./src/OrderedMap \
 				  ./src/Http/Response/GetResponse ./src/Http/Response/ErrorResponse \
-				  ./src/Http/Response/DeleteResponse
+				  ./src/Http/Response/DeleteResponse ./src/TypeMap
 
 
 
@@ -55,6 +55,7 @@ INCLUDE		+= -I ./src/Http/Response/GetResponse
 INCLUDE		+= -I ./src/Http/Response/ErrorResponse
 INCLUDE		+= -I ./src/Http/Response/DeleteResponse
 INCLUDE		+= -I ./src/OrderedMap
+INCLUDE		+= -I ./src/TypeMap
 
 # Diretories
 SRC_DIR			= ./src
