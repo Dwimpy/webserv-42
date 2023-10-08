@@ -54,7 +54,10 @@ fn main() -> Result<(), Error> {
         }
     }
 
+
     // Print the username and password
+    let new_email = email.replace("%40", "@");
+    email = &new_email;
     println!("Username: {}", username);
     println!("email: {}", email);
     println!("birthdate: {}", birthdate);

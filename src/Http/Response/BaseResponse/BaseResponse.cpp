@@ -164,7 +164,7 @@ std::string BaseResponse::build()
 	}
 		response += "Content-type: " + _contentType + "\r\n";
 		response += "Content-length: " + std::to_string(_content.length()) + "\r\n";
-		response += "Cache-Control: max-age=3600\r\n";
+//		response += "Cache-Control: max-age=10\r\n";
 		if (_request.getValueByKey("Cookie") == "")
 		{
 			std::cout << "no cookies found" << std::endl;
