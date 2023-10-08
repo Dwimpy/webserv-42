@@ -62,7 +62,6 @@ bool HttpResponse::checkFileExists(const std::string &uri, const ConfigFile &con
 	bool			is_good = false;
 
 	path = config.getFilePath(uri);
-	std::cout << "path " << path << std::endl;
 	if (isDirectory(path.c_str()))
 	{
 		if (!config.checkAutoIndex(uri))

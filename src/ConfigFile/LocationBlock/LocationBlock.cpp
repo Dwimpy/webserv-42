@@ -31,7 +31,6 @@ void LocationBlock::pushToDirectiveValue(char c)
 void LocationBlock::print()
 {
 	std::cout << "Location: " << std::endl;
-	std::cout << "Path: " << this->_path << std::endl;
 	for (size_t i = 0; i < _directives.size(); i++)
 		_directives[i].print();
 }
